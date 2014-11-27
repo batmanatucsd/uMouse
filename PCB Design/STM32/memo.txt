@@ -1,6 +1,14 @@
 use C0402 everywhere possible
 
-Will be used in simple debug situation
+the Flash is divided into two banks: the first bank is 512Kb and the second one is 256Kb (768Kb in total)
+thought: store the code in bank1 and store the non-volatile data in bank2
+
+Bootloader:activate by apply Pattern3
+60--BOOT0
+28--BOOT1
+BFB2--in the user option memory?
+
+USART1 be used in simple debug situation   (USART2(remapped) is not available on LQFP64)
 41--USART1_CK
 42--USART1_TX
 43--USART1_RX
@@ -15,4 +23,14 @@ CONNECT to mpu6050
 58--I2C1_SCL
 59--I2C1_SDA
 
-CONNECT
+CONNECT to motor driver
+GPIO*4
+PWM*2
+
+CONNECT to infarred sensor
+GPIO*4
+ADC*4
+
+AVOID:
+there is a tempurature sersor at ADC1_IN16
+
