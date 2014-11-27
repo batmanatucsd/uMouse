@@ -1,0 +1,18 @@
+use C0402 everywhere possible
+
+Will be used in simple debug situation
+41--USART1_CK
+42--USART1_TX
+43--USART1_RX
+44--USART1_CTS
+45--USART1_RTS
+
+CONNECT to JTAG
+
+
+CONNECT to mpu6050
+57--I2C1_SMBA
+58--I2C1_SCL
+59--I2C1_SDA
+
+CONNECT
