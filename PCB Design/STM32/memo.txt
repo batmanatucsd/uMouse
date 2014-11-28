@@ -15,21 +15,35 @@ USART1 be used in simple debug situation   (USART2(remapped) is not available on
 44--USART1_CTS
 45--USART1_RTS
 
-CONNECT to JTAG
-
+CONNECT to JTAG(for advance debug)
+7 --RST
+46--JT_TMS
+49--JT_TCK
+50--JT_TDI
+55--JT_TDO
+56--JT_TRST
 
 CONNECT to mpu6050
 57--I2C1_SMBA
 58--I2C1_SCL
 59--I2C1_SDA
 
-CONNECT to motor driver
+CONNECT to motor driver(Logic Level Converter?)
 GPIO*4
 PWM*2
 
-CONNECT to infarred sensor
-GPIO*4
-ADC*4
+CONNECT to infarred sensor(Logic Level Converter?)
+37--IR_OUT1
+38--IR_OUT2
+39--IR_OUT3
+40--IR_OUT4
+8 --IR_IN1
+9 --IR_IN2
+10--IR_IN3
+11--IR_IN4
+
+CONNECT to encoder
+GPIO*4?
 
 AVOID:
 there is a tempurature sersor at ADC1_IN16
