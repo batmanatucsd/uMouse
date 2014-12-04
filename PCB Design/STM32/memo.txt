@@ -1,0 +1,50 @@
+use C0402 everywhere possible
+
+the Flash is divided into two banks: the first bank is 512Kb and the second one is 256Kb (768Kb in total)
+thought: store the code in bank1 and store the non-volatile data in bank2
+
+Bootloader:activate by apply Pattern3
+60--BOOT0
+28--BOOT1
+BFB2--in the user option memory?
+
+USART1 be used in simple debug situation   (USART2(remapped) is not available on LQFP64)
+41--USART1_CK
+42--USART1_TX
+43--USART1_RX
+44--USART1_CTS
+45--USART1_RTS
+
+CONNECT to JTAG(for advance debug)
+7 --RST
+46--JT_TMS
+49--JT_TCK
+50--JT_TDI
+55--JT_TDO
+56--JT_TRST
+
+CONNECT to mpu6050
+57--I2C1_SMBA
+58--I2C1_SCL
+59--I2C1_SDA
+
+CONNECT to motor driver(Logic Level Converter?)
+GPIO*4
+PWM*2
+
+CONNECT to infarred sensor(Logic Level Converter?)
+37--IR_OUT1
+38--IR_OUT2
+39--IR_OUT3
+40--IR_OUT4
+8 --IR_IN1
+9 --IR_IN2
+10--IR_IN3
+11--IR_IN4
+
+CONNECT to encoder
+GPIO*4?
+
+AVOID:
+there is a tempurature sersor at ADC1_IN16
+
