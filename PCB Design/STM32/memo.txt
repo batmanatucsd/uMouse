@@ -3,12 +3,11 @@ use C0402 everywhere possible
 VCC = 3.3v
 VDDA = 3.3V
 
-the Flash is divided into two banks: the first bank is 512Kb and the second one is 256Kb (768Kb in total)
-thought: store the code in bank1 and store the non-volatile data in bank2
+Default boot from bank 1(512K), if set BFB2 then maybe bank 2(256K) 
 
 Bootloader:activate by apply Pattern3
-60--BOOT0
-28--BOOT1
+60--BOOT0--GND
+28--BOOT1--GND
 BFB2--in the user option memory?
 
 USART1 be used in simple debug situation   (USART2(remapped) is not available on LQFP64)
@@ -67,3 +66,5 @@ AVOID:
 there is a tempurature sersor at ADC1_IN16
 
 PC13,14,15 less output current 
+
+review the direction of motor connector in board design
