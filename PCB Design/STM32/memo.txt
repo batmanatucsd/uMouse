@@ -2,6 +2,16 @@ use C0402 everywhere possible
 
 VCC = 3.3v
 VDDA = 3.3V
+V_BATT = battery voltage
+
+AVOID:
+there is a tempurature sersor at ADC1_IN16
+
+PC13,14,15 less output current 
+
+review the direction of motor connector in board design
+
+***********************************************************************
 
 Default boot from bank 1(512K), if set BFB2 then maybe bank 2(256K) 
 
@@ -31,23 +41,19 @@ CONNECT to mpu6050
 59--I2C1_SDA
 61--INT
 
-mpu6050:
-1--CLKIN--GND
-8--3.3V--10nF--GND
-9--GND(i2c address 1101000)
-10--0.1uF--GND
-11--GND
-12-INT
-13--3.3V--0.1uF--GND
-18--GND
-20--2.2nF--GND
-23,24--I2C
+CONNECT to motor driver
+15--M1PWM(use timer 2 channel 2)
+16--M1I2
+17--M1I1
+20--M2I1
+21--M2I2
+22--M2PWM(use timer 3 channel 1)
 
-2-7, 14-17, 19, 21, 22--float
-
-CONNECT to motor driver(Logic Level Converter?)
-GPIO*4
-PWM*2
+CONNECT to encoder
+33--M1CA
+34--M1CB
+35--M2CA
+36--M2CB
 
 CONNECT to infarred sensor(Logic Level Converter?)
 37--IR_OUT1
@@ -59,12 +65,19 @@ CONNECT to infarred sensor(Logic Level Converter?)
 10--IR_IN3
 11--IR_IN4
 
-CONNECT to encoder
-GPIO*4?
+***********************************************************************
 
-AVOID:
-there is a tempurature sersor at ADC1_IN16
+mpu6050:
+1--CLKIN--GND
+8--3.3V--10nF--GND
+9--GND(i2c address 1101000)
+10--0.1uF--GND
+11--GND
+12-INT
+13--3.3V--0.1uF--GND
+18--GND
+20--2.2nF--GND
+23,24--I2C
+2-7, 14-17, 19, 21, 22--float
 
-PC13,14,15 less output current 
-
-review the direction of motor connector in board design
+***********************************************************************
