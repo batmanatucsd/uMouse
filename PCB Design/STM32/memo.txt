@@ -1,5 +1,8 @@
 use C0402 everywhere possible
 
+VCC = 3.3v
+VDDA = 3.3V
+
 the Flash is divided into two banks: the first bank is 512Kb and the second one is 256Kb (768Kb in total)
 thought: store the code in bank1 and store the non-volatile data in bank2
 
@@ -27,6 +30,21 @@ CONNECT to mpu6050
 57--I2C1_SMBA
 58--I2C1_SCL
 59--I2C1_SDA
+61--INT
+
+mpu6050:
+1--CLKIN--GND
+8--3.3V--10nF--GND
+9--GND(i2c address 1101000)
+10--0.1uF--GND
+11--GND
+12-INT
+13--3.3V--0.1uF--GND
+18--GND
+20--2.2nF--GND
+23,24--I2C
+
+2-7, 14-17, 19, 21, 22--float
 
 CONNECT to motor driver(Logic Level Converter?)
 GPIO*4
@@ -48,3 +66,4 @@ GPIO*4?
 AVOID:
 there is a tempurature sersor at ADC1_IN16
 
+PC13,14,15 less output current 
