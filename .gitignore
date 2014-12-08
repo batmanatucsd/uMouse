@@ -1,4 +1,6 @@
 # Ignore list for Eagle, a PCB layout tool
+.o
+.gch
 
 # Backup files
 *.s#?
