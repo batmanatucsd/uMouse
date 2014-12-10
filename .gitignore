@@ -2,9 +2,9 @@
 .o
 .gch
 
-#ignore the toolchain
+#ignore the toolchain & lib due to copyright? and cross plantform compatibility
 Code/arm-none-eabi/
-
+Code/STM32F10x_StdPeriph_Lib_V3.5.0/
 
 # Ignore list for Eagle, a PCB layout tool
 
