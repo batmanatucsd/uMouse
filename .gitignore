@@ -1,6 +1,12 @@
-# Ignore list for Eagle, a PCB layout tool
+#ignore build file
 .o
 .gch
+
+#ignore the toolchain
+Code/arm-none-eabi/
+
+
+# Ignore list for Eagle, a PCB layout tool
 
 # Backup files
 *.s#?

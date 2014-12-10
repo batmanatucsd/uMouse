@@ -1,0 +1,12 @@
+1.download the arm-none-eabi toolchain and extract them into /Code folder so the folder appear like(and pls rename to arm-none-eabi):
+
+/code
+	/arm-none-eabi
+		/arm-none-eabi
+		/bin
+		/lib
+		/share
+	Makefile
+	...
+
+
