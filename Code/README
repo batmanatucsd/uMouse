@@ -1,11 +1,12 @@
 arm-none-eabi toolchain: https://launchpad.net/gcc-arm-embedded
 stm32f10x library: http://www.st.com/web/en/catalog/tools/PF257890
-
+STM flash loader: http://www.st.com/web/en/catalog/tools/PF257525
+ST-LINK utility: http://www.st.com/web/en/catalog/tools/PF258168
 
 1.download the arm-none-eabi toolchain and extract them into /Code folder (and pls rename to arm-none-eabi)
 
 known issue: some 64 bit system might need ia32-libs to run 32 bit program(or NO  such file or directory error appear)
-For me(ubuntu 14.04 64 bit):sudo apt-get install libc-i386
+For me(ubuntu 14.04 64 bit):sudo apt-get install libc6-i386
 
 2.download the STM32F10X Library and extract them into /Code folder too
 
