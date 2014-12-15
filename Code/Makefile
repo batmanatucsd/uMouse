@@ -24,9 +24,9 @@ SRC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/src
 INC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
 
 # C source files
-CFILES   := $(foreach dir, $(SRC), $(wildcard $(dir)/*.c))
+CFILES  := $(foreach dir, $(SRC), $(wildcard $(dir)/*.c))
 # Assembly source files
-ASMFILES := $(foreach dir, $(SRC), $(wildcard $(dir)/*.s))
+ASMFILES:= $(foreach dir, $(SRC), $(wildcard $(dir)/*.s))
 
 # Object filse
 COBJ=$(patsubst %.c, %.o, $(CFILES))
@@ -40,9 +40,9 @@ STARTUP=$(DEVICE)/startup/TrueSTUDIO/startup_stm32f10x_xl.s
 LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Examples/FLASH/Dual_Boot/TrueSTUDIO/STM32F10X_XL_BANK1/stm32f10x_flash_xl_bank1.ld
 
 #FLAGS
-LDFLAGS = -O3 -T$(LDSCRIPT) -mthumb -mcpu=cortex-m3
+LDFLAGS = -O2 -T$(LDSCRIPT) -mthumb -mcpu=cortex-m3
 INCFLAGS= $(addprefix -I, $(INC))
-CFLAGS  = -O3 -g -mthumb -mcpu=cortex-m3
+CFLAGS  = -O2 -g -mthumb -mcpu=cortex-m3
 ASFLAGS = $(CFLAGS)
 
 FEATURES = -DUSE_STDPERIPH_DRIVER \
