@@ -23,4 +23,9 @@ in the end should look like this:
 	main.c
 	...
 
+3.modify STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/stm32f10x.h
+	in the beginning, we need to select the device we are using (STM32F10X_XL)
+	(just uncommet that line)
 
+4.there is a known error in core_cm3.c, updated accord to the reference.
+reference: http://www.atollic.com/index.php/kb/1-kb_building/117-kb_error_in_strexb
