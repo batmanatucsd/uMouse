@@ -32,7 +32,6 @@ LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EV
 FEATURES = -DSTM32F10X_MD_VL
 endif
 
-
 # Code Path
 SRC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/src
 # Include Path

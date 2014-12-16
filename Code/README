@@ -3,13 +3,14 @@ stm32f10x library: http://www.st.com/web/en/catalog/tools/PF257890
 STM flash loader: http://www.st.com/web/en/catalog/tools/PF257525
 ST-LINK utility: http://www.st.com/web/en/catalog/tools/PF258168
 
-1.download the arm-none-eabi toolchain and extract them into /Code folder (and pls rename to arm-none-eabi)
+1.make sure you have make. For windows install MINGW. For MAC install XCODE. Make usually come with a linux distro. 
 
-known issue: some 64 bit system might need ia32-libs to run 32 bit program(or NO  such file or directory error appear)
+2.download the arm-none-eabi toolchain for your system and extract them into /Code folder (and pls rename to arm-none-eabi)
+
+known issue: some 64 bit system might need ia32-libs to run 32 bit program(or NO such file or directory error appear)
 For me(ubuntu 14.04 64 bit):sudo apt-get install libc6-i386
 
-2.download the STM32F10X Library and extract them into /Code folder too
-
+3.download the STM32F10X Library and extract them into /Code folder too
 
 in the end should look like this:
 /code
@@ -19,15 +20,19 @@ in the end should look like this:
 		/lib
 		/share
 	/STM32F10x_StdPeriph_Lib_V3.5.0
+		/Libraries
+		...
 	Makefile
 	main.c
 	...
 
-3.there is a known error in core_cm3.c, updated accord to the reference.
+4.there is a known error in core_cm3.c, updated accord to the reference.
 reference: http://www.atollic.com/index.php/kb/1-kb_building/117-kb_error_in_strexb
 
-4.copy ./STM32F10x_StdPeriph_Lib_V3.5.0/Project/STM32F10x_StdPeriph_Template/stm32f10x_conf.h to ./stm32f10x_conf.h
+5.copy ./STM32F10x_StdPeriph_Lib_V3.5.0/Project/STM32F10x_StdPeriph_Template/stm32f10x_conf.h to ./stm32f10x_conf.h
 since I use the USE_STDPERIPH_DRIVER option(not sure)
 
-5.reference https://github.com/snowcap-electronics/stm32-examples
-I use the newlib_stubs.c to get the code compiled sice the stm32 library doesn't supply "_exit" funtion(from the error log)
+6.reference https://github.com/snowcap-electronics/stm32-examples
+I use the newlib_stubs.c to get the code compiled sice the stm32 library doesn't supply "_exit" funtion(from the error log)(not sure either)
+
+7.type make and the whole program should be compiled, althougth not sure if it is right because no test tools
