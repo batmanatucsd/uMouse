@@ -1,6 +1,9 @@
 # Project Name
 PROJECT=uMouse
 
+# DEVICE(RG,DISCOVERY)
+BOARD=RG
+
 # Tool PATH
 TOOLROOT=./arm-none-eabi/bin
 
@@ -18,12 +21,17 @@ CORE  =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
 DEVICE=$(LIBROOT)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
 PERIPH=$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
 
-#STARTUP file
+#define STARTUP file & Linker script for specific board
+ifeq ($(BOARD), RG)
 STARTUP=$(DEVICE)/startup/TrueSTUDIO/startup_stm32f10x_xl.s
-
-#Linker script
-#LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Examples/FLASH/Dual_Boot/TrueSTUDIO/STM32F10X_XL_BANK1/stm32f10x_flash_xl_bank1.ld
 LDSCRIPT=stm32_flash.ld
+FEATURES = -DSTM32F10X_XL
+else ifeq ($(BOARD), DISCOVERY)
+STARTUP=$(DEVICE)/startup/TrueSTUDIO/startup_stm32f10x_md_vl.s
+LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EVAL/stm32_flash.ld
+FEATURES = -DSTM32F10X_MD_VL
+endif
+
 
 # Code Path
 SRC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/src
@@ -46,7 +54,7 @@ LDFLAGS = -O2 -T$(LDSCRIPT) $(GFLAGS)
 CFLAGS  = -O2 -g $(GFLAGS)
 ASFLAGS = -g $(GFLAGS)
 INCFLAGS= $(addprefix -I, $(INC))
-FEATURES = -DUSE_STDPERIPH_DRIVER \
+FEATURES += -DUSE_STDPERIPH_DRIVER \
 
 # Create a raw binary file from the ELF version
 $(PROJECT).bin: $(PROJECT).elf
@@ -66,5 +74,8 @@ $(SOBJ): %.o: %.s
 all:
 	$(PROJECT).bin
 
-clean:
+cleanall:
 	rm -f $(OBJ) *.elf *.bin
+
+clean:
+	rm -f *o *.elf *.bin
