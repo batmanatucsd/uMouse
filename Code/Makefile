@@ -18,6 +18,12 @@ CORE  =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
 DEVICE=$(LIBROOT)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
 PERIPH=$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
 
+#STARTUP file
+STARTUP=$(DEVICE)/startup/TrueSTUDIO/startup_stm32f10x_xl.s
+
+#Linker script
+LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Examples/FLASH/Dual_Boot/TrueSTUDIO/STM32F10X_XL_BANK1/stm32f10x_flash_xl_bank1.ld
+
 # Code Path
 SRC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/src
 # Include Path
@@ -26,25 +32,19 @@ INC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
 # C source files
 CFILES  := $(foreach dir, $(SRC), $(wildcard $(dir)/*.c))
 # Assembly source files
-ASMFILES:= $(foreach dir, $(SRC), $(wildcard $(dir)/*.s))
+ASMFILES:= $(foreach dir, $(SRC), $(wildcard $(dir)/*.s)) $(STARTUP)
 
 # Object filse
 COBJ=$(patsubst %.c, %.o, $(CFILES))
 SOBJ=$(patsubst %.s, %.o, $(ASMFILES))
 OBJ=$(COBJ) $(SOBJ)
 
-#STARTUP file
-STARTUP=$(DEVICE)/startup/TrueSTUDIO/startup_stm32f10x_xl.s
-
-#Linker script
-LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Examples/FLASH/Dual_Boot/TrueSTUDIO/STM32F10X_XL_BANK1/stm32f10x_flash_xl_bank1.ld
-
 #FLAGS
-LDFLAGS = -O2 -T$(LDSCRIPT) -mthumb -mcpu=cortex-m3
+GFLAGS  = -mthumb -mcpu=cortex-m3
+LDFLAGS = -O2 -T$(LDSCRIPT) $(GFLAGS)
+CFLAGS  = -O2 -g $(GFLAGS)
+ASFLAGS = -g $(GFLAGS)
 INCFLAGS= $(addprefix -I, $(INC))
-CFLAGS  = -O2 -g -mthumb -mcpu=cortex-m3
-ASFLAGS = $(CFLAGS)
-
 FEATURES = -DUSE_STDPERIPH_DRIVER \
 
 # Create a raw binary file from the ELF version
