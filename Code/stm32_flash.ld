@@ -3,8 +3,9 @@
 **
 **  File        : stm32_flash.ld
 **
-**  Abstract    : Linker script for STM32F103ZG Device with
-**                1MByte FLASH, 96KByte RAM
+**  Abstract    : Linker script for STM32F103RG Device with
+**                768KByte FLASH, 96KByte RAM(will limit usage to 512K to 
+**                avoid program run from BANK2)
 **
 **                Set heap size, stack size and stack location according
 **                to application requirements.
@@ -28,6 +29,7 @@
 **
 *****************************************************************************
 */
+/*afsdfkjhgg*/
 
 /* Entry Point */
 ENTRY(Reset_Handler)
@@ -42,7 +44,7 @@ _Min_Stack_Size = 0x200; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 1M
+  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 512K
   RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 96K
   MEMORY_B1 (rx)  : ORIGIN = 0x60000000, LENGTH = 0K
 }
