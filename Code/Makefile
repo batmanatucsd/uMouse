@@ -22,7 +22,8 @@ PERIPH=$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
 STARTUP=$(DEVICE)/startup/TrueSTUDIO/startup_stm32f10x_xl.s
 
 #Linker script
-LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Examples/FLASH/Dual_Boot/TrueSTUDIO/STM32F10X_XL_BANK1/stm32f10x_flash_xl_bank1.ld
+#LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Examples/FLASH/Dual_Boot/TrueSTUDIO/STM32F10X_XL_BANK1/stm32f10x_flash_xl_bank1.ld
+LDSCRIPT=stm32_flash.ld
 
 # Code Path
 SRC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/src
