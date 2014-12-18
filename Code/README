@@ -32,7 +32,4 @@ reference: http://www.atollic.com/index.php/kb/1-kb_building/117-kb_error_in_str
 5.copy ./STM32F10x_StdPeriph_Lib_V3.5.0/Project/STM32F10x_StdPeriph_Template/stm32f10x_conf.h to ./stm32f10x_conf.h
 since I use the USE_STDPERIPH_DRIVER option(not sure)
 
-6.reference https://github.com/snowcap-electronics/stm32-examples
-I use the newlib_stubs.c to get the code compiled sice the stm32 library doesn't supply "_exit" funtion(from the error log)(not sure either)
-
-7.type make and the whole program should be compiled, althougth not sure if it is right because no test tools
+6.type make and the whole program should be compiled, althougth not sure if it is right because no test tools

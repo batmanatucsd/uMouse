@@ -2,7 +2,7 @@
 PROJECT=uMouse
 
 # DEVICE(RG,DISCOVERY)
-BOARD=RG
+BOARD=DISCOVERY
 
 # Tool PATH
 TOOLROOT=./arm-none-eabi/bin
@@ -15,6 +15,8 @@ CC=$(TOOLROOT)/arm-none-eabi-gcc
 LD=$(TOOLROOT)/arm-none-eabi-gcc
 AS=$(TOOLROOT)/arm-none-eabi-as
 CP=$(TOOLROOT)/arm-none-eabi-objcopy
+OD=$(TOOLROOT)/arm-none-eabi-objdump
+GDB=$(TOOLROOT)/arm-none-eabi-GDB
 
 # Main folder
 CORE  =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
@@ -23,11 +25,11 @@ PERIPH=$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
 
 #define STARTUP file & Linker script for specific board
 ifeq ($(BOARD), RG)
-STARTUP=$(DEVICE)/startup/TrueSTUDIO/startup_stm32f10x_xl.s
+STARTUP=$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_xl.s
 LDSCRIPT=stm32_flash.ld
 FEATURES = -DSTM32F10X_XL
 else ifeq ($(BOARD), DISCOVERY)
-STARTUP=$(DEVICE)/startup/TrueSTUDIO/startup_stm32f10x_md_vl.s
+STARTUP=$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_md_vl.s
 LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EVAL/stm32_flash.ld
 FEATURES = -DSTM32F10X_MD_VL
 endif
@@ -49,8 +51,8 @@ OBJ=$(COBJ) $(SOBJ)
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
-LDFLAGS = -O2 -T$(LDSCRIPT) $(GFLAGS)
-CFLAGS  = -O2 -g $(GFLAGS)
+LDFLAGS = -O2 -T$(LDSCRIPT) $(GFLAGS) -nostartfiles
+CFLAGS  = -O2 -g $(GFLAGS) -Wall
 ASFLAGS = -g $(GFLAGS)
 INCFLAGS= $(addprefix -I, $(INC))
 FEATURES += -DUSE_STDPERIPH_DRIVER \
@@ -78,3 +80,6 @@ cleanall:
 
 clean:
 	rm -f *o *.elf *.bin
+
+debug:
+	$(GDB) $(PROJECT).elf
