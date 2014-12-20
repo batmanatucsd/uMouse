@@ -51,11 +51,16 @@ OBJ=$(COBJ) $(SOBJ)
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
-LDFLAGS = -O2 -T$(LDSCRIPT) $(GFLAGS) -nostartfiles
-CFLAGS  = -O2 -g $(GFLAGS) -Wall
-ASFLAGS = -g $(GFLAGS)
+OPT		= -Os
+
+
+LDFLAGS = $(OPT) $(GFLAGS) -T$(LDSCRIPT) -nostartfiles
+CFLAGS  = $(OPT) $(GFLAGS) -g -Wall
+ASFLAGS = $(GFLAGS) -g
+
 INCFLAGS= $(addprefix -I, $(INC))
-FEATURES += -DUSE_STDPERIPH_DRIVER \
+FEATURES += -DUSE_STDPERIPH_DRIVER\
+			
 
 # Create a raw binary file from the ELF version
 $(PROJECT).bin: $(PROJECT).elf
