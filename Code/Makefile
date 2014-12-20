@@ -16,7 +16,7 @@ LD=$(TOOLROOT)/arm-none-eabi-gcc
 AS=$(TOOLROOT)/arm-none-eabi-as
 CP=$(TOOLROOT)/arm-none-eabi-objcopy
 OD=$(TOOLROOT)/arm-none-eabi-objdump
-GDB=$(TOOLROOT)/arm-none-eabi-GDB
+GDB=$(TOOLROOT)/arm-none-eabi-gdb
 
 # Main folder
 CORE  =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport

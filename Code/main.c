@@ -33,7 +33,7 @@ int main(void)
 
 
 
-void delay(int i)
+void delay(volatile int i)
 {
 	while(i--);
 }
