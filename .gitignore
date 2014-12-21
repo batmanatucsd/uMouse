@@ -1,13 +1,12 @@
 #ignore build file
 *.o
+*.d
 *.bin
 *.elf
 
 #ignore the toolchain & lib due to copyright? and cross plantform compatibility
 Code/arm-none-eabi/
 Code/STM32F10x_StdPeriph_Lib_V3.5.0/
-Code/newlib_stubs.c
-Code/stm32f10x_conf.h
 
 # Ignore list for Eagle, a PCB layout tool
 
