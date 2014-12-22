@@ -1,5 +1,5 @@
 #include <stm32f10x.h>
-void delay(int);
+void delay(volatile int);
 
 int main(void)
 {
