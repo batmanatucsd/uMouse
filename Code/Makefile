@@ -34,22 +34,22 @@ LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EV
 FEATURES = -DSTM32F10X_MD_VL
 endif
 
+vpath %.c $(CORE)
+vpath %.c $(DEVICE)
+vpath %.c $(PERIPH)/src
 
-
-# Code Path
-SRC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/src
 # Include Path
-INC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
+INC:= $(CORE) $(DEVICE) $(PERIPH)/inc
 
 # C source files
-CFILES  := $(foreach dir, $(SRC), $(wildcard $(dir)/*.c))
+#CFILES  := $(foreach dir, $(SRC), $(wildcard $(dir)/*.c))
 # Assembly source files
-ASMFILES:= $(foreach dir, $(SRC), $(wildcard $(dir)/*.s)) $(STARTUP)
+#ASMFILES:= $(foreach dir, $(SRC), $(wildcard $(dir)/*.s)) $(STARTUP)
 
 # Object filse
-COBJ=$(patsubst %.c, %.o, $(CFILES))
-SOBJ=$(patsubst %.s, %.o, $(ASMFILES))
-OBJ=$(COBJ) $(SOBJ)
+#COBJ=$(patsubst %.c, %.o, $(CFILES))
+#SOBJ=$(patsubst %.s, %.o, $(ASMFILES))
+OBJ = main.o
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
@@ -69,7 +69,7 @@ $(PROJECT).bin: $(PROJECT).elf
 	$(CP) -O binary $< $@
 
 # Build executable 
-$(PROJECT).elf: $(OBJ)
+$(PROJECT).elf: $(STARTUP:.s=.o) $(OBJ)
 	@sed 's,$*\.o[ :]*, ,g' < $(PROJECT).d.tmp > $(PROJECT).d;
 	$(LD) $(LDFLAGS) $^ -o $@
 
@@ -78,7 +78,7 @@ $(COBJ): %.o: %.c
 	$(CC) -c $(FEATURES) $(INCFLAGS) $(CFLAGS) $< -o $@
 	$(CC) -MM $(FEATURES) $(INCFLAGS) $(CFLAGS) $< >> $(PROJECT).d.tmp
 
-$(SOBJ): %.o: %.s
+%.o: %.s
 	$(AS) -c $(ASFLAGS) $< -o $@
 
 all:
