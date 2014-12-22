@@ -34,6 +34,8 @@ LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EV
 FEATURES = -DSTM32F10X_MD_VL
 endif
 
+
+
 # Code Path
 SRC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/src
 # Include Path
@@ -68,11 +70,13 @@ $(PROJECT).bin: $(PROJECT).elf
 
 # Build executable 
 $(PROJECT).elf: $(OBJ)
+	@sed 's,$*\.o[ :]*, ,g' < $(PROJECT).d.tmp > $(PROJECT).d;
 	$(LD) $(LDFLAGS) $^ -o $@
 
 # compile and generate dependency info
 $(COBJ): %.o: %.c
 	$(CC) -c $(FEATURES) $(INCFLAGS) $(CFLAGS) $< -o $@
+	$(CC) -MM $(FEATURES) $(INCFLAGS) $(CFLAGS) $< >> $(PROJECT).d.tmp
 
 $(SOBJ): %.o: %.s
 	$(AS) -c $(ASFLAGS) $< -o $@
@@ -84,7 +88,7 @@ cleanall:
 	rm -f $(OBJ) *.elf *.bin
 
 clean:
-	rm -f *o *.elf *.bin
+	rm -f *.o *.d *.tmp *.elf *.bin
 
 debug:
 	$(GDB) $(PROJECT).elf
