@@ -23,7 +23,7 @@ CORE  =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
 DEVICE=$(LIBROOT)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
 PERIPH=$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
 
-#define STARTUP file & Linker script for specific board
+# define STARTUP file & Linker script for specific board
 ifeq ($(BOARD), RG)
 STARTUP=$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_xl.s
 LDSCRIPT=stm32_flash.ld
@@ -34,57 +34,71 @@ LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EV
 FEATURES = -DSTM32F10X_MD_VL
 endif
 
-# Code Path
-SRC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/src
+# Code search path
+vpath %.c $(CORE)
+vpath %.c $(DEVICE)
+vpath %.c $(PERIPH)/src
+
 # Include Path
 INC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
 
-# C source files
-CFILES  := $(foreach dir, $(SRC), $(wildcard $(dir)/*.c))
-# Assembly source files
-ASMFILES:= $(foreach dir, $(SRC), $(wildcard $(dir)/*.s)) $(STARTUP)
-
-# Object filse
-COBJ=$(patsubst %.c, %.o, $(CFILES))
-SOBJ=$(patsubst %.s, %.o, $(ASMFILES))
-OBJ=$(COBJ) $(SOBJ)
+# The file to start the process
+SRC  = main.c
+SRC += core_cm3.c
+SRC += system_stm32f10x.c
+## used parts of the STM-Library
+#SRC += stm32f10x_usart.c
+#SRC += stm32f10x_flash.c
+SRC  += stm32f10x_gpio.c
+SRC  += stm32f10x_rcc.c
+#SRC += stm32f10x_spi.c
+#SRC += stm32f10x_rtc.c
+#SRC += stm32f10x_bkp.c
+#SRC += stm32f10x_pwr.c
+#SRC += stm32f10x_dma.c
+#SRC += stm32f10x_tim.c
+#SRC += stm32f10x_exti.c
+#SRC += misc.c
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
 OPT		= -Os
-
 
 LDFLAGS = $(OPT) $(GFLAGS) -T$(LDSCRIPT) -nostartfiles
 CFLAGS  = $(OPT) $(GFLAGS) -g -Wall
 ASFLAGS = $(GFLAGS) -g
 
 INCFLAGS= $(addprefix -I, $(INC))
-FEATURES += -DUSE_STDPERIPH_DRIVER\
-			
+FEATURES += -DUSE_STDPERIPH_DRIVER \
 
 # Create a raw binary file from the ELF version
 $(PROJECT).bin: $(PROJECT).elf
 	$(CP) -O binary $< $@
 
 # Build executable 
-$(PROJECT).elf: $(OBJ)
+$(PROJECT).elf: $(STARTUP:.s=.o) $(SRC:.c=.o)
 	$(LD) $(LDFLAGS) $^ -o $@
 
 # compile and generate dependency info
-$(COBJ): %.o: %.c
+%.o: %.c
 	$(CC) -c $(FEATURES) $(INCFLAGS) $(CFLAGS) $< -o $@
 
-$(SOBJ): %.o: %.s
+%.o: %.s
 	$(AS) -c $(ASFLAGS) $< -o $@
+
+%.d: %.c
+	@set -e; rm -f $@; \
+	$(CC) -MM $(FEATURES) $(INCFLAGS) $(CFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
 
 all:
 	$(PROJECT).bin
 
-cleanall:
-	rm -f $(OBJ) *.elf *.bin
-
 clean:
-	rm -f *o *.elf *.bin
+	rm -f *.o *.d *.elf *.bin
 
 debug:
 	$(GDB) $(PROJECT).elf
+
+-include $(SRC:.c=.d)
