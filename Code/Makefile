@@ -47,18 +47,9 @@ SRC	= main.c
 SRC	+= core_cm3.c
 SRC += system_stm32f10x.c
 ## used parts of the STM-Library
-#SRC += stm32f10x_usart.c
-#SRC += stm32f10x_flash.c
 SRC	+= stm32f10x_gpio.c
+SRC += stm32f10x_i2c.c
 SRC	+= stm32f10x_rcc.c
-#SRC += stm32f10x_spi.c
-#SRC += stm32f10x_rtc.c
-#SRC += stm32f10x_bkp.c
-#SRC += stm32f10x_pwr.c
-#SRC += stm32f10x_dma.c
-#SRC += stm32f10x_tim.c
-#SRC += stm32f10x_exti.c
-#SRC += misc.c
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
