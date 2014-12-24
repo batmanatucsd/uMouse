@@ -43,14 +43,14 @@ vpath %.c $(PERIPH)/src
 INC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
 
 # The file to start the process
-SRC  = main.c
-SRC += core_cm3.c
+SRC	= main.c
+SRC	+= core_cm3.c
 SRC += system_stm32f10x.c
 ## used parts of the STM-Library
 #SRC += stm32f10x_usart.c
 #SRC += stm32f10x_flash.c
-SRC  += stm32f10x_gpio.c
-SRC  += stm32f10x_rcc.c
+SRC	+= stm32f10x_gpio.c
+SRC	+= stm32f10x_rcc.c
 #SRC += stm32f10x_spi.c
 #SRC += stm32f10x_rtc.c
 #SRC += stm32f10x_bkp.c
@@ -69,7 +69,7 @@ CFLAGS  = $(OPT) $(GFLAGS) -g -Wall
 ASFLAGS = $(GFLAGS) -g
 
 INCFLAGS= $(addprefix -I, $(INC))
-FEATURES += -DUSE_STDPERIPH_DRIVER \
+FEATURES += -DUSE_STDPERIPH_DRIVER
 
 # Create a raw binary file from the ELF version
 $(PROJECT).bin: $(PROJECT).elf
@@ -87,7 +87,7 @@ $(PROJECT).elf: $(STARTUP:.s=.o) $(SRC:.c=.o)
 	$(AS) -c $(ASFLAGS) $< -o $@
 
 %.d: %.c
-	@set -e; rm -f $@; \
+	@set -e; rm -f $@; echo $@;\
 	$(CC) -MM $(FEATURES) $(INCFLAGS) $(CFLAGS) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
