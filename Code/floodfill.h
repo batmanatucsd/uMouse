@@ -1,6 +1,7 @@
 unsigned short board[16][16];
 unsigned char location = 0x0;
-unsigned char direction = 0x0;
+unsigned char direction = 0x0; // 0x0 north 0x1 east 0x2 south 0x3 west
+unsigned char neighbor[4];
 
 // Bit masks
 unsigned short VISITED = 0x1000;
@@ -13,7 +14,7 @@ unsigned char ROW = 0xf0;
 unsigned char COL = 0x0f;
 
 // DFS stack
-unsigned short stack[512];
+unsigned char stack[512];
 unsigned short stackptr = 0;
 
 void setup();
