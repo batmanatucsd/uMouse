@@ -14,6 +14,10 @@ void setup() {
 			if (row == 15) board[row][col] |= SOUTH_WALL;
 		}
 	}
+
+	// Initialize mouse
+	location = 0xf0;
+	direction = 0x1;
 }
 
 unsigned short init(unsigned short row, unsigned short col) {
@@ -32,28 +36,52 @@ unsigned short init(unsigned short row, unsigned short col) {
 
 void update(unsigned short row, unsigned short col) {
 	
-	unsigned short cell = stack[--stackptr];
-	
 	// Update 4 walls and neighbors
+	unsigned short dist = stack[--stackptr] & DIST;
 }
 
 
 void print() {
 
 	for (unsigned short row = 0; row < 16; row++) {
+
+		// North wall
 		for (unsigned short col = 0; col < 16; col++) {
 			printf("+%s", board[row][col] & NORTH_WALL?
 				"---": "   ");
 		}
 		printf("+\n");
+
 		for (unsigned short col = 0; col < 16; col++) {
-			printf("%s%3d", board[row][col] & WEST_WALL?
-				"|": " ", board[row][col] & VALUE);
-			// TODO Print the visited cells and mouse location and direction
+
+			// West wall
+			printf("%s", board[row][col] & WEST_WALL?
+				"|": " ");
+
+			// Location direction
+			if (row == (location & ROW) >> 4 &&
+				col == (location & COL)) {
+				switch (direction) {
+					case 0x1: printf("^");
+								break;
+					case 0x2: printf(">");
+								break;
+					case 0x4: printf("v");
+								break;
+					case 0x8: printf("<");
+				}
+			} else if (board[row][col] & VISITED) {
+				printf("*");
+			} else {
+				printf(" ");
+			}
+			printf("%-2d", board[row][col] & DIST);
 		}
 		printf("%s\n", board[row][15] & EAST_WALL?
 			"|": " ");
 	}
+
+	// South wall
 	for (unsigned short col = 0; col < 16; col++) {
 		printf("+%s", board[15][col] & SOUTH_WALL?
 			"---": "   ");
@@ -68,9 +96,10 @@ int main() {
 	stack[stackptr++] = board[15][0];
 	print();
 /*
-	//while (dist > 0)
-	while (stackptr > 0) {
-		update(15, 0);
+	while (dist > 0) {
+		while (stackptr > 0) {
+			update(15, 0);
+		}
 	}
 */
 }
