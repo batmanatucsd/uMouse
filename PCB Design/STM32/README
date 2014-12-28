@@ -1,4 +1,4 @@
-use C0402 everywhere possible
+use 0603 everywhere possible
 
 VCC = 3.3v
 VDDA = 3.3V
@@ -15,10 +15,10 @@ review the direction of motor connector in board design
 
 Default boot from bank 1(512K), if set BFB2 then maybe bank 2(256K) 
 
-Bootloader:activate by apply Pattern3
+Bootloader: activate by apply Pattern3
 60--BOOT0--GND
 28--BOOT1--GND
-BFB2--in the user option memory?
+BFB2--in the user option memory
 
 USART1 be used in simple debug situation   (USART2(remapped) is not available on LQFP64)
 41--USART1_CK
