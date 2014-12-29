@@ -1,11 +1,10 @@
 CC=gcc
-CXX=g++
-CXXFLAGS=-Wall -std=c++11	
 
-all: floodfill 
+CFLAGS=-Wall
+
+all: pid.o floodfill 
 
 floodfill: floodfill.o
-pid: pid.o
 
 floodfill.o: floodfill.h
 pid.o: pid.h

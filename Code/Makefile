@@ -54,6 +54,7 @@ SRC	+= stm32f10x_gpio.c
 SRC += stm32f10x_i2c.c
 SRC	+= stm32f10x_rcc.c
 SRC += stm32f10x_usart.c
+SRC	+= stm32f10x_adc.c
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
