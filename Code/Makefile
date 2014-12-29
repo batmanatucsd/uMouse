@@ -23,6 +23,9 @@ CORE  =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
 DEVICE=$(LIBROOT)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
 PERIPH=$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
 
+# Output bin path
+GEN=./gen
+
 # define STARTUP file & Linker script for specific board
 ifeq ($(BOARD), RG)
 STARTUP=$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_xl.s
@@ -43,7 +46,7 @@ vpath %.c $(PERIPH)/src
 INC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
 
 # The file to start the process
-SRC	= main.c
+SRC	= main.c mcu_lib.c
 SRC	+= core_cm3.c
 SRC += system_stm32f10x.c
 ## used parts of the STM-Library
