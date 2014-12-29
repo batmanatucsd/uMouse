@@ -36,33 +36,42 @@ unsigned short init(unsigned short row, unsigned short col) {
 
 void update(unsigned short row, unsigned short col) {
 
-	unsigned char dist = stack[--stackptr];
+	unsigned char dist = board[row][col] & DIST;
 
-	// Search valid neighbors
-	neighbor = {255, 255, 255, 255};
+	// Minimum open neighbor
+    unsigned char min = 255;
 	if (row - 1 >= 0 && !(board[row][col] & NORTH_WALL)) {
-		neighbor[0] = board[row - 1][col] & DIST;
+		min = board[row - 1][col] & DIST;
 	}
 	if (col + 1 <= 15 && !(board[row][col] & EAST_WALL)) {
-		neighbor[1] = board[row][col + 1] & DIST;
+		min = board[row][col + 1] & DIST;
 	}
 	if (row + 1 <= 15 && !(board[row][col] & SOUTH_WALL)) {
-		neighbor[2] = board[row + 1][col] & DIST;
+		min = board[row + 1][col] & DIST;
 	}
 	if (col - 1 >= 0 && !(board[row][col] & WEST_WALL)) {
-		neighbor[3] = board[row][col - 1] & DIST;
+		min = board[row][col - 1] & DIST;
 	}
 
-	// Minimum neighbor
-	unsigned char min = neighbor[0];
-	for (unsigned char i = 1; i < 4; i++) {
-		if (min > neighbor[i]) min = neighbor[i];
-	}
-
-	// Update distance
 	if (min + 1 != dist) {
+
+		// Update distance
 		board[row][col] &= 0xffff0000;
 		board[row][col] |= min + 1;
+
+		// Push open neighbors onto stack
+		if (row - 1 >= 0 && !(board[row][col] & NORTH_WALL)) {
+			stack[stackptr++] = board[row - 1][col];
+		}
+		if (col + 1 <= 15 && !(board[row][col] & EAST_WALL)) {
+			stack[stackptr++] = board[row][col + 1];
+		}
+		if (row + 1 <= 15 && !(board[row][col] & SOUTH_WALL)) {
+			stack[stackptr++] = board[row + 1][col];
+		}
+		if (col - 1 >= 0 && !(board[row][col] & WEST_WALL)) {
+			stack[stackptr++] = board[row][col - 1];
+		}
 	}
 }
 
