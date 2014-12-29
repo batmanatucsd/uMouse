@@ -1,7 +1,6 @@
 unsigned short board[16][16];
 unsigned char location = 0x0;
 unsigned char direction = 0x0; // 0x0 north 0x1 east 0x2 south 0x3 west
-unsigned char neighbor[4];
 
 // Bit masks
 unsigned short VISITED = 0x1000;
