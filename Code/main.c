@@ -10,15 +10,22 @@ int main(void)
 	GPIO_Configuration();
 	USART_Configuration();
 
+ /* 
 	while(1)
 	{
-		//USART_SendData(USART1, 'd');
+		USART_SendData(USART1, 'd');
 		// printf("this is a test");
 		while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET){}
+
+    GPIO_SetBits(GPIOC, GPIO_Pin_9);                                            
+    delay(10000);                                                             
+ 
+    GPIO_ResetBits(GPIOC, GPIO_Pin_9);                                          
+    delay(1000000);                                                             
 	}
 	
-/*	
 	
+*/
 
   while(1)                                                                      
   {                                                                             
@@ -31,7 +38,6 @@ int main(void)
     
     delay(1000000);                                                             
   }                  
-*/
 	return 0;
 }
 
