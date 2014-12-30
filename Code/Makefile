@@ -10,21 +10,24 @@ TOOLROOT=./arm-none-eabi/bin
 # Library PATH
 LIBROOT=./STM32F10x_StdPeriph_Lib_V3.5.0
 
+# OUT PATH
+OUTROOT=./out
+
+# Code PATH
+SRCROOT=./src
+
 # Tools
-CC=$(TOOLROOT)/arm-none-eabi-gcc
-LD=$(TOOLROOT)/arm-none-eabi-gcc
-AS=$(TOOLROOT)/arm-none-eabi-as
-CP=$(TOOLROOT)/arm-none-eabi-objcopy
-OD=$(TOOLROOT)/arm-none-eabi-objdump
+CC =$(TOOLROOT)/arm-none-eabi-gcc
+LD =$(TOOLROOT)/arm-none-eabi-gcc
+AS =$(TOOLROOT)/arm-none-eabi-as
+CP =$(TOOLROOT)/arm-none-eabi-objcopy
+OD =$(TOOLROOT)/arm-none-eabi-objdump
 GDB=$(TOOLROOT)/arm-none-eabi-gdb
 
 # Main folder
 CORE  =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
 DEVICE=$(LIBROOT)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
 PERIPH=$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
-
-# Output bin path
-GEN=./gen
 
 # define STARTUP file & Linker script for specific board
 ifeq ($(BOARD), RG)
@@ -38,23 +41,28 @@ FEATURES = -DSTM32F10X_MD_VL
 endif
 
 # Code search path
+vpath %.c $(SRCROOT)
 vpath %.c $(CORE)
 vpath %.c $(DEVICE)
 vpath %.c $(PERIPH)/src
 
-# Include Path
-INC:= $(CURDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
+vpath %.s $(dir $(STARTUP))
 
-# The file to start the process
-SRC	= main.c mcu_lib.c
+# Include Path
+INC := $(SRCROOT) $(CORE) $(DEVICE) $(PERIPH)/inc
+
+# The project file
+SRC	 = main.c mcu_lib.c
+# used parts of the STM-Library
 SRC	+= core_cm3.c
 SRC += system_stm32f10x.c
-## used parts of the STM-Library
+SRC	+= stm32f10x_adc.c
 SRC	+= stm32f10x_gpio.c
 SRC += stm32f10x_i2c.c
 SRC	+= stm32f10x_rcc.c
 SRC += stm32f10x_usart.c
-SRC	+= stm32f10x_adc.c
+
+OBJ  = $(notdir $(STARTUP:.s=.o) $(SRC:.c=.o))
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
@@ -64,7 +72,7 @@ LDFLAGS = $(OPT) $(GFLAGS) -T$(LDSCRIPT) -nostartfiles
 CFLAGS  = $(OPT) $(GFLAGS) -g -Wall
 ASFLAGS = $(GFLAGS) -g
 
-INCFLAGS= $(addprefix -I, $(INC))
+INCFLAGS  = $(addprefix -I, $(INC))
 FEATURES += -DUSE_STDPERIPH_DRIVER
 
 # Create a raw binary file from the ELF version
@@ -72,7 +80,7 @@ $(PROJECT).bin: $(PROJECT).elf
 	$(CP) -O binary $< $@
 
 # Build executable 
-$(PROJECT).elf: $(STARTUP:.s=.o) $(SRC:.c=.o)
+$(PROJECT).elf: $(OBJ)
 	$(LD) $(LDFLAGS) $^ -o $@
 
 # compile and generate dependency info
@@ -83,7 +91,7 @@ $(PROJECT).elf: $(STARTUP:.s=.o) $(SRC:.c=.o)
 	$(AS) -c $(ASFLAGS) $< -o $@
 
 %.d: %.c
-	@set -e; rm -f $@; echo $@;\
+	@set -e; rm -f $@; echo $@; \
 	$(CC) -MM $(FEATURES) $(INCFLAGS) $(CFLAGS) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
