@@ -8,13 +8,13 @@ BOARD=DISCOVERY
 TOOLROOT=./arm-none-eabi/bin
 
 # Library PATH
-LIBROOT=./STM32F10x_StdPeriph_Lib_V3.5.0
+LIBROOT =./STM32F10x_StdPeriph_Lib_V3.5.0
 
-# OUT PATH
-OUTROOT=./out
+# Object PATH
+OBJROOT =./build
 
 # Code PATH
-SRCROOT=./src
+SRCROOT =./src
 
 # Tools
 CC =$(TOOLROOT)/arm-none-eabi-gcc
@@ -25,20 +25,10 @@ OD =$(TOOLROOT)/arm-none-eabi-objdump
 GDB=$(TOOLROOT)/arm-none-eabi-gdb
 
 # Main folder
-CORE  =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
-DEVICE=$(LIBROOT)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
-PERIPH=$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
-
-# define STARTUP file & Linker script for specific board
-ifeq ($(BOARD), RG)
-STARTUP=$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_xl.s
-LDSCRIPT=stm32_flash.ld
-FEATURES = -DSTM32F10X_XL
-else ifeq ($(BOARD), DISCOVERY)
-STARTUP=$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_md_vl.s
-LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EVAL/stm32_flash.ld
-FEATURES = -DSTM32F10X_MD_VL
-endif
+CORE   =$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
+DEVICE =$(LIBROOT)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
+PERIPH =$(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver
+STARTUP=$(DEVICE)/startup/gcc_ride7
 
 # Code search path
 vpath %.c $(SRCROOT)
@@ -46,7 +36,9 @@ vpath %.c $(CORE)
 vpath %.c $(DEVICE)
 vpath %.c $(PERIPH)/src
 
-vpath %.s $(dir $(STARTUP))
+vpath %.s $(STARTUP)
+
+vpath %.o $(OBJROOT)
 
 # Include Path
 INC := $(SRCROOT) $(CORE) $(DEVICE) $(PERIPH)/inc
@@ -62,7 +54,19 @@ SRC += stm32f10x_i2c.c
 SRC	+= stm32f10x_rcc.c
 SRC += stm32f10x_usart.c
 
-OBJ  = $(notdir $(STARTUP:.s=.o) $(SRC:.c=.o))
+# define STARTUP file & Linker script for specific board
+ifeq ($(BOARD), RG)
+SRC += startup_stm32f10x_xl.s
+LDSCRIPT=stm32_flash.ld
+FEATURES = -DSTM32F10X_XL
+else ifeq ($(BOARD), DISCOVERY)
+SRC += startup_stm32f10x_md_vl.s
+LDSCRIPT=$(LIBROOT)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EVAL/stm32_flash.ld
+FEATURES = -DSTM32F10X_MD_VL
+endif
+
+# the object file to be compiled
+OBJ  = $(notdir $(SRC:.s=.o) $(SRC:.c=.o))
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
@@ -84,7 +88,7 @@ $(PROJECT).elf: $(OBJ)
 	$(LD) $(LDFLAGS) $^ -o $@
 
 # compile and generate dependency info
-%.o: %.c
+$(OBJROOT)%.o: %.c
 	$(CC) -c $(FEATURES) $(INCFLAGS) $(CFLAGS) $< -o $@
 
 %.o: %.s
@@ -105,4 +109,4 @@ clean:
 debug:
 	$(GDB) $(PROJECT).elf
 
--include $(SRC:.c=.d)
+-include $(addprefix $(OBJROOT)/, $(SRC:.c=.d))
