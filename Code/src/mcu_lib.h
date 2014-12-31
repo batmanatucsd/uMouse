@@ -3,7 +3,6 @@
 
 #include <stm32f10x.h>
 
-void RCC_Configuration(void);
 void GPIO_Configuration(void);
 void USART_Configuration(void);
 void ADC_Configuration(void);

@@ -5,7 +5,6 @@ void delay(volatile int);
 int main(void)
 {
 	
-	RCC_Configuration();
 	GPIO_Configuration();
 	USART_Configuration();
 
