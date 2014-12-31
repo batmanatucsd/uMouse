@@ -44,8 +44,6 @@ vpath %.c $(CORE)
 vpath %.c $(DEVICE)
 vpath %.c $(PERIPH)/src
 
-vpath %.s $(dir $(STARTUP))
-
 vpath %.o $(OBJDIR)
 
 # Include Path
@@ -80,33 +78,34 @@ FEATURES += -DUSE_STDPERIPH_DRIVER
 $(PROJECT).bin: $(PROJECT).elf
 	$(CP) -O binary $< $@
 
-# Build executable 
+# Linking object file 
 $(PROJECT).elf: $(addprefix $(OBJDIR)/,$(OBJ)) 
 	$(LD) $(LDFLAGS) $^ -o $@ 
-
-$(OBJDIR):
-	mkdir $(OBJDIR)
 
 # compile and generate dependency info
 $(OBJDIR)/%.o: %.c
 	$(CC) -c $(FEATURES) $(INCFLAGS) $(CFLAGS) $< -o $@
 
-$(OBJDIR)/%.o: %.s
+$(OBJDIR)/%.o: $(STARTUP)
 	$(AS) -c $(ASFLAGS) $< -o $@
 
-$(OBJDIR)/%.d: %.c
+$(OBJDIR)/%.d: %.c | $(OBJDIR)
 	@set -e; rm -f $@; echo $@; \
 	$(CC) -MM $(FEATURES) $(INCFLAGS) $(CFLAGS) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
 all:
 	$(PROJECT).bin
 
 clean:
-	rm -f *.o *.d *.elf *.bin
+	rm -rf $(OBJDIR)
+	rm -f $(PROJECT).bin $(PROJECT).elf
 
 debug:
 	$(GDB) $(PROJECT).elf
 
-include $(addprefix $(OBJDIR)/, $(SRC:.c=.d))
+-include $(addprefix $(OBJDIR)/, $(SRC:.c=.d))
