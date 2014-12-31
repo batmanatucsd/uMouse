@@ -1,7 +1,7 @@
 # Project Name
 PROJECT =uMouse
 
-# DEVICE(RG,DISCOVERY)
+# DEVICE(MOUSE,DISCOVERY)
 BOARD   =DISCOVERY
 
 # Tool PATH
@@ -28,9 +28,9 @@ DEVICE =$(LIBDIR)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
 PERIPH =$(LIBDIR)/Libraries/STM32F10x_StdPeriph_Driver
 
 # define STARTUP file & Linker script for specific board
-ifeq ($(BOARD), RG)
+ifeq ($(BOARD), MOUSE)
 STARTUP =$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_xl.s
-LDSCRIPT=stm32_flash.ld
+LDSCRIPT=$(SRCDIR)/stm32_flash.ld
 FEATURES=-DSTM32F10X_XL
 else ifeq ($(BOARD), DISCOVERY)
 STARTUP =$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_md_vl.s
@@ -50,7 +50,7 @@ vpath %.o $(OBJDIR)
 INC := $(SRCDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
 
 # The project file
-SRC	 = main.c mcu_lib.c
+SRC	 = $(notdir $(wildcard $(SRCDIR)/*.c))
 # used parts of the STM-Library
 SRC	+= core_cm3.c
 SRC += system_stm32f10x.c
