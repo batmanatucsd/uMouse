@@ -16,68 +16,51 @@ review the direction of motor connector in board design
 Default boot from bank 1(512K), if set BFB2 then maybe bank 2(256K) 
 
 Bootloader: activate by apply Pattern3
-60--BOOT0--GND
-28--BOOT1--GND
+BOOT0--GND
+BOOT1--GND
 BFB2--in the user option memory
 
 USART1 be used in simple debug situation   (USART2(remapped) is not available on LQFP64)
-41--USART1_CK
-42--USART1_TX
-43--USART1_RX
-44--USART1_CTS
-45--USART1_RTS
+PA8--USART1_CK
+PA9--USART1_TX
+PA10--USART1_RX
+PA11--USART1_CTS
+PA12--USART1_RTS
 
 CONNECT to JTAG(for advance debug)
-7 --RST
-46--JT_TMS
-49--JT_TCK
-50--JT_TDI
-55--JT_TDO
-56--JT_TRST
+NRST--RST
+PA13--JT_TMS
+PA14--JT_TCK
+PA15--JT_TDI
+PB3--JT_TDO
+PB4--JT_TRST
 
 CONNECT to mpu6050
-57--I2C1_SMBA
-58--I2C1_SCL
-59--I2C1_SDA
-61--INT
+PB5--I2C1_SMBA
+PB6--I2C1_SCL
+PB7--I2C1_SDA
+PB8--INT
 
 CONNECT to motor driver
-15--M1PWM(use timer 2 channel 2)
-16--M1I2
-17--M1I1
-20--M2I1
-21--M2I2
-22--M2PWM(use timer 3 channel 1)
+PA1--M1PWM(use timer 2 channel 2)
+PA2--M1I2
+PA3--M1I1
+PA4--M2I1
+PA5--M2I2
+PA6--M2PWM(use timer 3 channel 1)
 
-CONNECT to encoder
-33--M1CA
-34--M1CB
-35--M2CA
-36--M2CB
+CONNECT to encoder(possible interrupt)
+PB12--M1CA
+PB13--M1CB
+PB14--M2CA
+PB15--M2CB
 
 CONNECT to infarred sensor(Logic Level Converter?)
-37--IR_OUT1
-38--IR_OUT2
-39--IR_OUT3
-40--IR_OUT4
-8 --IR_IN1
-9 --IR_IN2
-10--IR_IN3
-11--IR_IN4
-
-***********************************************************************
-
-mpu6050:
-1--CLKIN--GND
-8--3.3V--10nF--GND
-9--GND(i2c address 1101000)
-10--0.1uF--GND
-11--GND
-12-INT
-13--3.3V--0.1uF--GND
-18--GND
-20--2.2nF--GND
-23,24--I2C
-2-7, 14-17, 19, 21, 22--float
-
-***********************************************************************
+PC0--IR_IN1
+PC1--IR_IN2
+PC2--IR_IN3
+PC3--IR_IN4
+PC6--IR_OUT1
+PC7--IR_OUT2
+PC8--IR_OUT3
+PC9--IR_OUT4
