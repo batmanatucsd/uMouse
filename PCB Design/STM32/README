@@ -13,7 +13,7 @@ review the direction of motor connector in board design
 
 ***********************************************************************
 
-Default boot from bank 1(512K), if set BFB2 then maybe bank 2(256K) 
+Default boot from bank 1(512K)
 
 Bootloader: activate by apply Pattern3
 BOOT0--GND
