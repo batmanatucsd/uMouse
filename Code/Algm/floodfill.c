@@ -38,6 +38,25 @@ void update(unsigned short row, unsigned short col) {
 
 	unsigned char dist = board[row][col] & DIST;
 
+	// Update wall map
+/*
+	if (north) {
+		board[row][col] |= NORTH_WALL;
+		board[row - 1][col] |= SOUTH_WALL;
+	}
+	if (east) {
+		board[row][col] |= EAST_WALL;
+		board[row][col + 1] |= WEST_WALL;
+	}
+	if (south) {
+		board[row][col] |= SOUTH_WALL;
+		board[row + 1][col] |= NORTH_WALL;
+	}
+	if (west) {
+		board[row][col] |= WEST_WALL;
+		board[row][col - 1] |= EAST_WALL;
+	}
+*/
 	// Minimum open neighbor
     unsigned char min = 255;
 	if (row - 1 >= 0 && !(board[row][col] & NORTH_WALL)) {
