@@ -1,5 +1,4 @@
 #include "mcu_lib.h"
-#include <stdio.h>
 
 void delay(volatile int);
 
@@ -12,8 +11,7 @@ int main(void)
 
 	while(1)
 	{
-		//USART_SendData(USART1, 'd');
-		// printf("this is a test");
+		USART_SendData(USART1, 'd');
 		while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET){}
 	}
 	
