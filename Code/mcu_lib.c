@@ -10,26 +10,29 @@ void RCC_Configuration(void)
   /* ADCCLK = PCLK2/6 = 72/6 = 12MHz*/
   // RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
-  /* ADCCLK = PCLK2/4 */
+  /* ADCCLK = PCLK2/4 for ADC */
   RCC_ADCCLKConfig(RCC_PCLK2_Div4); 
- 
-  /* Enable ADC1, ADC2, ADC3 and GPIOC clocks */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOC |
-  											 RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO	|
-  											 RCC_APB2Periph_USART1, ENABLE);
+
+   /* TIM clock enable for PWM */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+
+  /* GPIO, ADC clock enable */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
+                         RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO |
+                         RCC_APB2Periph_ADC1, ENABLE);
 }
 
 void GPIO_Configuration(void) 
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	// **** GPIO for digital output push-pull *** //
+	// **** GPIO config for digital output push-pull *** //
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	// **** GPIO for analog input *** //
+	// **** GPIO config for analog input *** //
 	/*
 	void GPIO_Configuration(void)
 	{
@@ -43,7 +46,7 @@ void GPIO_Configuration(void)
 	}
 	*/
 
-	// **** GPIO for ... *** //
+	// **** GPIO config for serial connection *** //
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);  
@@ -56,6 +59,8 @@ void GPIO_Configuration(void)
 
 void USART_Configuration(void)
 {
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+	
 	USART_InitTypeDef USART_InitStructure;
 
 	USART_InitStructure.USART_BaudRate = 115200;
@@ -103,5 +108,57 @@ void ADC_Configuration(void)
   ADC_StartCalibration(ADC1);
   /* Check the end of ADC1 calibration */
   while(ADC_GetCalibrationStatus(ADC1));
+}
+
+void PWM_Configuration(void)
+{
+	/* Compute the prescaler value */
+  PrescalerValue = (uint16_t) (SystemCoreClock / 24000000) - 1;
+  /* Time base configuration */
+  TIM_TimeBaseStructure.TIM_Period = 665;
+  TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+  /* PWM1 Mode configuration: Channel1 */
+  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = CCR1_Val;
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+  TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+
+  TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel2 */
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = CCR2_Val;
+
+  TIM_OC2Init(TIM3, &TIM_OCInitStructure);
+
+  TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel3 */
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = CCR3_Val;
+
+  TIM_OC3Init(TIM3, &TIM_OCInitStructure);
+
+  TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel4 */
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = CCR4_Val;
+
+  TIM_OC4Init(TIM3, &TIM_OCInitStructure);
+
+  TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+  TIM_ARRPreloadConfig(TIM3, ENABLE);
+
+  /* TIM3 enable counter */
+  TIM_Cmd(TIM3, ENABLE);
 }
 

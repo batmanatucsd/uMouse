@@ -9,6 +9,7 @@ int main(void)
 	RCC_Configuration();
 	GPIO_Configuration();
 	USART_Configuration();
+  ADC_Configuration();
 
  /* 
 	while(1)
