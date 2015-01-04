@@ -36,43 +36,43 @@ unsigned short init(unsigned short row, unsigned short col) {
 
 void update(unsigned short row, unsigned short col) {
 
-	unsigned char dist = board[row][col] & DIST;
+	unsigned char tile = board[row][col];
 
 	// Update wall map
 /*
-	if (north) {
-		board[row][col] |= NORTH_WALL;
-		board[row - 1][col] |= SOUTH_WALL;
+	// left wall
+	if (abs(analogRead(IR_IN1) - THRESHOLD) > abs(analogREAD(IR_IN1) - leftAmbientLight)) {
 	}
-	if (east) {
-		board[row][col] |= EAST_WALL;
-		board[row][col + 1] |= WEST_WALL;
-	}
-	if (south) {
-		board[row][col] |= SOUTH_WALL;
-		board[row + 1][col] |= NORTH_WALL;
-	}
-	if (west) {
-		board[row][col] |= WEST_WALL;
-		board[row][col - 1] |= EAST_WALL;
-	}
+	// right wall
+	...
+	// front wall
+	...
+	// Also update adjacent cells
 */
 	// Minimum open neighbor
     unsigned char min = 255;
-	if (row - 1 >= 0 && !(board[row][col] & NORTH_WALL)) {
-		min = board[row - 1][col] & DIST;
+	if (row - 1 >= 0 && !(tile & NORTH_WALL)) {
+		min = (board[row - 1][col] & DIST) < min?
+		      board[row - 1][col] & DIST:
+		      min;
 	}
-	if (col + 1 <= 15 && !(board[row][col] & EAST_WALL)) {
-		min = board[row][col + 1] & DIST;
+	if (col + 1 <= 15 && !(tile & EAST_WALL)) {
+		min = (board[row][col + 1] & DIST) < min?
+		      board[row][col + 1] & DIST:
+		      min;
 	}
-	if (row + 1 <= 15 && !(board[row][col] & SOUTH_WALL)) {
-		min = board[row + 1][col] & DIST;
+	if (row + 1 <= 15 && !(tile & SOUTH_WALL)) {
+		min = (board[row + 1][col] & DIST) < min?
+		      board[row + 1][col] & DIST:
+		      min;
 	}
-	if (col - 1 >= 0 && !(board[row][col] & WEST_WALL)) {
-		min = board[row][col - 1] & DIST;
+	if (col - 1 >= 0 && !(tile & WEST_WALL)) {
+		min = (board[row][col - 1] & DIST) < min?
+		      board[row][col - 1] & DIST:
+		      min;
 	}
 
-	if (min + 1 != dist) {
+	if (min + 1 != (tile & DIST)) {
 
 		// Update distance
 		board[row][col] &= 0xffff0000;
