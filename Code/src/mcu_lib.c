@@ -22,8 +22,8 @@ void RCC_Configuration(void)
 
   /* GPIO, ADC clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
-                         RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO |
-                         RCC_APB2Periph_ADC1, ENABLE);
+   RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO |
+   RCC_APB2Periph_ADC1, ENABLE);
 }
 
 /*****************************************************************************/
@@ -69,6 +69,7 @@ void GPIO_Configuration(void)
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
+#ifdef  SERIAL_DEBUG
 /*****************************************************************************/
 // USART_Configuration
 // 
@@ -82,35 +83,53 @@ void USART_Configuration(void)
   GPIO_InitTypeDef GPIO_InitStructure;
   
 	// **** GPIO config for serial connection *** //
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);  
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);  
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	USART_InitTypeDef USART_InitStructure;
+  USART_InitTypeDef USART_InitStructure;
 
-	USART_InitStructure.USART_BaudRate = 115200;
-	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-	USART_InitStructure.USART_StopBits = USART_StopBits_1;
-	USART_InitStructure.USART_Parity = USART_Parity_No;
-	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+  USART_InitStructure.USART_BaudRate = 115200;
+  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+  USART_InitStructure.USART_StopBits = USART_StopBits_1;
+  USART_InitStructure.USART_Parity = USART_Parity_No;
+  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-	USART_Init(USART1, &USART_InitStructure);
-	USART_Cmd(USART1, ENABLE);
+  USART_Init(USART1, &USART_InitStructure);
+  USART_Cmd(USART1, ENABLE);
 }
+
+void USART_Write(uint16_t Data)
+{
+  USART_SendData(USART1, Data);
+  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET){}
+}
+
+#endif
 
 /*****************************************************************************/
 // ADC_Configuration
 //
 // Set configurations for analog input
+// ADC on PC0, PC1, PC2, PC3
+// ADC123_IN10, 11, 12 ,13
 /*****************************************************************************/
 void ADC_Configuration(void)
 {
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOC, ENABLE);
+
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+
   ADC_InitTypeDef  ADC_InitStructure;
 
   /* Put everything back to power-on defaults */
@@ -188,3 +207,69 @@ void PWM_Configuration(void)
   TIM_Cmd(TIM3, ENABLE);
 }
 
+/*****************************************************************************/
+// MPU_Configuration
+//
+// Set configurations for MPU6050(debug for adxl345 right now)
+/*****************************************************************************/
+void MPU_Configuration(void)
+{
+  /* Enable I2C and I2C_PORT & Alternate Function clocks */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
+  
+  /* Reset I2C IP */
+  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, ENABLE);
+  
+  /* Release reset signal of I2C IP */
+  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, DISABLE);
+  
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+  I2C_InitTypeDef I2C_InitStructure;
+  
+  I2C_InitStructure.I2C_ClockSpeed = 400000;
+  I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+  I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+  I2C_InitStructure.I2C_OwnAddress1 = 0x00;
+  I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+  I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+  
+  I2C_Init(I2C1, &I2C_InitStructure);
+
+  I2C_Cmd(I2C1, ENABLE);
+}
+
+void init_sensor(void)
+{
+  /* initiate start sequence */
+  I2C_GenerateSTART(I2C1, ENABLE);
+  /* check start bit flag */
+  while(!I2C_GetFlagStatus(I2C1, I2C_FLAG_SB));
+  /*send write command to chip*/
+  I2C_Send7bitAddress(I2C1, MPU_ADDR, I2C_Direction_Transmitter);
+  /*check master is now in Tx mode*/
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+  /*mode register address*/
+  I2C_SendData(I2C1, 0x02);
+  /*wait for byte send to complete*/
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+  /*clear bits*/
+  I2C_SendData(I2C1, 0x00);
+  /*wait for byte send to complete*/
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+  /*generate stop*/
+  I2C_GenerateSTOP(I2C1, ENABLE);
+  /*stop bit flag*/
+  while(I2C_GetFlagStatus(I2C1, I2C_FLAG_STOPF));
+}
+
+uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
+{
+  
+}

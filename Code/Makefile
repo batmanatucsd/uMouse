@@ -1,8 +1,11 @@
 # Project Name
-PROJECT =uMouse
+PROJECT=uMouse
 
 # DEVICE(MOUSE,DISCOVERY)
-BOARD   =DISCOVERY
+BOARD  =DISCOVERY
+
+# Serial Debug(DEBUG)
+SERIAL =DEBUG
 
 # Tool PATH
 TOOLDIR=./arm-none-eabi/bin
@@ -55,11 +58,16 @@ SRC	 = $(notdir $(wildcard $(SRCDIR)/*.c))
 SRC	+= core_cm3.c
 SRC += system_stm32f10x.c
 SRC	+= stm32f10x_adc.c
+SRC += stm32f10x_dma.c
 SRC	+= stm32f10x_gpio.c
 SRC += stm32f10x_i2c.c
 SRC	+= stm32f10x_rcc.c
-SRC += stm32f10x_usart.c
 SRC += stm32f10x_tim.c
+
+ifeq ($(SERIAL), DEBUG)
+SRC += stm32f10x_usart.c
+FEATURES+=-DSERIAL_DEBUG
+endif
 
 # the object file to be compiled
 OBJ := $(notdir $(STARTUP:.s=.o)) $(SRC:.c=.o) 

@@ -21,6 +21,13 @@
 TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 
+/*****************************************************************************/
+// For I2C
+/*****************************************************************************/
+
+#define MPU_ADDR 0x53<<1
+
+uint8_t buffer[6];
 
 /*****************************************************************************/
 // Functions
@@ -30,5 +37,6 @@ void GPIO_Configuration(void);
 void USART_Configuration(void);
 void ADC_Configuration(void);
 void PWM_Configuration(void);
+void MPU_Configuration(void);
 
 #endif // _MCU_LIB_H

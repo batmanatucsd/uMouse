@@ -15,6 +15,7 @@ int main(void)
 	GPIO_Configuration();
   // ADC_Configuration();
   PWM_Configuration();
+  MPU_Configuration();
 
   // Only for debug
   // USART_Configuration();
@@ -23,8 +24,7 @@ int main(void)
   {                                                                             
     /*
     // USART debugging
-		USART_SendData(USART1, 'd');
-		while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET){}
+    USART_Write('d');
     */
 
     //GPIO_SetBits(GPIOC, GPIO_Pin_8);                                          
