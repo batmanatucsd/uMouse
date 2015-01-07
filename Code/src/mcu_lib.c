@@ -94,7 +94,7 @@ void USART_Configuration(void)
 
   USART_InitTypeDef USART_InitStructure;
 
-  USART_InitStructure.USART_BaudRate = 115200;
+  USART_InitStructure.USART_BaudRate = USART_BAUDRATE;
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits = USART_StopBits_1;
   USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -111,7 +111,7 @@ void USART_Write(uint16_t Data)
   while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET){}
 }
 
-#endif
+#endif // SERIAL_DEBUG
 
 /*****************************************************************************/
 // ADC_Configuration
@@ -125,7 +125,6 @@ void ADC_Configuration(void)
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOC, ENABLE);
 
   GPIO_InitTypeDef GPIO_InitStructure;
-
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -233,7 +232,7 @@ void MPU_Configuration(void)
 
   I2C_InitTypeDef I2C_InitStructure;
   
-  I2C_InitStructure.I2C_ClockSpeed = 400000;
+  I2C_InitStructure.I2C_ClockSpeed = 300000;
   I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
   I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
   I2C_InitStructure.I2C_OwnAddress1 = 0x00;
@@ -271,5 +270,39 @@ void init_sensor(void)
 
 uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
 {
+  uint8_t TEMP;
+  I2C_AcknowledgeConfig(I2C1, ENABLE);
+
+  while (I2C_GetFlagStatus(I2C1,I2C_FLAG_BUSY));
+  /**********************************************/
+  I2C_GenerateSTART(I2C1, ENABLE);
+
+  while(!I2C_GetFlagStatus(I2C1, I2C_FLAG_SB));
+
+  I2C_Send7bitAddress(I2C1, DeviceAddr, I2C_Direction_Transmitter);
+
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+
+  I2C_SendData(I2C1, RegisterAddr);
+
+  while (!I2C_GetFlagStatus(I2C1,I2C_FLAG_TXE));
+  /**********************************************/
+  I2C_GenerateSTART(I2C1, ENABLE);
   
+  while (!I2C_GetFlagStatus(I2C1,I2C_FLAG_SB));
+  
+  I2C_Send7bitAddress(I2C1, DeviceAddr, I2C_Direction_Receiver);
+    
+  while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
+    
+  while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
+  TEMP = I2C_ReceiveData(I2C1);
+  /**********************************************/
+  I2C_NACKPositionConfig(I2C1, I2C_NACKPosition_Current);
+  I2C_AcknowledgeConfig(I2C1, DISABLE);
+
+  I2C_GenerateSTOP(I2C1, ENABLE);
+  while(I2C_GetFlagStatus(I2C1, I2C_FLAG_STOPF));
+
+  return TEMP;
 }
