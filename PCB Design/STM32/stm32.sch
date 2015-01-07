@@ -16476,7 +16476,7 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 <classes>
 <class number="0" name="default" width="0.254" drill="0">
 </class>
-<class number="1" name="MOTOR" width="0.3048" drill="0">
+<class number="1" name="MOTOR" width="1.016" drill="0">
 </class>
 </classes>
 <parts>
@@ -16582,8 +16582,6 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 <part name="GND27" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND28" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND30" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
-<part name="C22" library="rcl" deviceset="CPOL-EU" device="UD-4X5,8" value="10uF"/>
-<part name="C23" library="rcl" deviceset="CPOL-EU" device="UD-4X5,8" value="10uF"/>
 <part name="SUPPLY17" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="GND31" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND32" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
@@ -16591,6 +16589,8 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 <part name="GND34" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND35" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="SUPPLY18" library="SparkFun-Aesthetics" deviceset="V_BATT" device=""/>
+<part name="C8" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10uF"/>
+<part name="C14" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10uF, 33m&lt;ESR&lt;2.2"/>
 </parts>
 <sheets>
 <sheet>
@@ -16719,8 +16719,6 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 <instance part="GND27" gate="1" x="109.22" y="83.82"/>
 <instance part="GND28" gate="1" x="127" y="83.82"/>
 <instance part="GND30" gate="1" x="93.98" y="83.82"/>
-<instance part="C22" gate="G$1" x="127" y="93.98"/>
-<instance part="C23" gate="G$1" x="93.98" y="93.98"/>
 <instance part="SUPPLY17" gate="G$1" x="132.08" y="101.6"/>
 <instance part="GND31" gate="1" x="317.5" y="193.04" rot="R180"/>
 <instance part="GND32" gate="1" x="375.92" y="172.72" rot="R90"/>
@@ -16728,6 +16726,8 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 <instance part="GND34" gate="1" x="320.04" y="147.32"/>
 <instance part="GND35" gate="1" x="304.8" y="152.4"/>
 <instance part="SUPPLY18" gate="G$1" x="86.36" y="101.6"/>
+<instance part="C8" gate="G$1" x="93.98" y="91.44"/>
+<instance part="C14" gate="G$1" x="127" y="91.44"/>
 </instances>
 <busses>
 </busses>
@@ -16979,14 +16979,14 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 <wire x1="109.22" y1="91.44" x2="109.22" y2="86.36" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="C22" gate="G$1" pin="-"/>
 <pinref part="GND28" gate="1" pin="GND"/>
 <wire x1="127" y1="88.9" x2="127" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="C14" gate="G$1" pin="2"/>
 </segment>
 <segment>
-<pinref part="C23" gate="G$1" pin="-"/>
 <pinref part="GND30" gate="1" pin="GND"/>
 <wire x1="93.98" y1="88.9" x2="93.98" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="C8" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <pinref part="C16" gate="G$1" pin="1"/>
@@ -17641,7 +17641,6 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 </segment>
 <segment>
 <pinref part="IC1" gate="G$1" pin="IN"/>
-<pinref part="C23" gate="G$1" pin="+"/>
 <wire x1="101.6" y1="101.6" x2="93.98" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="101.6" x2="93.98" y2="99.06" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="99.06" x2="93.98" y2="96.52" width="0.1524" layer="91"/>
@@ -17649,6 +17648,7 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 <pinref part="SUPPLY18" gate="G$1" pin="V_BATT"/>
 <wire x1="86.36" y1="99.06" x2="86.36" y2="101.6" width="0.1524" layer="91"/>
 <junction x="93.98" y="99.06"/>
+<pinref part="C8" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="M2I1" class="0">
@@ -17795,12 +17795,12 @@ Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
 <wire x1="121.92" y1="99.06" x2="127" y2="99.06" width="0.1524" layer="91"/>
 <wire x1="127" y1="99.06" x2="132.08" y2="99.06" width="0.1524" layer="91"/>
 <wire x1="121.92" y1="101.6" x2="121.92" y2="99.06" width="0.1524" layer="91"/>
-<pinref part="C22" gate="G$1" pin="+"/>
 <wire x1="127" y1="99.06" x2="127" y2="96.52" width="0.1524" layer="91"/>
 <junction x="121.92" y="99.06"/>
 <junction x="127" y="99.06"/>
 <pinref part="SUPPLY17" gate="G$1" pin="5V"/>
 <wire x1="132.08" y1="101.6" x2="132.08" y2="99.06" width="0.1524" layer="91"/>
+<pinref part="C14" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>

@@ -11,6 +11,9 @@ PC13,14,15 less output current
 
 review the direction of motor connector in board design
 
+CIN for NCP1117 -- 10uf (typ)
+Cout for NCP1117 > 4.7uf (ESR) that is within the limits of 33 m (typ) to 2.2  is required. 
+
 ***********************************************************************
 
 Default boot from bank 1(512K)
