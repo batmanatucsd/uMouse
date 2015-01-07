@@ -49,28 +49,44 @@ void update(unsigned short row, unsigned short col) {
 	...
 	// Also update adjacent cells
 */
+
+	// TODO
+	// Once we figure out the encoding for the gyro we can probably optimize the open neighbor code
+	// TODO
+
 	// Minimum open neighbor
-    unsigned char min = 255;
+    unsigned char min = tile;
+    unsigned char next = (row << 4) | col;
 	if (row - 1 >= 0 && !(tile & NORTH_WALL)) {
-		min = (board[row - 1][col] & DIST) < min?
-		      board[row - 1][col] & DIST:
-		      min;
+		if ((board[row - 1][col] & DIST) < min) {
+			min = board[row - 1][col] & DIST;
+			next = ((row - 1) << 4) | col;
+			direction = 0x0;
+		}
 	}
 	if (col + 1 <= 15 && !(tile & EAST_WALL)) {
-		min = (board[row][col + 1] & DIST) < min?
-		      board[row][col + 1] & DIST:
-		      min;
+		if ((board[row][col + 1] & DIST) < min) {
+			min = board[row][col + 1] & DIST;
+			next = (row << 4) | (col + 1);
+			direction = 0x1;
+		}
 	}
 	if (row + 1 <= 15 && !(tile & SOUTH_WALL)) {
-		min = (board[row + 1][col] & DIST) < min?
-		      board[row + 1][col] & DIST:
-		      min;
+		if ((board[row + 1][col] & DIST) < min) {
+			min = board[row + 1][col] & DIST;
+			next = ((row + 1) << 4) | col;
+			direction = 0x2;
+		}
 	}
 	if (col - 1 >= 0 && !(tile & WEST_WALL)) {
-		min = (board[row][col - 1] & DIST) < min?
-		      board[row][col - 1] & DIST:
-		      min;
+		if ((board[row][col - 1] & DIST) < min) {
+			min = board[row][col - 1] & DIST;
+			next = (row << 4) | (col - 1);
+			direction = 0x3;
+		}
 	}
+
+	location = next;
 
 	if (min + 1 != (tile & DIST)) {
 
@@ -151,10 +167,15 @@ int main() {
 	// Push first cell into stack
 	stack[stackptr++] = location;
 	print();
+	while (location != 0x77 && location != 0x78 &&
+		location != 0x87 && location != 0x88) {
+		update((location & ROW) >> 4, location & COL);
+		print();
+	}
 /*
 	// Not at destination cells
-	while (location != 0x77 || location != 0x78 ||
-		location != 0x87 || location != 0x88) {
+	while (location != 0x77 && location != 0x78 &&
+		location != 0x87 && location != 0x88) {
 		while (stackptr > 0) {
 			update(location & ROW >> 4, location & COL);
 		}
