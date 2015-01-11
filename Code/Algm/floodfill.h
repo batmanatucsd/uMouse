@@ -16,6 +16,9 @@ unsigned char COL = 0x0f;
 unsigned char stack[512];
 unsigned short stackptr = 0;
 
+/*****************************************************************************/
+// Function Declarations
+/*****************************************************************************/
 void setup();
 
 unsigned short init(unsigned short row, unsigned short col);
