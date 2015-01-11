@@ -97,9 +97,11 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-	location = next;
-
-	if (min + 1 != (tile & DIST))
+	if (stackptr == 0 && min + 1 == (tile & DIST))
+	{
+		location = next;
+	}
+	else
 	{
 		// Update distance
 		board[row][col] &= 0xffff0000;
@@ -193,7 +195,10 @@ int main()
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
-		update((location & ROW) >> 4, location & COL);
+		// Pop next cell from stack
+		--stackptr;
+		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+		stack[stackptr++] = location;
 		print();
 	}
 }
