@@ -113,6 +113,7 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
+	// Continue if distances are correct
 	if (stackptr == 0 && min + 1 == (tile & DIST))
 	{
 		location = next;
