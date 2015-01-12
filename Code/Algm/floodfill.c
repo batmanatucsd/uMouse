@@ -2,6 +2,11 @@
 
 #include "floodfill.h"
 
+/*****************************************************************************/
+// setup
+//
+// Initializes the board with the assumption that no walls exist
+/*****************************************************************************/
 void setup()
 {
 	// Initialize board
@@ -10,6 +15,8 @@ void setup()
 		for (unsigned short col = 0; col < 16; col++)
 		{
 			board[row][col] = init(row, col);
+
+			// Maze borders
 			if (row == 0) board[row][col] |= NORTH_WALL;
 			if (col == 0) board[row][col] |= WEST_WALL;
 			if (col == 15) board[row][col] |= EAST_WALL;
@@ -22,6 +29,11 @@ void setup()
 	direction = 0x0;
 }
 
+/*****************************************************************************/
+// init
+//
+// Calculates the distance from given cell to center (no walls)
+/*****************************************************************************/
 unsigned short init(unsigned short row, unsigned short col)
 {	
 	if(row > 0x07) {
@@ -35,7 +47,11 @@ unsigned short init(unsigned short row, unsigned short col)
 	return 0x0e - col - row;
 }
 
-
+/*****************************************************************************/
+// update
+//
+// Changes current cell distance and check neighbors if necessary
+/*****************************************************************************/
 void update(unsigned short row, unsigned short col)
 {
 	unsigned char tile = board[row][col];
@@ -127,7 +143,11 @@ void update(unsigned short row, unsigned short col)
 	}
 }
 
-
+/*****************************************************************************/
+// print
+//
+// Print out the maze, mouse location, mouse direction, visited cells
+/*****************************************************************************/
 void print() {
 
 	for (unsigned short row = 0; row < 16; row++)
@@ -188,6 +208,10 @@ void print() {
 int main()
 {
 	setup();
+
+	// Add test walls here
+	board[8][0] |= EAST_WALL; board[8][1] |= WEST_WALL;
+	// end
 
 	// Push first cell into stack
 	stack[stackptr++] = location;
