@@ -54,7 +54,7 @@ unsigned short init(unsigned short row, unsigned short col)
 /*****************************************************************************/
 void update(unsigned short row, unsigned short col)
 {
-	unsigned char tile = board[row][col];
+	unsigned short tile = board[row][col];
 
 	// Update wall map
 /*
@@ -74,7 +74,7 @@ void update(unsigned short row, unsigned short col)
 	// TODO
 
 	// Minimum open neighbor
-    unsigned char min = tile;
+    unsigned char min = 255;
     unsigned char next = (row << 4) | col;
 	if (row - 1 >= 0 && !(tile & NORTH_WALL))
 	{
@@ -116,29 +116,30 @@ void update(unsigned short row, unsigned short col)
 	if (stackptr == 0 && min + 1 == (tile & DIST))
 	{
 		location = next;
+		stack[stackptr++] = next;
 	}
-	else
+	else if (min + 1 != (tile & DIST))
 	{
 		// Update distance
-		board[row][col] &= 0xffff0000;
+		board[row][col] &= 0xff00;
 		board[row][col] |= min + 1;
 
 		// Push open neighbors onto stack
 		if (row - 1 >= 0 && !(board[row][col] & NORTH_WALL))
 		{
-			stack[stackptr++] = board[row - 1][col];
+			stack[stackptr++] = ((row - 1) << 4) | col;
 		}
 		if (col + 1 <= 15 && !(board[row][col] & EAST_WALL))
 		{
-			stack[stackptr++] = board[row][col + 1];
+			stack[stackptr++] = (row << 4) | (col + 1);
 		}
 		if (row + 1 <= 15 && !(board[row][col] & SOUTH_WALL))
 		{
-			stack[stackptr++] = board[row + 1][col];
+			stack[stackptr++] = ((row + 1) << 4) | col;
 		}
 		if (col - 1 >= 0 && !(board[row][col] & WEST_WALL))
 		{
-			stack[stackptr++] = board[row][col - 1];
+			stack[stackptr++] = (row << 4) | (col - 1);
 		}
 	}
 }
@@ -146,7 +147,7 @@ void update(unsigned short row, unsigned short col)
 /*****************************************************************************/
 // print
 //
-// Print out the maze, mouse location, mouse direction, visited cells
+// Print out current state of maze
 /*****************************************************************************/
 void print() {
 
@@ -210,19 +211,23 @@ int main()
 	setup();
 
 	// Add test walls here
-	board[8][0] |= EAST_WALL; board[8][1] |= WEST_WALL;
+	for (int i = 8; i <= 15; i++)
+	{
+		board[i][0] |= EAST_WALL; board[i][1] |= WEST_WALL;
+	}
 	// end
 
 	// Push first cell into stack
 	stack[stackptr++] = location;
-	print();
+
+	
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
 		// Pop next cell from stack
+		print();
 		--stackptr;
 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-		stack[stackptr++] = location;
-		print();
 	}
+	print();
 }
