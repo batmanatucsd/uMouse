@@ -211,13 +211,6 @@ int main()
 {
 	setup();
 
-	// Add test walls here
-	for (int i = 8; i <= 15; i++)
-	{
-		board[i][0] |= EAST_WALL; board[i][1] |= WEST_WALL;
-	}
-	// end
-
 	// Push first cell into stack
 	stack[stackptr++] = location;
 
