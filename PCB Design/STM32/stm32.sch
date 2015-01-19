@@ -6424,7 +6424,7 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <classes>
 <class number="0" name="default" width="0.254" drill="0">
 </class>
-<class number="1" name="MOTOR" width="0.4064" drill="0">
+<class number="1" name="MOTOR" width="0.254" drill="0">
 </class>
 </classes>
 <parts>
