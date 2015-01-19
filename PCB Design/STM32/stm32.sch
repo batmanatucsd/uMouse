@@ -131,63 +131,10 @@
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
 <libraries>
-<library name="SparkFun">
-<packages>
-</packages>
-<symbols>
-<symbol name="GND">
-<wire x1="-1.905" y1="0" x2="1.905" y2="0" width="0.254" layer="94"/>
-<text x="-2.54" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="GND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
-</symbol>
-<symbol name="VCC2">
-<wire x1="0.762" y1="1.27" x2="0" y2="2.54" width="0.254" layer="94"/>
-<wire x1="0" y1="2.54" x2="-0.762" y2="1.27" width="0.254" layer="94"/>
-<text x="-1.016" y="3.556" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="VCC" x="0" y="0" visible="off" length="short" direction="sup" rot="R90"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="GND" prefix="GND">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="1" symbol="GND" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="VCC" prefix="P+">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="1" symbol="VCC2" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="supply1">
 <packages>
 </packages>
 <symbols>
-<symbol name="VDD">
-<wire x1="1.27" y1="-1.905" x2="0" y2="0" width="0.254" layer="94"/>
-<wire x1="0" y1="0" x2="-1.27" y2="-1.905" width="0.254" layer="94"/>
-<wire x1="0" y1="1.27" x2="-1.27" y2="-1.905" width="0.254" layer="94"/>
-<wire x1="1.27" y1="-1.905" x2="0" y2="1.27" width="0.254" layer="94"/>
-<text x="-2.54" y="-2.54" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="VDD" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
-</symbol>
 <symbol name="GND">
 <wire x1="-1.905" y1="0" x2="1.905" y2="0" width="0.254" layer="94"/>
 <text x="-2.54" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
@@ -195,19 +142,6 @@
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="VDD" prefix="VDD">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="VDD" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="GND" prefix="GND">
 <description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
 <gates>
@@ -1639,6 +1573,12 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <text x="-1.016" y="3.556" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="5V" x="0" y="0" visible="off" length="short" direction="sup" rot="R90"/>
 </symbol>
+<symbol name="VDD">
+<wire x1="0.762" y1="1.27" x2="0" y2="2.54" width="0.254" layer="94"/>
+<wire x1="0" y1="2.54" x2="-0.762" y2="1.27" width="0.254" layer="94"/>
+<text x="-1.016" y="3.556" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="VDD" x="0" y="0" visible="off" length="short" direction="sup" rot="R90"/>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="GND" prefix="GND">
@@ -1685,6 +1625,19 @@ Generic symbol for the battery input to a system.</description>
 <description>5V supply symbol</description>
 <gates>
 <gate name="G$1" symbol="5V" x="0" y="0"/>
+</gates>
+<devices>
+<device name="">
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="VDD" prefix="SUPPLY">
+<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
+<gates>
+<gate name="VDD" symbol="VDD" x="0" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -6157,18 +6110,18 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </classes>
 <parts>
 <part name="Q1" library="SparkFun-FreqCtrl" deviceset="CRYSTAL-GROUNDED" device="" value="ABM3B-8.000MHZ-10-1UT"/>
-<part name="GND10" library="SparkFun" deviceset="GND" device=""/>
+<part name="GND10" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="C12" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10pF"/>
 <part name="C13" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10pF"/>
-<part name="P+1" library="SparkFun" deviceset="VCC" device=""/>
-<part name="GND1" library="SparkFun" deviceset="GND" device=""/>
-<part name="P+3" library="SparkFun" deviceset="VCC" device=""/>
-<part name="GND7" library="SparkFun" deviceset="GND" device=""/>
-<part name="GND9" library="SparkFun" deviceset="GND" device=""/>
-<part name="VDD3" library="supply1" deviceset="VDD" device="" value="VDDA"/>
-<part name="VDD1" library="supply1" deviceset="VDD" device="" value="VDDA"/>
-<part name="GND8" library="SparkFun" deviceset="GND" device=""/>
-<part name="GND2" library="SparkFun" deviceset="GND" device=""/>
+<part name="P+1" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
+<part name="GND1" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="P+3" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
+<part name="GND7" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="GND9" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="VDD3" library="SparkFun-Aesthetics" deviceset="VDD" device="" value="VDDA"/>
+<part name="VDD1" library="SparkFun-Aesthetics" deviceset="VDD" device="" value="VDDA"/>
+<part name="GND8" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="GND2" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="U4" library="SparkFun-Sensors" deviceset="MPU-6000" device="QFN-24" value="MPU-6050"/>
 <part name="SUPPLY6" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
 <part name="C20" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="2.2nF"/>
@@ -6233,9 +6186,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="GND25" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND26" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="U1" library="ST Microelctronics_By_element14_Batch_1" deviceset="STM32F103RET6" device=""/>
-<part name="P+2" library="SparkFun" deviceset="VCC" device=""/>
-<part name="VDD2" library="supply1" deviceset="VDD" device="" value="VDDA"/>
-<part name="GND5" library="SparkFun" deviceset="GND" device=""/>
+<part name="P+2" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
+<part name="VDD2" library="SparkFun-Aesthetics" deviceset="VDD" device="" value="VDDA"/>
+<part name="GND5" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="IC1" library="linear" deviceset="MC33269ST*" device="" technology="-3.3T3" value="NCP1117ST50T3G"/>
 <part name="SUPPLY16" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="SUPPLY2" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
@@ -6279,7 +6232,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="C10" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10uF"/>
 <part name="C11" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10uF"/>
 <part name="C9" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10uF"/>
-<part name="GND38" library="SparkFun" deviceset="GND" device=""/>
+<part name="GND38" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="SUPPLY21" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="C22" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10uF"/>
 <part name="X1" library="battery_plug" deviceset="22-23-2031" device=""/>
@@ -6313,17 +6266,17 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <attribute name="NAME" x="234.696" y="249.047" size="1.778" layer="95"/>
 <attribute name="VALUE" x="241.3" y="248.92" size="1.778" layer="96"/>
 </instance>
-<instance part="P+1" gate="1" x="99.06" y="226.06"/>
+<instance part="P+1" gate="G$1" x="99.06" y="226.06"/>
 <instance part="GND1" gate="1" x="99.06" y="205.74" rot="MR0"/>
-<instance part="P+3" gate="1" x="241.3" y="86.36" smashed="yes">
+<instance part="P+3" gate="G$1" x="241.3" y="86.36" smashed="yes">
 <attribute name="VALUE" x="242.824" y="87.376" size="1.778" layer="96"/>
 </instance>
 <instance part="GND7" gate="1" x="177.8" y="68.58"/>
 <instance part="GND9" gate="1" x="241.3" y="66.04"/>
-<instance part="VDD3" gate="G$1" x="241.3" y="116.84" smashed="yes">
+<instance part="VDD3" gate="VDD" x="241.3" y="116.84" smashed="yes">
 <attribute name="VALUE" x="243.84" y="114.3" size="1.778" layer="96"/>
 </instance>
-<instance part="VDD1" gate="G$1" x="104.14" y="264.16" smashed="yes">
+<instance part="VDD1" gate="VDD" x="104.14" y="264.16" smashed="yes">
 <attribute name="VALUE" x="101.6" y="266.7" size="1.778" layer="96"/>
 </instance>
 <instance part="GND8" gate="1" x="241.3" y="93.98"/>
@@ -6392,8 +6345,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="GND25" gate="1" x="406.4" y="205.74"/>
 <instance part="GND26" gate="1" x="429.26" y="205.74"/>
 <instance part="U1" gate="A" x="193.04" y="205.74"/>
-<instance part="P+2" gate="1" x="154.94" y="254"/>
-<instance part="VDD2" gate="G$1" x="154.94" y="266.7" smashed="yes">
+<instance part="P+2" gate="G$1" x="154.94" y="254"/>
+<instance part="VDD2" gate="VDD" x="154.94" y="266.7" smashed="yes">
 <attribute name="VALUE" x="152.4" y="269.24" size="1.778" layer="96"/>
 </instance>
 <instance part="GND5" gate="1" x="154.94" y="137.16" rot="MR0"/>
@@ -6760,7 +6713,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <segment>
 <pinref part="C3" gate="G$1" pin="1"/>
 <pinref part="C4" gate="G$1" pin="1"/>
-<pinref part="P+1" gate="1" pin="VCC"/>
+<pinref part="P+1" gate="G$1" pin="VCC"/>
 <pinref part="C5" gate="G$1" pin="1"/>
 <pinref part="C6" gate="G$1" pin="1"/>
 <pinref part="C7" gate="G$1" pin="1"/>
@@ -6780,7 +6733,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </segment>
 <segment>
 <wire x1="241.3" y1="81.28" x2="241.3" y2="83.82" width="0.1524" layer="91"/>
-<pinref part="P+3" gate="1" pin="VCC"/>
+<pinref part="P+3" gate="G$1" pin="VCC"/>
 <pinref part="U3" gate="A" pin="VOUT"/>
 <wire x1="241.3" y1="83.82" x2="241.3" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="83.82" x2="241.3" y2="83.82" width="0.1524" layer="91"/>
@@ -6844,7 +6797,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="160.02" y1="256.54" x2="160.02" y2="254" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="256.54" x2="160.02" y2="256.54" width="0.1524" layer="91"/>
 <wire x1="160.02" y1="251.46" x2="154.94" y2="251.46" width="0.1524" layer="91"/>
-<pinref part="P+2" gate="1" pin="VCC"/>
+<pinref part="P+2" gate="G$1" pin="VCC"/>
 <wire x1="154.94" y1="251.46" x2="154.94" y2="254" width="0.1524" layer="91"/>
 <junction x="160.02" y="256.54"/>
 <junction x="160.02" y="254"/>
@@ -7094,17 +7047,17 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <segment>
 <wire x1="228.6" y1="111.76" x2="241.3" y2="111.76" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="111.76" x2="241.3" y2="109.22" width="0.1524" layer="91"/>
-<wire x1="241.3" y1="111.76" x2="241.3" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="241.3" y1="111.76" x2="241.3" y2="116.84" width="0.1524" layer="91"/>
 <junction x="241.3" y="111.76"/>
-<pinref part="VDD3" gate="G$1" pin="VDD"/>
+<pinref part="VDD3" gate="VDD" pin="VDD"/>
 <pinref part="U2" gate="A" pin="VOUT"/>
 <pinref part="C10" gate="G$1" pin="1"/>
 </segment>
 <segment>
 <pinref part="U1" gate="A" pin="VDDA"/>
 <wire x1="162.56" y1="261.62" x2="154.94" y2="261.62" width="0.1524" layer="91"/>
-<pinref part="VDD2" gate="G$1" pin="VDD"/>
-<wire x1="154.94" y1="261.62" x2="154.94" y2="264.16" width="0.1524" layer="91"/>
+<pinref part="VDD2" gate="VDD" pin="VDD"/>
+<wire x1="154.94" y1="261.62" x2="154.94" y2="266.7" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="109.22" y1="259.08" x2="109.22" y2="256.54" width="0.1524" layer="91"/>
@@ -7113,8 +7066,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="C1" gate="G$1" pin="1"/>
 <wire x1="104.14" y1="259.08" x2="99.06" y2="259.08" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="259.08" x2="99.06" y2="256.54" width="0.1524" layer="91"/>
-<pinref part="VDD1" gate="G$1" pin="VDD"/>
-<wire x1="104.14" y1="259.08" x2="104.14" y2="261.62" width="0.1524" layer="91"/>
+<pinref part="VDD1" gate="VDD" pin="VDD"/>
+<wire x1="104.14" y1="259.08" x2="104.14" y2="264.16" width="0.1524" layer="91"/>
 <junction x="104.14" y="259.08"/>
 </segment>
 </net>
