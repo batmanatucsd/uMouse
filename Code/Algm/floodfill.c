@@ -37,10 +37,12 @@ void setup()
 /*****************************************************************************/
 unsigned short init(unsigned short row, unsigned short col)
 {	
+	// 2nd and 4th quadrant
 	if(row > 0x07) {
 		row = 0x07 - (row - 0x08);
 	}
 	
+	// 3rd and 4th quadrant
 	if(col > 0x07) {
 		col = 0x07 - (col - 0x08);
 	}
@@ -218,16 +220,6 @@ void print() {
 int main() {
   	char name[99999];
 	setup();
-
-	// Add test walls here
-	for (int i = 0; i <= 15; i++)
-	{
-		if (i != 10)
-		{
-			board[i][0] |= EAST_WALL; board[i][1] |= WEST_WALL;
-		}
-	}
-	// end
 
 	// Push first cell into stack
 	stack[stackptr++] = current;
