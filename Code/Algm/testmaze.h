@@ -4,11 +4,16 @@
 //
 /****************************************************************************/
 
-unsigned short maze[16][16];			//This represents the actual board, 
+unsigned short testMaze[16][16];		//This represents the actual board, 
 										//mouse does not know this yet.
+
+/****************************************************************************/
+// setupTest():
+//		This actually just hardcodes the maze... lmao
+/****************************************************************************/
 void setupTest() {
 
-// Initialize, empty 
+	// Initialize, empty 
 	for (unsigned short row = 0; row < 16; row++) {
 		for (unsigned short col = 0; col < 16; col++) {
 			board[row][col] = init(row, col);
@@ -23,6 +28,12 @@ void setupTest() {
 	location = 0xf0;				// board[15,0]
 	direction = 0x0;				// 0x0 = up direction
 
-	// Initialize the right wall for the bottom left corner
+
+	// Initialize the right wall for the bottom left corner 
+	// *** THIS WILL ALWAYS BE THE SAME ***
 	board[15][0] = board[15][0] | WEST_WALL;
+
+
+
+
 }
