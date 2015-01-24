@@ -2,8 +2,10 @@
 // Globals
 /*****************************************************************************/
 unsigned short board[16][16];
-unsigned char location = 0x0;	// First four bits = ROW, last four = COL
-unsigned char direction = 0x0;  // 0x0 north 0x1 east 0x2 south 0x3 west
+unsigned short current = 0x0;  
+unsigned char location = 0x0;  // First four bits = ROW, last four = COL
+unsigned char direction = 0x0; // 0x0 north 0x1 east 0x2 south 0x3 west
+
 
 /*****************************************************************************/
 // Bit masks
