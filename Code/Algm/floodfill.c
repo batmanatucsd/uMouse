@@ -224,5 +224,7 @@ int main() {
 		--stackptr;
 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 	}
+	printf("Press RETURN to contine");
+  fgets(name, sizeof(name), stdin);
 	print();
 }
