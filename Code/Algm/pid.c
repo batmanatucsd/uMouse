@@ -1,5 +1,10 @@
 #include "pid.h"
 
+/*****************************************************************************/
+// pid
+//
+// PID code
+/*****************************************************************************/
 void pid()
 {
 	// TODO:
@@ -26,16 +31,20 @@ void pid()
   */
 
 	if ((leftIR >= THRESHOLD && rightIR <= THRESHOLD) ||
-		(leftIR <= THRESHOLD && rightIR >= THRESHOLD)) {
+		(leftIR <= THRESHOLD && rightIR >= THRESHOLD))
+  {
 		currentError = leftIR - rightIR;
 	} 
-  else if (leftIR < THRESHOLD) {
+  else if (leftIR < THRESHOLD)
+  {
 		currentError =  THRESHOLD - rightIR;
 	} 
-  else if (rightIR < THRESHOLD) {
+  else if (rightIR < THRESHOLD)
+  {
 		currentError = leftIR - THRESHOLD;
 	}
-  else if (leftIR < THRESHOLD && rightIR < THRESHOLD) {
+  else if (leftIR < THRESHOLD && rightIR < THRESHOLD)
+  {
 		currentError = (rightEncoder - leftEncoder) * ADJUST ; // * some constant
 	}
 

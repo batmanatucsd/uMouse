@@ -2,12 +2,21 @@
 
 #include "floodfill.h"
 
-void setup() {
-
+/*****************************************************************************/
+// setup
+//
+// Initializes the board with the assumption that no walls exist
+/*****************************************************************************/
+void setup()
+{
 	// Initialize board
-	for (unsigned short row = 0; row < 16; row++) {
-		for (unsigned short col = 0; col < 16; col++) {
+	for (unsigned short row = 0; row < 16; row++)
+	{
+		for (unsigned short col = 0; col < 16; col++)
+		{
 			board[row][col] = init(row, col);
+
+			// Maze borders
 			if (row == 0) board[row][col] |= NORTH_WALL;
 			if (col == 0) board[row][col] |= WEST_WALL;
 			if (col == 15) board[row][col] |= EAST_WALL;
@@ -20,8 +29,13 @@ void setup() {
 	direction = 0x0;
 }
 
-unsigned short init(unsigned short row, unsigned short col) {
-	
+/*****************************************************************************/
+// init
+//
+// Calculates the distance from given cell to center (no walls)
+/*****************************************************************************/
+unsigned short init(unsigned short row, unsigned short col)
+{	
 	if(row > 0x07) {
 		row = 0x07 - (row - 0x08);
 	}
@@ -33,15 +47,20 @@ unsigned short init(unsigned short row, unsigned short col) {
 	return 0x0e - col - row;
 }
 
-
-void update(unsigned short row, unsigned short col) {
-
-	unsigned char tile = board[row][col];
+/*****************************************************************************/
+// update
+//
+// Changes current cell distance and check neighbors if necessary
+/*****************************************************************************/
+void update(unsigned short row, unsigned short col)
+{
+	unsigned short tile = board[row][col];
 
 	// Update wall map
 /*
 	// left wall
-	if (abs(analogRead(IR_IN1) - THRESHOLD) > abs(analogREAD(IR_IN1) - leftAmbientLight)) {
+	if (abs(analogRead(IR_IN1) - THRESHOLD) > abs(analogREAD(IR_IN1) - leftAmbientLight))
+	{
 	}
 	// right wall
 	...
@@ -55,82 +74,105 @@ void update(unsigned short row, unsigned short col) {
 	// TODO
 
 	// Minimum open neighbor
-    unsigned char min = tile;
+    unsigned char min = 255;
     unsigned char next = (row << 4) | col;
-	if (row - 1 >= 0 && !(tile & NORTH_WALL)) {
-		if ((board[row - 1][col] & DIST) < min) {
+	if (row - 1 >= 0 && !(tile & NORTH_WALL))
+	{
+		if ((board[row - 1][col] & DIST) < min)
+		{
 			min = board[row - 1][col] & DIST;
 			next = ((row - 1) << 4) | col;
 			direction = 0x0;
 		}
 	}
-	if (col + 1 <= 15 && !(tile & EAST_WALL)) {
-		if ((board[row][col + 1] & DIST) < min) {
+	if (col + 1 <= 15 && !(tile & EAST_WALL))
+	{
+		if ((board[row][col + 1] & DIST) < min)
+		{
 			min = board[row][col + 1] & DIST;
 			next = (row << 4) | (col + 1);
 			direction = 0x1;
 		}
 	}
-	if (row + 1 <= 15 && !(tile & SOUTH_WALL)) {
-		if ((board[row + 1][col] & DIST) < min) {
+	if (row + 1 <= 15 && !(tile & SOUTH_WALL))
+	{
+		if ((board[row + 1][col] & DIST) < min)
+		{
 			min = board[row + 1][col] & DIST;
 			next = ((row + 1) << 4) | col;
 			direction = 0x2;
 		}
 	}
-	if (col - 1 >= 0 && !(tile & WEST_WALL)) {
-		if ((board[row][col - 1] & DIST) < min) {
+	if (col - 1 >= 0 && !(tile & WEST_WALL))
+	{
+		if ((board[row][col - 1] & DIST) < min)
+		{
 			min = board[row][col - 1] & DIST;
 			next = (row << 4) | (col - 1);
 			direction = 0x3;
 		}
 	}
 
-	location = next;
-
-	if (min + 1 != (tile & DIST)) {
-
+	// Continue if distances are correct
+	if (stackptr == 0 && min + 1 == (tile & DIST))
+	{
+		location = next;
+		stack[stackptr++] = next;
+	}
+	else if (min + 1 != (tile & DIST))
+	{
 		// Update distance
-		board[row][col] &= 0xffff0000;
+		board[row][col] &= 0xff00;
 		board[row][col] |= min + 1;
 
 		// Push open neighbors onto stack
-		if (row - 1 >= 0 && !(board[row][col] & NORTH_WALL)) {
-			stack[stackptr++] = board[row - 1][col];
+		if (row - 1 >= 0 && !(board[row][col] & NORTH_WALL))
+		{
+			stack[stackptr++] = ((row - 1) << 4) | col;
 		}
-		if (col + 1 <= 15 && !(board[row][col] & EAST_WALL)) {
-			stack[stackptr++] = board[row][col + 1];
+		if (col + 1 <= 15 && !(board[row][col] & EAST_WALL))
+		{
+			stack[stackptr++] = (row << 4) | (col + 1);
 		}
-		if (row + 1 <= 15 && !(board[row][col] & SOUTH_WALL)) {
-			stack[stackptr++] = board[row + 1][col];
+		if (row + 1 <= 15 && !(board[row][col] & SOUTH_WALL))
+		{
+			stack[stackptr++] = ((row + 1) << 4) | col;
 		}
-		if (col - 1 >= 0 && !(board[row][col] & WEST_WALL)) {
-			stack[stackptr++] = board[row][col - 1];
+		if (col - 1 >= 0 && !(board[row][col] & WEST_WALL))
+		{
+			stack[stackptr++] = (row << 4) | (col - 1);
 		}
 	}
 }
 
-
+/*****************************************************************************/
+// print
+//
+// Print out current state of maze
+/*****************************************************************************/
 void print() {
 
-	for (unsigned short row = 0; row < 16; row++) {
-
+	for (unsigned short row = 0; row < 16; row++)
+	{
 		// North wall
-		for (unsigned short col = 0; col < 16; col++) {
+		for (unsigned short col = 0; col < 16; col++)
+		{
 			printf("+%s", board[row][col] & NORTH_WALL?
 				"---": "   ");
 		}
 		printf("+\n");
 
-		for (unsigned short col = 0; col < 16; col++) {
-
+		for (unsigned short col = 0; col < 16; col++)
+		{
 			printf("%s", board[row][col] & WEST_WALL?
 				"|": " ");
 
 			// Location direction
 			if (row == (location & ROW) >> 4 &&
-				col == (location & COL)) {
-				switch (direction) {
+				col == (location & COL))
+			{
+				switch (direction)
+				{
 					case 0x0: printf("^");
 								break;
 					case 0x1: printf(">");
@@ -139,9 +181,12 @@ void print() {
 								break;
 					case 0x3: printf("<");
 				}
-			} else if (board[row][col] & VISITED) {
+			}
+			else if (board[row][col] & VISITED)
+			{
 				printf("*");
-			} else {
+			} else
+			{
 				printf(" ");
 			}
 
@@ -154,7 +199,8 @@ void print() {
 	}
 
 	// South wall
-	for (unsigned short col = 0; col < 16; col++) {
+	for (unsigned short col = 0; col < 16; col++)
+	{
 		printf("+%s", board[15][col] & SOUTH_WALL?
 			"---": "   ");
 	}
@@ -167,21 +213,16 @@ int main() {
 
 	// Push first cell into stack
 	stack[stackptr++] = location;
-	print();
+
+	
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88) {
 	  printf("Press RETURN to contine");
     fgets(name, sizeof(name), stdin);
 		update((location & ROW) >> 4, location & COL);
 		print();
+		--stackptr;
+		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 	}
-/*
-	// Not at destination cells
-	while (location != 0x77 && location != 0x78 &&
-		location != 0x87 && location != 0x88) {
-		while (stackptr > 0) {
-			update(location & ROW >> 4, location & COL);
-		}
-	}
-*/
+	print();
 }
