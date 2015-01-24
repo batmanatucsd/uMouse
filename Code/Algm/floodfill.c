@@ -232,8 +232,8 @@ int main() {
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
-	  	printf("Press RETURN to contine");
-    	fgets(name, sizeof(name), stdin);
+	  printf("Press RETURN to contine");
+    fgets(name, sizeof(name), stdin);
 		update((location & ROW) >> 4, location & COL);
 		print();
 		--stackptr;
