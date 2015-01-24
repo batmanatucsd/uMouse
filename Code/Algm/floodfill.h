@@ -2,6 +2,7 @@
 // Globals
 /*****************************************************************************/
 unsigned short board[16][16];
+unsigned short current = 0x0;
 unsigned char location = 0x0;
 unsigned char direction = 0x0; // 0x0 north 0x1 east 0x2 south 0x3 west
 

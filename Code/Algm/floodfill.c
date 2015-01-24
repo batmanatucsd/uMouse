@@ -25,6 +25,7 @@ void setup()
 	}
 
 	// Initialize mouse
+	current = 0xf0;
 	location = 0xf0;
 	direction = 0x0;
 }
@@ -116,7 +117,7 @@ void update(unsigned short row, unsigned short col)
 	// Continue if distances are correct
 	if (stackptr == 0 && min + 1 == (tile & DIST))
 	{
-		location = next;
+		current = next;
 		stack[stackptr++] = next;
 	}
 	else if (min + 1 != (tile & DIST))
@@ -143,9 +144,7 @@ void update(unsigned short row, unsigned short col)
 			stack[stackptr++] = (row << 4) | (col - 1);
 		}
 	}
-
-	// Temporary representation for current cell
-	location = next;
+	current = next;
 }
 
 /*****************************************************************************/
@@ -188,7 +187,13 @@ void print() {
 			else if (board[row][col] & VISITED)
 			{
 				printf("*");
-			} else
+			}
+			else if (row == (current & ROW) >> 4 &&
+				col == (current & COL))
+			{
+				printf("c");
+			}
+			else
 			{
 				printf(" ");
 			}
@@ -211,7 +216,7 @@ void print() {
 }
 
 int main() {
-  char name[99999];
+  	char name[99999];
 	setup();
 
 	// Add test walls here
@@ -225,16 +230,18 @@ int main() {
 	// end
 
 	// Push first cell into stack
-	stack[stackptr++] = location;
-	printf("%d%d", (stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-
+	stack[stackptr++] = current;
 	
-	while (location != 0x77 && location != 0x78 &&
-		location != 0x87 && location != 0x88)
+	while (current != 0x77 && current != 0x78 &&
+		current != 0x87 && current != 0x88)
 	{
 	  	printf("Press RETURN to contine");
     	fgets(name, sizeof(name), stdin);
-		update((location & ROW) >> 4, location & COL);
+		printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
+		printf("Current stack: ");
+		for (int i = 0; i < stackptr; i++)
+			printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
+		printf("\n");
 		print();
 		--stackptr;
 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
