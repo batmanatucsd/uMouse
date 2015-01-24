@@ -19,7 +19,6 @@ void setupTest() {
 	// Initialize, empty 
 	for (unsigned short row = 0; row < 16; row++) {
 		for (unsigned short col = 0; col < 16; col++) {
-			testMaze[row][col] = init(row, col);
 			if (row == 0) testMaze[row][col] |= NORTH_WALL;
 			if (col == 0) testMaze[row][col] |= WEST_WALL;
 			if (col == 15) testMaze[row][col] |= EAST_WALL;
