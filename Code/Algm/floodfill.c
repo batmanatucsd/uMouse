@@ -246,5 +246,4 @@ int main() {
 		--stackptr;
 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 	}
-	print();
 }
