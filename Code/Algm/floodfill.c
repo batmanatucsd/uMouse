@@ -20,12 +20,18 @@ void setup() {
 	direction = 0x0;
 }
 
+/**
+ * Pre-fill cell with values that determine its distance from the center.
+ * Initially assumes a wall-less maze.
+ **/
 unsigned short init(unsigned short row, unsigned short col) {
-	
+
+	//For bottom half of maze, distance from center is the same as top half
 	if(row > 0x07) {
 		row = 0x07 - (row - 0x08);
 	}
-	
+
+	//For right half of maze, distance from center is the same as left half
 	if(col > 0x07) {
 		col = 0x07 - (col - 0x08);
 	}
@@ -57,6 +63,7 @@ void update(unsigned short row, unsigned short col) {
 	// Minimum open neighbor
     unsigned char min = tile;
     unsigned char next = (row << 4) | col;
+
 	if (row - 1 >= 0 && !(tile & NORTH_WALL)) {
 		if ((board[row - 1][col] & DIST) < min) {
 			min = board[row - 1][col] & DIST;
