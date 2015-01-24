@@ -82,7 +82,7 @@ void update(unsigned short row, unsigned short col)
 		{
 			min = board[row - 1][col] & DIST;
 			next = ((row - 1) << 4) | col;
-			direction = 0x0;
+			//direction = 0x0;
 		}
 	}
 	if (col + 1 <= 15 && !(tile & EAST_WALL))
@@ -91,7 +91,7 @@ void update(unsigned short row, unsigned short col)
 		{
 			min = board[row][col + 1] & DIST;
 			next = (row << 4) | (col + 1);
-			direction = 0x1;
+			//direction = 0x1;
 		}
 	}
 	if (row + 1 <= 15 && !(tile & SOUTH_WALL))
@@ -100,7 +100,7 @@ void update(unsigned short row, unsigned short col)
 		{
 			min = board[row + 1][col] & DIST;
 			next = ((row + 1) << 4) | col;
-			direction = 0x2;
+			//direction = 0x2;
 		}
 	}
 	if (col - 1 >= 0 && !(tile & WEST_WALL))
@@ -109,7 +109,7 @@ void update(unsigned short row, unsigned short col)
 		{
 			min = board[row][col - 1] & DIST;
 			next = (row << 4) | (col - 1);
-			direction = 0x3;
+			//direction = 0x3;
 		}
 	}
 
@@ -143,6 +143,9 @@ void update(unsigned short row, unsigned short col)
 			stack[stackptr++] = (row << 4) | (col - 1);
 		}
 	}
+
+	// Temporary representation for current cell
+	location = next;
 }
 
 /*****************************************************************************/
@@ -211,14 +214,26 @@ int main() {
   char name[99999];
 	setup();
 
+	// Add test walls here
+	for (int i = 0; i <= 15; i++)
+	{
+		if (i != 10)
+		{
+			board[i][0] |= EAST_WALL; board[i][1] |= WEST_WALL;
+		}
+	}
+	// end
+
 	// Push first cell into stack
 	stack[stackptr++] = location;
+	printf("%d%d", (stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 
 	
 	while (location != 0x77 && location != 0x78 &&
-		location != 0x87 && location != 0x88) {
-	  printf("Press RETURN to contine");
-    fgets(name, sizeof(name), stdin);
+		location != 0x87 && location != 0x88)
+	{
+	  	printf("Press RETURN to contine");
+    	fgets(name, sizeof(name), stdin);
 		update((location & ROW) >> 4, location & COL);
 		print();
 		--stackptr;
