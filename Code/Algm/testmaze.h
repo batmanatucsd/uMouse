@@ -54,20 +54,21 @@ void setupTest() {
 	//testMaze[0][0] |=
 
 	//Column 1 WALLS:
-	testMaze[14][0] |= 
-	testMaze[13][0] |= EAST_WALL;
-	testMaze[12][0] |= EAST_WALL;
-	testMaze[11][0] |= NORTH_WALL;
-	testMaze[10][0] |= (SOUTH_WALL | NORTH_WALL);
-	testMaze[9][0] |= (SOUTH_WALL | NORTH_WALL);
-	testMaze[8][0] |= SOUTH_WALL;
+	testMaze[15][1] |= WEST_WALL;
+	testMaze[14][1] |= EAST_WALL;
+	testMaze[13][1] |= WEST_WALL;
+	testMaze[12][1] |= (NORTH_WALL | WEST_WALL);
+	testMaze[11][1] |= (SOUTH_WALL | NORTH_WALL);
+	testMaze[10][1] |= (SOUTH_WALL | NORTH_WALL);
+	testMaze[9][1] |= (SOUTH_WALL | NORTH_WALL);
+	testMaze[8][1] |= (SOUTH_WALL | NORTH_WALL);
 	//testMaze[7][0] |= 
-	testMaze[6][0] |= EAST_WALL;
+	testMaze[6][1] |= EAST_WALL;
 	//testMaze[5][0] |= 
-	testMaze[4][0] |= EAST_WALL;
+	testMaze[4][1] |= EAST_WALL;
 	//testMaze[3][0] |= 
-	testMaze[2][0] |= EAST_WALL;
-	testMaze[1][0] |= EAST_WALL; 
+	testMaze[2][1] |= EAST_WALL;
+	testMaze[1][1] |= EAST_WALL; 
 	//testMaze[0][0] |=
 
 
