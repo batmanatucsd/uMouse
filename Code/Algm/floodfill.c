@@ -210,8 +210,8 @@ void print() {
 	printf("+\n");
 }
 
-int main()
-{
+int main() {
+  char name[99999];
 	setup();
 
 	// Add test walls here
@@ -232,8 +232,10 @@ int main()
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
-		// Pop next cell from stack
-		// TODO: print 1 maze per keystroke
+		location != 0x87 && location != 0x88) {
+	  	printf("Press RETURN to contine");
+    	fgets(name, sizeof(name), stdin);
+		update((location & ROW) >> 4, location & COL);
 		print();
 		--stackptr;
 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
