@@ -16,7 +16,7 @@ unsigned char COL = 0x0f;
 //for each cell there will be 4 bits
 //[north][east][south][west] 1 will designate if there is a wall
 // 0 will designate no wall
-unsigned short WALLS
+
 
 // DFS stack
 unsigned char stack[512];
