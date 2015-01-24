@@ -172,7 +172,6 @@ int main() {
 		location != 0x87 && location != 0x88) {
 	  printf("Press RETURN to contine");
     fgets(name, sizeof(name), stdin);
-   // scanf("%[^\n]%c", name);
 		update((location & ROW) >> 4, location & COL);
 		print();
 	}
