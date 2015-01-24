@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "floodfill.h"
-#include "testmaze.h"
 
 /*****************************************************************************/
 // setup():
@@ -236,8 +235,7 @@ int main() {
 	// Initialize maze and mouse location
 	char name[99999];
 	setup();
-	setupTest();
-
+	
 	// Push first cell into stack
 	stack[stackptr++] = location;
 
