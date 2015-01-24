@@ -1,0 +1,27 @@
+Data requirements
+
+Gerber data in RS-274X data format.
+
+Drill drawing including hole sizes and locations. (Interger and Decimal such as 2:4 or 4:3 should be noted when possible)
+
+Fabrication drawing with board dimensions (include and special angles and radius), notes/requirements (example: Layer count, Board thickness, Copper weight, Plating finish etc..) or any special requirements.
+
+If a drawing is not available, basic board requirements must be provided; see notes/requirements for example.
+
+
+limitations:
+
+.008 (.20mm) minimum drill size
+.008 (.20mm) minimum annular ring (pad size larger than drill)
+.008 (.20mm) minimum spacing from vias or traces to ground planes
+
+.004 (.08mm) minimum line / .004 (.08mm) minimum spacing
+
+.006 (.15mm) minimum silkscreen line width (silkscreen to be cleared from all exposed plated surfaces unless the customer specifies not to)
+.004 (.08mm) minimum spacing from edge of mask to edge of silkscreen
+
+
+
+
+
+

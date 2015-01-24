@@ -1,45 +1,49 @@
 #include <stdio.h>
-
 #include "floodfill.h"
 
 /*****************************************************************************/
-// setup
-//
-// Initializes the board with the assumption that no walls exist
+// setup():
+// 		Initialize 16x16 maze using 2D array, assumption that no walls exist
 /*****************************************************************************/
-void setup()
+void setup() 
 {
-	// Initialize board
+	// Initialize maze
 	for (unsigned short row = 0; row < 16; row++)
 	{
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			board[row][col] = init(row, col);
-
-			// Maze borders
-			if (row == 0) board[row][col] |= NORTH_WALL;
-			if (col == 0) board[row][col] |= WEST_WALL;
-			if (col == 15) board[row][col] |= EAST_WALL;
-			if (row == 15) board[row][col] |= SOUTH_WALL;
+			maze[row][col] = init(row, col);
 		}
 	}
+	for (unsigned short i = 0; i < 16; i++)
+	{
+		maze[0][i] |= NORTH_WALL;
+		maze[i][0] |= WEST_WALL;
+		maze[i][15] |= EAST_WALL;
+		maze[15][i] |= SOUTH_WALL;
+	}
 
-	// Initialize mouse
-	location = 0xf0;
-	direction = 0x0;
+	// Initialize mouse, position in bottom left corner, facing up
+	current = 0xf0;
+	location = 0xf0;				// maze[15,0]
+	direction = 0x0;				// 0x0 = up direction
+
+
 }
 
 /*****************************************************************************/
-// init
-//
-// Calculates the distance from given cell to center (no walls)
+// init(unsigned short row, unsigned short col):
+// 		Pre-fill cell with values that determine its distance from the center.
+// 		Initially assumes a wall-less maze.
 /*****************************************************************************/
-unsigned short init(unsigned short row, unsigned short col)
+unsigned short init(unsigned short row, unsigned short col) 
 {	
+	// 2nd and 4th quadrant
 	if(row > 0x07) {
 		row = 0x07 - (row - 0x08);
 	}
 	
+	// 3rd and 4th quadrant
 	if(col > 0x07) {
 		col = 0x07 - (col - 0x08);
 	}
@@ -48,15 +52,17 @@ unsigned short init(unsigned short row, unsigned short col)
 }
 
 /*****************************************************************************/
-// update
+// update(unsigned short row, unsigned short col):
 //
-// Changes current cell distance and check neighbors if necessary
+// 		Changes current cell distance and check neighbors if necessary
 /*****************************************************************************/
 void update(unsigned short row, unsigned short col)
 {
-	unsigned short tile = board[row][col];
+	unsigned short tile = maze[row][col];
 
 	// Update wall map
+	printf("\nTEST LOCATION:%u\n", location);
+	printf("\nTEST TILE:%u\n\n", tile);
 /*
 	// left wall
 	if (abs(analogRead(IR_IN1) - THRESHOLD) > abs(analogREAD(IR_IN1) - leftAmbientLight))
@@ -76,79 +82,90 @@ void update(unsigned short row, unsigned short col)
 	// Minimum open neighbor
     unsigned char min = 255;
     unsigned char next = (row << 4) | col;
+
+    // If (current row - 1) exists, and there is no NORTH wall for this cell
 	if (row - 1 >= 0 && !(tile & NORTH_WALL))
 	{
-		if ((board[row - 1][col] & DIST) < min)
+		if ((maze[row - 1][col] & DIST) < min)
 		{
-			min = board[row - 1][col] & DIST;
+			min = maze[row - 1][col] & DIST;
 			next = ((row - 1) << 4) | col;
-			direction = 0x0;
+			//direction = 0x0;
 		}
 	}
+
+	// If (current col + 1) exists, and there is no EAST wall for this cell
 	if (col + 1 <= 15 && !(tile & EAST_WALL))
 	{
-		if ((board[row][col + 1] & DIST) < min)
+		if ((maze[row][col + 1] & DIST) < min)
 		{
-			min = board[row][col + 1] & DIST;
+			min = maze[row][col + 1] & DIST;
 			next = (row << 4) | (col + 1);
-			direction = 0x1;
+			//direction = 0x1;
 		}
 	}
+
+	// If (current row + 1) exists, and there is no SOUTH wall for this cell
 	if (row + 1 <= 15 && !(tile & SOUTH_WALL))
 	{
-		if ((board[row + 1][col] & DIST) < min)
+		if ((maze[row + 1][col] & DIST) < min)
 		{
-			min = board[row + 1][col] & DIST;
+			min = maze[row + 1][col] & DIST;
 			next = ((row + 1) << 4) | col;
-			direction = 0x2;
+			//direction = 0x2;
 		}
 	}
+
+	// If (current cel - 1) exists, and there is no WEST wall for this cell
 	if (col - 1 >= 0 && !(tile & WEST_WALL))
 	{
-		if ((board[row][col - 1] & DIST) < min)
+		if ((maze[row][col - 1] & DIST) < min)
 		{
-			min = board[row][col - 1] & DIST;
+			min = maze[row][col - 1] & DIST;
 			next = (row << 4) | (col - 1);
-			direction = 0x3;
+			//direction = 0x3;
 		}
 	}
+
 
 	// Continue if distances are correct
 	if (stackptr == 0 && min + 1 == (tile & DIST))
 	{
-		location = next;
+		current = next;
 		stack[stackptr++] = next;
 	}
 	else if (min + 1 != (tile & DIST))
 	{
+
 		// Update distance
-		board[row][col] &= 0xff00;
-		board[row][col] |= min + 1;
+		maze[row][col] &= 0xff00;
+		maze[row][col] |= min + 1;
 
 		// Push open neighbors onto stack
-		if (row - 1 >= 0 && !(board[row][col] & NORTH_WALL))
+		if (row - 1 >= 0 && !(maze[row][col] & NORTH_WALL))
 		{
 			stack[stackptr++] = ((row - 1) << 4) | col;
 		}
-		if (col + 1 <= 15 && !(board[row][col] & EAST_WALL))
+		if (col + 1 <= 15 && !(maze[row][col] & EAST_WALL))
 		{
 			stack[stackptr++] = (row << 4) | (col + 1);
 		}
-		if (row + 1 <= 15 && !(board[row][col] & SOUTH_WALL))
+		if (row + 1 <= 15 && !(maze[row][col] & SOUTH_WALL))
 		{
 			stack[stackptr++] = ((row + 1) << 4) | col;
 		}
-		if (col - 1 >= 0 && !(board[row][col] & WEST_WALL))
+		if (col - 1 >= 0 && !(maze[row][col] & WEST_WALL))
 		{
 			stack[stackptr++] = (row << 4) | (col - 1);
 		}
 	}
+	current = next;
 }
 
 /*****************************************************************************/
-// print
-//
-// Print out current state of maze
+// print():
+// 		Print out the cell, with the mouse location designated with a carrot
+// 		sign pointing in direction it faces
 /*****************************************************************************/
 void print() {
 
@@ -157,14 +174,14 @@ void print() {
 		// North wall
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			printf("+%s", board[row][col] & NORTH_WALL?
+			printf("+%s", maze[row][col] & NORTH_WALL?
 				"---": "   ");
 		}
 		printf("+\n");
 
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			printf("%s", board[row][col] & WEST_WALL?
+			printf("%s", maze[row][col] & WEST_WALL?
 				"|": " ");
 
 			// Location direction
@@ -182,46 +199,62 @@ void print() {
 					case 0x3: printf("<");
 				}
 			}
-			else if (board[row][col] & VISITED)
+			else if (maze[row][col] & VISITED)
 			{
 				printf("*");
-			} else
+			}
+			else if (row == (current & ROW) >> 4 &&
+				col == (current & COL))
+			{
+				printf("c");
+			}
+			else
 			{
 				printf(" ");
 			}
 
 			// Print 2 digits
-			printf("%2d", (board[row][col] & DIST) % 100);
+			printf("%2d", (maze[row][col] & DIST) % 100);
 		}
 
-		printf("%s\n", board[row][15] & EAST_WALL?
+		printf("%s\n", maze[row][15] & EAST_WALL?
 			"|": " ");
 	}
 
 	// South wall
 	for (unsigned short col = 0; col < 16; col++)
 	{
-		printf("+%s", board[15][col] & SOUTH_WALL?
+		printf("+%s", maze[15][col] & SOUTH_WALL?
 			"---": "   ");
 	}
 	printf("+\n");
 }
 
-int main()
-{
-	setup();
+int main() {
 
+	// Initialize maze and mouse location
+	char name[99999];
+	setup();
+	
 	// Push first cell into stack
 	stack[stackptr++] = location;
 
-	
-	while (location != 0x77 && location != 0x78 &&
-		location != 0x87 && location != 0x88)
+	while (current != 0x77 && current != 0x78 &&
+		current != 0x87 && current != 0x88)
 	{
-		// Pop next cell from stack
+	  	printf("Press RETURN to contine");
+    	fgets(name, sizeof(name), stdin);
+    	// DEBUG
+		printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
+		printf("Current stack: ");
+		for (int i = 0; i < stackptr; i++)
+			printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
+		printf("\n");
+		// DEBUG
 		print();
 		--stackptr;
 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+		// if (stackptr == 0) move();
 	}
-	print();
+
 }
