@@ -22,8 +22,10 @@ int main(void)
   // Only for debug
    USART_Configuration();
    uint8_t test =0;
- //  while(1)                                                                      
- //  {                                                                             
+   
+   //  Commented portion
+ //  while(1)                                                                      /*{{{*/
+ //  {                                                                             /*{{{*/
  //    /*
  //    // USART debugging
  //    USART_Write('d');
@@ -37,8 +39,9 @@ int main(void)
  //    GPIO_ResetBits(GPIOC, GPIO_Pin_9);                                          
     
  //    delay(1000000);                                                             
- //  }                  
-	// return 0;
+ //  }                  /*}}}*/
+	// return 0;/*}}}*/
+  
    while(1)
    {
     USART_Write('t');
