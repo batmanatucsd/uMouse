@@ -14,13 +14,14 @@ void setup()
 		for (unsigned short col = 0; col < 16; col++)
 		{
 			maze[row][col] = init(row, col);
-
-			// Maze borders
-			if (row == 0) maze[row][col] |= NORTH_WALL;
-			if (col == 0) maze[row][col] |= WEST_WALL;
-			if (col == 15) maze[row][col] |= EAST_WALL;
-			if (row == 15) maze[row][col] |= SOUTH_WALL;
 		}
+	}
+	for (unsigned short i = 0; i < 16; i++)
+	{
+		maze[0][i] |= NORTH_WALL;
+		maze[i][0] |= WEST_WALL;
+		maze[i][15] |= EAST_WALL;
+		maze[15][i] |= SOUTH_WALL;
 	}
 
 	// Initialize mouse, position in bottom left corner, facing up
