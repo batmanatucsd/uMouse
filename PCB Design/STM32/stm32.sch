@@ -6401,6 +6401,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="243.84" y1="259.08" x2="251.46" y2="259.08" width="0.1524" layer="91"/>
 <pinref part="C13" gate="G$1" pin="1"/>
 <wire x1="243.84" y1="248.92" x2="251.46" y2="248.92" width="0.1524" layer="91"/>
+<junction x="251.46" y="248.92"/>
 </segment>
 <segment>
 <pinref part="C3" gate="G$1" pin="2"/>
@@ -7526,13 +7527,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="U1" gate="A" pin="PB0"/>
 <wire x1="162.56" y1="195.58" x2="147.32" y2="195.58" width="0.1524" layer="91"/>
 <label x="147.32" y="195.58" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="LED4" class="0">
-<segment>
-<pinref part="U1" gate="A" pin="PB1"/>
-<wire x1="162.56" y1="190.5" x2="147.32" y2="190.5" width="0.1524" layer="91"/>
-<label x="147.32" y="190.5" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="BUTTON1" class="0">
