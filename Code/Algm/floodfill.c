@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "floodfill.h"
-#include "testmaze.h"
 
 /*****************************************************************************/
 // setup():
@@ -236,8 +235,7 @@ int main() {
 	// Initialize maze and mouse location
 	char name[99999];
 	setup();
-	setupTest();
-
+	
 	// Push first cell into stack
 	stack[stackptr++] = location;
 
@@ -246,15 +244,17 @@ int main() {
 	{
 	  	printf("Press RETURN to contine");
     	fgets(name, sizeof(name), stdin);
+    	// DEBUG
 		printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
 		printf("Current stack: ");
-
 		for (int i = 0; i < stackptr; i++)
 			printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
 		printf("\n");
+		// DEBUG
 		print();
 		--stackptr;
 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+		// if (stackptr == 0) move();
 	}
 
 }

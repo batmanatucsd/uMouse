@@ -1,4 +1,4 @@
-use 0603 everywhere possible
+use 0805 everywhere possible
 
 VCC = 3.3v
 VDDA = 3.3V
@@ -23,7 +23,7 @@ BOOT0--GND
 BOOT1--GND
 BFB2--in the user option memory
 
-USART1 be used in simple debug situation   (USART2(remapped) is not available on LQFP64)
+USART1 be used in simple debug situation
 PA8--USART1_CK
 PA9--USART1_TX
 PA10--USART1_RX
@@ -40,30 +40,35 @@ PB4--JT_TRST
 
 CONNECT to mpu6050
 PB5--I2C1_SMBA
-PB6--I2C1_SCL
-PB7--I2C1_SDA
-PB8--INT
+PB8--I2C1_SCL--REMAP
+PB9--I2C1_SDA--REMAP
+PC12--INT
 
 CONNECT to motor driver
-PA1--M1PWM(use timer 2 channel 2)
+PA1--M1PWM(TIM5_CH2)
 PA2--M1I2
 PA3--M1I1
-PA4--M2I1
-PA5--M2I2
-PA6--M2PWM(use timer 3 channel 1)
+PA4--STBY
+PA5--M2I1
+PA6--M2I2
+PA7--M2PWM(TIM3_CH2)
 
 CONNECT to encoder(possible interrupt)
-PB12--M1CA
-PB13--M1CB
-PB14--M2CA
-PB15--M2CB
+PB6--M1CA(TIM4_CH1)
+PB7--M1CB(TIM4_CH2)
+PC7--M2CA(TIM3_CH2)
+PC6--M2CB(TIM3_CH1)
 
 CONNECT to infarred sensor(Logic Level Converter?)
 PC0--IR_IN1
 PC1--IR_IN2
 PC2--IR_IN3
 PC3--IR_IN4
-PC6--IR_OUT1
-PC7--IR_OUT2
-PC8--IR_OUT3
-PC9--IR_OUT4
+PB15--IR_OUT1
+PB14--IR_OUT2
+PB13--IR_OUT3
+PB12--IR_OUT4
+
+PB10--BUTTON1
+PC4--LED1
+PC5--LED2
