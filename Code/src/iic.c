@@ -2,32 +2,19 @@
 #include "mcu_lib.h"
 
 /*****************************************************************************/
+// Global Variable
+/*****************************************************************************/
+uint8_t IIC_RX_Buffer[IIC_RX_BUFF_SIZE];
+uint8_t IIC_RX_OUTPUT;
+
+/*****************************************************************************/
 // Init MPU
 //
 // Set configurations for MPU6050(debug for adxl345 right now)
 /*****************************************************************************/
-void init_sensor(void)
+void sensor_init(void)
 {
-  /* initiate start sequence */
-  I2C_GenerateSTART(I2C1, ENABLE);
-  /* check start bit flag */
-  while(!I2C_GetFlagStatus(I2C1, I2C_FLAG_SB));
-  /*send write command to chip*/
-  I2C_Send7bitAddress(I2C1, MPU_ADDR, I2C_Direction_Transmitter);
-  /*check master is now in Tx mode*/
-  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-  /*mode register address*/
-  I2C_SendData(I2C1, 0x02);
-  /*wait for byte send to complete*/
-  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-  /*clear bits*/
-  I2C_SendData(I2C1, 0x00);
-  /*wait for byte send to complete*/
-  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-  /*generate stop*/
-  I2C_GenerateSTOP(I2C1, ENABLE);
-  /*stop bit flag*/
-  while(I2C_GetFlagStatus(I2C1, I2C_FLAG_STOPF));
+
 }
 
 /*****************************************************************************/
@@ -191,6 +178,30 @@ uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
   return TEMP;
 }
 
+void IIC_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_t Data)
+{
+  /* Send START condition */
+  I2C_GenerateSTART(I2C1, ENABLE);
+  /* Test on EV5 and clear it */
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
+  /* Send IIC address for write */
+  I2C_Send7bitAddress(I2C1, DeviceAddr, I2C_Direction_Transmitter);
+  /* Test on EV6 and clear it */
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+  /* Send the IIC internal address to write to */
+  I2C_SendData(I2C1, RegisterAddr);
+  /* Test on EV8_2 and clear it */
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+  /*clear bits*/
+  I2C_SendData(I2C1, Data);
+  /*wait for byte send to complete*/
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+  /* Send STOP condition */
+  I2C_GenerateSTOP(I2C1, ENABLE);
+  /*stop bit flag*/
+  while(I2C_GetFlagStatus(I2C1, I2C_FLAG_STOPF));
+}
+
 /*****************************************************************************/
 // IIC_DMA_Read
 //
@@ -199,10 +210,12 @@ uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
 // Greatly save CPU time
 // Current Function: Read register value
 // Prerequsite: NEED to enable DMA ans NVIC before use.
+// Limits: cannot read a single bit
 /*****************************************************************************/
 void IIC_DMA_Read(uint8_t DeviceAddr, uint8_t RegisterAddr)
 {
   DMA_Cmd(IIC_RX_DMA_Channel, ENABLE);
+  DMA_ITConfig(IIC_RX_DMA_Channel, DMA_IT_TC, ENABLE);
 
   I2C_AcknowledgeConfig(I2C1, ENABLE);
 
@@ -257,7 +270,8 @@ void IIC_DMA_Read(uint8_t DeviceAddr, uint8_t RegisterAddr)
 
 void DMA1_Channel7_IRQHandler(void)
 {
-  if (DMA_GetFlagStatus(DMA1_FLAG_TC7))
+  USART_Write(0x04);
+  if (DMA_GetFlagStatus(DMA1_FLAG_TC7)==SET)
   {
     /* Clear transmission complete flag */
     DMA_ClearFlag(DMA1_FLAG_TC7);
@@ -265,18 +279,11 @@ void DMA1_Channel7_IRQHandler(void)
     I2C_DMACmd(I2C1, DISABLE);
     /* Send I2C1 STOP Condition */
     I2C_GenerateSTOP(I2C1, ENABLE);
+    /*stop bit flag*/
+    while(I2C_GetFlagStatus(I2C1, I2C_FLAG_STOPF));
     /* Disable DMA channel*/
     DMA_Cmd(IIC_RX_DMA_Channel, DISABLE);
 
-
-    USART_Write(IIC_RX_Buffer[0]);
-
-    //Read Accel data from byte 0 to byte 2
-    //for(i=0; i<3; i++)
-    //AccelGyro[i]=((s16)((u16)I2C_Rx_Buffer[2*i] << 8) + I2C_Rx_Buffer[2*i+1]);
-    //Skip byte 3 of temperature data
-    //Read Gyro data from byte 4 to byte 6
-    //for(i=4; i<7; i++)
-    //AccelGyro[i-1]=((s16)((u16)I2C_Rx_Buffer[2*i] << 8) + I2C_Rx_Buffer[2*i+1]);
+    IIC_RX_OUTPUT = 1;
     }
 }
