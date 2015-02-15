@@ -57,6 +57,7 @@ SRC	 = $(notdir $(wildcard $(SRCDIR)/*.c))
 # used parts of the STM-Library
 SRC	+= core_cm3.c
 SRC += system_stm32f10x.c
+SRC += misc.c
 SRC	+= stm32f10x_adc.c
 SRC += stm32f10x_dma.c
 SRC	+= stm32f10x_gpio.c
@@ -70,7 +71,7 @@ FEATURES+=-DSERIAL_DEBUG
 endif
 
 # the object file to be compiled
-OBJ := $(notdir $(STARTUP:.s=.o)) $(SRC:.c=.o) 
+OBJ := $(notdir $(STARTUP:.s=.o)) $(SRC:.c=.o)
 
 #FLAGS
 GFLAGS  = -mthumb -mcpu=cortex-m3
@@ -81,15 +82,15 @@ CFLAGS  = $(OPT) $(GFLAGS) -g -Wall
 ASFLAGS = $(GFLAGS) -g
 
 INCFLAGS  = $(addprefix -I, $(INC))
-FEATURES += -DUSE_STDPERIPH_DRIVER
+FEATURES += -DUSE_STDPERIPH_DRIVER -Wall
 
 # Create a raw binary file from the ELF version
 $(PROJECT).bin: $(PROJECT).elf
 	$(CP) -O binary $< $@
 
-# Linking object file 
-$(PROJECT).elf: $(addprefix $(OBJDIR)/,$(OBJ)) 
-	$(LD) $(LDFLAGS) $^ -o $@ 
+# Linking object file
+$(PROJECT).elf: $(addprefix $(OBJDIR)/,$(OBJ))
+	$(LD) $(LDFLAGS) $^ -o $@
 
 # compile and generate dependency info
 $(OBJDIR)/%.o: %.c
