@@ -15,7 +15,7 @@ void RCC_Configuration(void)
   // RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
   /* ADCCLK = PCLK2/4 for ADC */
-  RCC_ADCCLKConfig(RCC_PCLK2_Div4); 
+  RCC_ADCCLKConfig(RCC_PCLK2_Div4);
 
    /* TIM clock enable for PWM */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
@@ -31,7 +31,7 @@ void RCC_Configuration(void)
 //
 // Set general purpose input & output pin configurations
 /*****************************************************************************/
-void GPIO_Configuration(void) 
+void GPIO_Configuration(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -47,15 +47,15 @@ void GPIO_Configuration(void)
 	{
 	  GPIO_InitTypeDef GPIO_InitStructure;
 
-	  // Configure PC.02, PC.03 and PC.04 (ADC Channel12, ADC Channel13 and 
-	  //   ADC Channel14) as analog inputs 
+	  // Configure PC.02, PC.03 and PC.04 (ADC Channel12, ADC Channel13 and
+	  //   ADC Channel14) as analog inputs
 	  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4;
 	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
 	  GPIO_Init(GPIOC, &GPIO_InitStructure);
 	}
 	*/
 
-  // GPIOA Configuration:TIM3 Channel1, 2, 3 and 4 as alternate function push-pull 
+  // GPIOA Configuration:TIM3 Channel1, 2, 3 and 4 as alternate function push-pull
   // TIM3
   // Channel 1 : PA6
   // Channel 2 : PA7
@@ -72,20 +72,20 @@ void GPIO_Configuration(void)
 #ifdef  SERIAL_DEBUG
 /*****************************************************************************/
 // USART_Configuration
-// 
+//
 // Set configurations for serial connection
 // Only called when in debug mode
 /*****************************************************************************/
 void USART_Configuration(void)
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
-	
+
   GPIO_InitTypeDef GPIO_InitStructure;
-  
+
 	// **** GPIO config for serial connection *** //
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);  
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -141,7 +141,7 @@ void ADC_Configuration(void)
   ADC_InitStructure.ADC_ScanConvMode = DISABLE;
   /* Don't do contimuous conversions - do them on demand */
   ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
-  // Start conversin by software, not an external trigger 
+  // Start conversin by software, not an external trigger
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
   /* Conversions are 12 bit - put them in the lower 12 bits of the result */
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
@@ -170,10 +170,10 @@ void ADC_Configuration(void)
 /*****************************************************************************/
 void PWM_Configuration(void)
 {
-	// Compute the prescaler value 
+	// Compute the prescaler value
   uint16_t PrescalerValue = (uint16_t) (SystemCoreClock / 24000000) - 1;
-  
-  // Time base configuration 
+
+  // Time base configuration
   TIM_TimeBaseStructure.TIM_Period = 665;
   TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
@@ -182,7 +182,7 @@ void PWM_Configuration(void)
   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 
 
-  // PWM1 Mode configuration: Channel3 
+  // PWM1 Mode configuration: Channel3
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
   TIM_OCInitStructure.TIM_Pulse = PWIDTH_MAX;
@@ -192,7 +192,7 @@ void PWM_Configuration(void)
   TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
 
 
-  // PWM1 Mode configuration: Channel4 
+  // PWM1 Mode configuration: Channel4
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
   TIM_OCInitStructure.TIM_Pulse = PWIDTH_0;
 
@@ -202,48 +202,15 @@ void PWM_Configuration(void)
 
   TIM_ARRPreloadConfig(TIM3, ENABLE);
 
-  // TIM3 enable counter 
+  // TIM3 enable counter
   TIM_Cmd(TIM3, ENABLE);
 }
 
 /*****************************************************************************/
-// MPU_Configuration
+// Init MPU
 //
 // Set configurations for MPU6050(debug for adxl345 right now)
 /*****************************************************************************/
-void MPU_Configuration(void)
-{
-  /* Enable I2C and I2C_PORT & Alternate Function clocks */
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
-  
-  /* Reset I2C IP */
-  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, ENABLE);
-  
-  /* Release reset signal of I2C IP */
-  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, DISABLE);
-  
-  GPIO_InitTypeDef GPIO_InitStructure;
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-  I2C_InitTypeDef I2C_InitStructure;
-  
-  I2C_InitStructure.I2C_ClockSpeed = 300000;
-  I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
-  I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
-  I2C_InitStructure.I2C_OwnAddress1 = 0x00;
-  I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
-  I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-  
-  I2C_Init(I2C1, &I2C_InitStructure);
-
-  I2C_Cmd(I2C1, ENABLE);
-}
-
 void init_sensor(void)
 {
   /* initiate start sequence */
@@ -268,7 +235,60 @@ void init_sensor(void)
   while(I2C_GetFlagStatus(I2C1, I2C_FLAG_STOPF));
 }
 
-uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
+/*****************************************************************************/
+// I2C_Configuration
+//
+// Design to be an univerial I2C initializer
+// use once in the before all I2C communication
+// Current Function: enable I2C1 on PB8 and PB9 (Remap)
+/*****************************************************************************/
+void IIC_Configuration(void)
+{
+  /* Enable I2C and I2C_PORT & Alternate Function clocks */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
+
+  /* Reset I2C IP */
+  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, ENABLE);
+
+  /* Release reset signal of I2C IP */
+  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, DISABLE);
+
+  /* Configure the GPIO on the corresponding pins */
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+  /* Enable the Remap */
+  GPIO_PinRemapConfig(GPIO_Remap_I2C1, ENABLE);
+
+  /* Configure the I2C */
+  I2C_InitTypeDef I2C_InitStructure;
+
+  I2C_InitStructure.I2C_ClockSpeed = 300000;
+  I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+  I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+  I2C_InitStructure.I2C_OwnAddress1 = 0x00;
+  I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+  I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+
+  I2C_Init(I2C1, &I2C_InitStructure);
+
+  /*Enable I2C*/
+  I2C_Cmd(I2C1, ENABLE);
+}
+
+/*****************************************************************************/
+// I2C_Configuration
+//
+// Design to be an univerial I2C initializer
+// use once in the before all I2C communication
+// Current Function: enable I2C1 on PB8 and PB9 (Remap)
+/*****************************************************************************/
+uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
 {
   uint8_t TEMP;
   I2C_AcknowledgeConfig(I2C1, ENABLE);
@@ -288,13 +308,13 @@ uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
   while (!I2C_GetFlagStatus(I2C1,I2C_FLAG_TXE));
   /**********************************************/
   I2C_GenerateSTART(I2C1, ENABLE);
-  
+
   while (!I2C_GetFlagStatus(I2C1,I2C_FLAG_SB));
-  
+
   I2C_Send7bitAddress(I2C1, DeviceAddr, I2C_Direction_Receiver);
-    
+
   while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
-    
+
   while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
   TEMP = I2C_ReceiveData(I2C1);
   /**********************************************/

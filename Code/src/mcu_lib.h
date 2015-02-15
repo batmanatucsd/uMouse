@@ -39,9 +39,9 @@ void GPIO_Configuration(void);
 
 void ADC_Configuration(void);
 void PWM_Configuration(void);
-void MPU_Configuration(void);
 
-uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr);
+void IIC_Configuration(void);
+uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr);
 
 #ifdef  SERIAL_DEBUG
 void USART_Configuration(void);
