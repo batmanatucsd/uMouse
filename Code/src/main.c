@@ -10,19 +10,18 @@ void delay(volatile int);
 /*****************************************************************************/
 int main(void)
 {
-	
-  RCC_Configuration();
+	RCC_Configuration();
 	//GPIO_Configuration();
   // ADC_Configuration();
   //PWM_Configuration();
-  MPU_Configuration();
+  IIC_Configuration();
 
-  
+
 
   // Only for debug
    USART_Configuration();
    uint8_t test =0;
-   
+
    //  Commented portion
  //  while(1)                                                                      /*{{{*/
  //  {                                                                             /*{{{*/
@@ -31,22 +30,22 @@ int main(void)
  //    USART_Write('d');
  //    */
 
- //    //GPIO_SetBits(GPIOC, GPIO_Pin_8);                                          
- //    GPIO_SetBits(GPIOC, GPIO_Pin_9);                                            
- //    delay(10000);                                                             
- 
- //    //GPIO_ResetBits(GPIOC, GPIO_Pin_8);                                        
- //    GPIO_ResetBits(GPIOC, GPIO_Pin_9);                                          
-    
- //    delay(1000000);                                                             
+ //    //GPIO_SetBits(GPIOC, GPIO_Pin_8);
+ //    GPIO_SetBits(GPIOC, GPIO_Pin_9);
+ //    delay(10000);
+
+ //    //GPIO_ResetBits(GPIOC, GPIO_Pin_8);
+ //    GPIO_ResetBits(GPIOC, GPIO_Pin_9);
+
+ //    delay(1000000);
  //  }                  /*}}}*/
 	// return 0;/*}}}*/
-  
+
    while(1)
    {
-    USART_Write('t');
+    USART_Write('a');
 
-    test = I2C_ReadDeviceRegister(MPU_ADDR,DEVID);
+    test = IIC_ReadDeviceRegister(MPU_ADDR,DEVID);
     USART_Write(test);
    }
 }
