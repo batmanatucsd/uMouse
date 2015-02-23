@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "floodfill.h"
+//#include "floodfill.h"
+#include "testmaze.h"
 
 /*****************************************************************************/
 // setup():
@@ -174,14 +175,14 @@ void print() {
 		// North wall
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			printf("+%s", maze[row][col] & NORTH_WALL?
+			printf("+%s", testMaze[row][col] & NORTH_WALL?
 				"---": "   ");
 		}
 		printf("+\n");
 
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			printf("%s", maze[row][col] & WEST_WALL?
+			printf("%s", testMaze[row][col] & WEST_WALL?
 				"|": " ");
 
 			// Location direction
@@ -199,7 +200,7 @@ void print() {
 					case 0x3: printf("<");
 				}
 			}
-			else if (maze[row][col] & VISITED)
+			else if (testMaze[row][col] & VISITED)
 			{
 				printf("*");
 			}
@@ -214,17 +215,17 @@ void print() {
 			}
 
 			// Print 2 digits
-			printf("%2d", (maze[row][col] & DIST) % 100);
+			printf("%2d", (testMaze[row][col] & DIST) % 100);
 		}
 
-		printf("%s\n", maze[row][15] & EAST_WALL?
+		printf("%s\n", testMaze[row][15] & EAST_WALL?
 			"|": " ");
 	}
 
 	// South wall
 	for (unsigned short col = 0; col < 16; col++)
 	{
-		printf("+%s", maze[15][col] & SOUTH_WALL?
+		printf("+%s", testMaze[15][col] & SOUTH_WALL?
 			"---": "   ");
 	}
 	printf("+\n");
@@ -232,14 +233,17 @@ void print() {
 
 int main() {
 
-	// Initialize maze and mouse location
-	char name[99999];
+	//Initialize maze, testmaze, and mouse location
+	//char name[99999];
 	setup();
+	setupTest();
 	
 	// Push first cell into stack
 	stack[stackptr++] = location;
 
-	while (current != 0x77 && current != 0x78 &&
+	//print();
+
+	/**while (current != 0x77 && current != 0x78 &&
 		current != 0x87 && current != 0x88)
 	{
 	  	printf("Press RETURN to contine");
@@ -255,6 +259,6 @@ int main() {
 		--stackptr;
 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 		// if (stackptr == 0) move();
-	}
+	} **/
 
 }

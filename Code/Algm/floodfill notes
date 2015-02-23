@@ -1,0 +1,43 @@
+0x0800
+
+if row > 0x07 = 0000 0111
+				0000 1000
+				then it is equal to north?
+
+if col > 0x07 = 0000 0111
+				0000 1000
+
+0x0e - col - row:
+0x0e = 0000 1110
+
+location : 1111 0000
+
+
+0000 1000 0000 0000 	north
+0000 0100 0000 0000 	east
+0000 0010 0000 0000 	south
+0000 0001 0000 0000 	west
+
+row: 1111 0000
+col: 0000 1111
+
+
+
+you can follow a path to the center but if there is a wall we dont know how to respond to it yet 
+
+
+--DO TESTS
+-make random mazes
+-corner cases
+
+
+find the minimum neighbor that has the minimum distance to the center and then we make sure to check if the distance in that cell 
+
+
+ORing with northwall... if there is 1 then it is a northwall
+
+***************************************************************************
+
+update() :
+
+// get the value IN THE TILE : you're going to get 14, because that is how far it is from the center. 
