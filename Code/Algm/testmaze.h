@@ -26,7 +26,7 @@ void setupTest() {
 
 			//Call init from floodfill.c
 			//Pre-fills cells with distance from center, assuming no walls
-			testMaze[row][col] = init(row, col);
+			//testMaze[row][col] = init(row, col);
 
 			if (row == 0) testMaze[row][col] |= NORTH_WALL;
 			if (col == 0) testMaze[row][col] |= WEST_WALL;
@@ -52,16 +52,31 @@ void setupTest() {
 	//Read the text file to create maze
 	//int i = 0;
 	char * line = NULL;
-	int value;
+	unsigned short value;
+	int row = 0;
+	int col = 0;
 	size_t len = 0;
 	ssize_t read;
+
 
 	//Read to end of file
 	while(!feof(file)) {
 		if ((read = getline(&line, &len, file)) != -1 && line[0] != '/') {
+			
+			//Convert the value in file into an int
 			printf("line value: %s\n", line);
 			value = atoi(line);
+			
+			value = value << 8;
 			printf("int value: %d\n", value);
+
+			// = 0; //|= value;
+			//testMaze[row][col] |= value;
+			row++;
+			if (row == 15) {
+				col++;
+				row = 0;
+			}
 
 			//Create maze by OR'ing the values inputted in txt file
 			testMaze [row][col] |= value;
@@ -70,6 +85,7 @@ void setupTest() {
 			memset(line, 0, sizeof(*line));
 		}
 	}
+	//printf("Testing testmaze access: %u\n",testMaze[1][3]);
 
 }
 	//Loop through text file to create the maze.
