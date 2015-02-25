@@ -27,18 +27,18 @@ void pid()
     rightIR = analogRead(IR_IN4);
 
     leftIR -= leftAmbientLight;
-    rightIR -= rightAmbientLight; 
+    rightIR -= rightAmbientLight;
   */
 
 	if ((leftIR >= THRESHOLD && rightIR <= THRESHOLD) ||
 		(leftIR <= THRESHOLD && rightIR >= THRESHOLD))
   {
 		currentError = leftIR - rightIR;
-	} 
+	}
   else if (leftIR < THRESHOLD)
   {
 		currentError =  THRESHOLD - rightIR;
-	} 
+	}
   else if (rightIR < THRESHOLD)
   {
 		currentError = leftIR - THRESHOLD;
