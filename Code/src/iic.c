@@ -7,6 +7,8 @@
 uint8_t IIC_RX_Buffer[IIC_RX_BUFF_SIZE];
 uint8_t IIC_RX_OUTPUT;
 
+static void IIC_DMA_Configuration(IIC_DMADirection_TypeDef Direction, uint8_t* buffer);
+
 /*****************************************************************************/
 // Init MPU
 //
@@ -14,6 +16,7 @@ uint8_t IIC_RX_OUTPUT;
 /*****************************************************************************/
 void sensor_init(void)
 {
+
 
 }
 
@@ -26,12 +29,12 @@ void sensor_init(void)
 /*****************************************************************************/
 void IIC_Configuration(void)
 {
-  /* Enable I2C and I2C_PORT clocks */
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
+  GPIO_InitTypeDef GPIO_InitStructure;
 
-  /* Reset I2C*/
-  //I2C_DeInit(I2C1);
+  /*Enable I2C clk, GPIO clk, AF(always required?) and remap(if needed)*/
+  RCC_APB1PeriphClockCmd(IIC_CLK, ENABLE);
+  RCC_APB2PeriphClockCmd(IIC_GPIO_CLK | RCC_APB2Periph_AFIO, ENABLE);
+  GPIO_PinRemapConfig(GPIO_Remap_I2C1, ENABLE);
 
   /* Reset I2C IP */
   RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, ENABLE);
@@ -40,15 +43,10 @@ void IIC_Configuration(void)
   RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, DISABLE);
 
   /* Configure the GPIO on the corresponding pins */
-  GPIO_InitTypeDef GPIO_InitStructure;
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+  GPIO_InitStructure.GPIO_Pin = IIC_SCL | IIC_SDA;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-  /* Enable the Remap */
-  GPIO_PinRemapConfig(GPIO_Remap_I2C1, ENABLE);
 
   /* Configure the I2C */
   I2C_InitTypeDef I2C_InitStructure;
@@ -62,13 +60,12 @@ void IIC_Configuration(void)
 
   I2C_Init(I2C1, &I2C_InitStructure);
 
-  #ifdef IIC_DMA_EN
-    IIC_DMA_Configuration();
-    IIC_NVIC_Configuration();
-  #endif
-
   /*Enable I2C*/
   I2C_Cmd(I2C1, ENABLE);
+
+  #ifdef IIC_DMA_EN
+    IIC_NVIC_Configuration();
+  #endif
 }
 
 /*****************************************************************************/
@@ -78,39 +75,62 @@ void IIC_Configuration(void)
 // Current Function: Enable I2C RX DMA
 // Prerequsite: NONE
 /*****************************************************************************/
-void IIC_DMA_Configuration(void)
+static void IIC_DMA_Configuration(IIC_DMADirection_TypeDef Direction, uint8_t* buffer)
 {
   DMA_InitTypeDef DMA_InitStructure;
 
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+  RCC_AHBPeriphClockCmd(IIC_DMA_CLK, ENABLE);
 
   //Reset DMA1 Channel 7 to default, which is used for I2C RX
-  DMA_DeInit(IIC_RX_DMA_Channel);
+  //DMA_DeInit(IIC_RX_DMA_Channel);
 
   //Specify the I2C address
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)IIC_DR_Address;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)IIC_RX_Buffer;
+  DMA_InitStructure.DMA_PeripheralBaseAddr = IIC_DR_Addr;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)buffer;
 
   //Specify whether DMA run once or serveral time
   DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
 
   //Specify the dma priority
-  DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
 
   //Specify the direction of dma
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
 
   //Specify whether Peripheral and Memory will increse by itself
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 
   //Specify the size
-  DMA_InitStructure.DMA_BufferSize = IIC_RX_BUFF_SIZE;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
 
-  DMA_Init(IIC_RX_DMA_Channel, &DMA_InitStructure);
+  /* If using DMA for Reception */
+  if (Direction == IIC_DMA_RX)
+  {
+    /* Initialize the DMA_DIR member */
+    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+
+    /* Initialize the DMA_BufferSize member */
+    DMA_InitStructure.DMA_BufferSize = 2;
+
+    DMA_DeInit(IIC_DMA_RX_CHANNEL);
+
+    DMA_Init(IIC_DMA_RX_CHANNEL, &DMA_InitStructure);
+  }
+  /* If using DMA for Transmission */
+  else if (Direction == IIC_DMA_TX)
+  {
+    /* Initialize the DMA_DIR member */
+    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+
+    /* Initialize the DMA_BufferSize member */
+    DMA_InitStructure.DMA_BufferSize = 1;
+
+    DMA_DeInit(IIC_DMA_TX_CHANNEL);
+
+    DMA_Init(IIC_DMA_TX_CHANNEL, &DMA_InitStructure);
+  }
 }
 
 /*****************************************************************************/
@@ -125,8 +145,8 @@ void IIC_NVIC_Configuration(void)
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel7_IRQn; //I2C1 RX connect to channel 7 of DMA1
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x05;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x05;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 }
@@ -147,7 +167,7 @@ uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
   /**********************************************/
   I2C_GenerateSTART(I2C1, ENABLE);
 
-  while(!I2C_GetFlagStatus(I2C1, I2C_FLAG_SB));
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
   I2C_Send7bitAddress(I2C1, DeviceAddr, I2C_Direction_Transmitter);
 
@@ -155,11 +175,11 @@ uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
 
   I2C_SendData(I2C1, RegisterAddr);
 
-  while (!I2C_GetFlagStatus(I2C1,I2C_FLAG_TXE));
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
   /**********************************************/
   I2C_GenerateSTART(I2C1, ENABLE);
 
-  while (!I2C_GetFlagStatus(I2C1,I2C_FLAG_SB));
+  while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
   I2C_Send7bitAddress(I2C1, DeviceAddr, I2C_Direction_Receiver);
 
@@ -214,8 +234,8 @@ void IIC_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_t D
 /*****************************************************************************/
 void IIC_DMA_Read(uint8_t DeviceAddr, uint8_t RegisterAddr)
 {
-  DMA_Cmd(IIC_RX_DMA_Channel, ENABLE);
-  DMA_ITConfig(IIC_RX_DMA_Channel, DMA_IT_TC, ENABLE);
+  //DMA_Cmd(IIC_RX_DMA_Channel, ENABLE);
+  //DMA_ITConfig(IIC_RX_DMA_Channel, DMA_IT_TC, ENABLE);
 
   I2C_AcknowledgeConfig(I2C1, ENABLE);
 

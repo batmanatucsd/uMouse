@@ -10,44 +10,55 @@ void delay(volatile int);
 /*****************************************************************************/
 int main(void)
 {
-	RCC_Configuration();
+	//RCC_Configuration();
 	//GPIO_Configuration();
   // ADC_Configuration();
   //PWM_Configuration();
   IIC_Configuration();
 
-
-
   // Only for debug
-   USART_Configuration();
-   uint8_t test =0;
+  USART_Configuration();
+  uint8_t test =0;
+	//uint16_t data[3];
 
-   //  Commented portion
- //  while(1)                                                                      /*{{{*/
- //  {                                                                             /*{{{*/
- //    /*
- //    // USART debugging
- //    USART_Write('d');
- //    */
+  //  Commented portion
+	//  while(1)                                                                      /*{{{*/
+	//  {                                                                             /*{{{*/
+	//    /*
+	//    // USART debugging
+	//    USART_Write('d');
+	//    */
 
- //    //GPIO_SetBits(GPIOC, GPIO_Pin_8);
- //    GPIO_SetBits(GPIOC, GPIO_Pin_9);
- //    delay(10000);
+	//    //GPIO_SetBits(GPIOC, GPIO_Pin_8);
+	//    GPIO_SetBits(GPIOC, GPIO_Pin_9);
+	//    delay(10000);
 
- //    //GPIO_ResetBits(GPIOC, GPIO_Pin_8);
- //    GPIO_ResetBits(GPIOC, GPIO_Pin_9);
+	//    //GPIO_ResetBits(GPIOC, GPIO_Pin_8);
+	//    GPIO_ResetBits(GPIOC, GPIO_Pin_9);
 
- //    delay(1000000);
- //  }                  /*}}}*/
+	//    delay(1000000);
+	//  }                  /*}}}*/
 	// return 0;/*}}}*/
 
-   while(1)
-   {
-    USART_Write('a');
+	//int temp = 0;
+	//USART_Write(0x03);
+	delay(100);
+  while(1)
+  {
+		test = IIC_ReadDeviceRegister(MPU_ADDR,DEVID);
+		USART_Write(test);
 
-    test = IIC_ReadDeviceRegister(MPU_ADDR,DEVID);
-    USART_Write(test);
-   }
+		//IIC_DMA_Read(MPU_ADDR,DEVID);
+
+		//USART_Write(0x03);
+
+		//while(IIC_RX_OUTPUT == 0){}
+
+		//for(temp = 0; temp < 6; temp++)
+		//{
+		//	USART_Write(IIC_RX_Buffer[temp]);
+		//}
+  }
 }
 
 /*****************************************************************************/
