@@ -14,7 +14,7 @@ int main(void)
 	//GPIO_Configuration();
   // ADC_Configuration();
   //PWM_Configuration();
-  IIC_Configuration();
+  MPU_Configuration();
 
   // Only for debug
   USART_Configuration();
@@ -40,12 +40,11 @@ int main(void)
 	//  }                  /*}}}*/
 	// return 0;/*}}}*/
 
-	//int temp = 0;
-	//USART_Write(0x03);
 	delay(100);
+  USART_Write(0x03);
   while(1)
   {
-		test = IIC_ReadDeviceRegister(MPU_ADDR,DEVID);
+		test = MPU_ReadID();
 		USART_Write(test);
 
 		//IIC_DMA_Read(MPU_ADDR,DEVID);
