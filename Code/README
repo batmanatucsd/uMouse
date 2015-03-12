@@ -38,3 +38,7 @@ notes:
 
 2.	stm32_flash.ld comes from /STM32F10x_StdPeriph_Lib_V3.5.0/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM3210E-EVAL_XL
 	reason: need to modify linker scrpit for different MCU
+
+3.	debug:
+	1.use texane/stlink to start the gdb server: st-util --stlinkv1
+	2.
