@@ -21,9 +21,9 @@ void RCC_Configuration(void)
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
   /* GPIO, ADC clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
-   RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO |
-   RCC_APB2Periph_ADC1, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | 
+                         RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO |
+                         RCC_APB2Periph_ADC1, ENABLE);
 }
 
 /*****************************************************************************/
@@ -43,16 +43,13 @@ void GPIO_Configuration(void)
 
 	// **** GPIO config for analog input *** //
 	/*
-	void GPIO_Configuration(void)
-	{
-	  GPIO_InitTypeDef GPIO_InitStructure;
+  GPIO_InitTypeDef GPIO_InitStructure;
 
-	  // Configure PC.02, PC.03 and PC.04 (ADC Channel12, ADC Channel13 and
-	  //   ADC Channel14) as analog inputs
-	  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4;
-	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-	  GPIO_Init(GPIOC, &GPIO_InitStructure);
-	}
+  // Configure PC.02, PC.03 and PC.04 (ADC Channel12, ADC Channel13 and
+  //   ADC Channel14) as analog inputs
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
 	*/
 
   // GPIOA Configuration:TIM3 Channel1, 2, 3 and 4 as alternate function push-pull
@@ -69,7 +66,7 @@ void GPIO_Configuration(void)
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
-#ifdef  SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
 /*****************************************************************************/
 // USART_Configuration
 //
@@ -171,6 +168,10 @@ void ADC_Configuration(void)
 /*****************************************************************************/
 void PWM_Configuration(void)
 {
+
+  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+  TIM_OCInitTypeDef  TIM_OCInitStructure;
+
 	// Compute the prescaler value
   uint16_t PrescalerValue = (uint16_t) (SystemCoreClock / 24000000) - 1;
 
@@ -180,26 +181,27 @@ void PWM_Configuration(void)
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); // Initialize TIM3
 
-
-  // PWM1 Mode configuration: Channel3
+  // Channel Configuration
+  // Mode: PWM1
+  // Polarity: HIGH
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+  // TIM 3 Channel3 
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
   TIM_OCInitStructure.TIM_Pulse = PWIDTH_MAX;
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
   TIM_OC3Init(TIM3, &TIM_OCInitStructure);
   TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
 
-
-  // PWM1 Mode configuration: Channel4
+  // TIM3 Channel4
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
   TIM_OCInitStructure.TIM_Pulse = PWIDTH_0;
 
   TIM_OC4Init(TIM3, &TIM_OCInitStructure);
   TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
-
 
   TIM_ARRPreloadConfig(TIM3, ENABLE);
 

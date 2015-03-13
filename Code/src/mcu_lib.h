@@ -1,8 +1,8 @@
 #ifndef _MCU_LIB_H
 #define _MCU_LIB_H
 
-#include <stm32f10x.h>
-#include <iic.h>
+#include "stm32f10x.h"
+#include "iic.h"
 
 /*****************************************************************************/
 // For USART
@@ -18,9 +18,6 @@
 #define PWIDTH_75 249
 #define PWIDTH_80 333
 #define PWIDTH_MAX 600
-
-TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-TIM_OCInitTypeDef  TIM_OCInitStructure;
 
 /*****************************************************************************/
 // Functions
