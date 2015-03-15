@@ -51,6 +51,8 @@ typedef enum
 
 #define TIMEOUT_MAX 100
 
+uint16_t IIC_TimeOut;
+
 void IIC_GPIO_Config(void);
 void IIC_Config(void);
 void IIC_DMA_Config(IIC_DMADirection_TypeDef Direction, uint8_t* buffer);
