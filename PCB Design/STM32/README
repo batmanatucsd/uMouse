@@ -5,14 +5,14 @@ VDDA = 3.3V
 V_BATT = battery voltage
 
 AVOID:
-there is a tempurature sersor at ADC1_IN16
+there is a temperature sensor at ADC1_IN16
 
-PC13,14,15 less output current 
+PC13,14,15 less output current
 
 review the direction of motor connector in board design
 
 CIN for NCP1117 -- 10uf (typ)
-Cout for NCP1117 > 4.7uf (ESR) that is within the limits of 33 m (typ) to 2.2  is required. 
+Cout for NCP1117 > 4.7uf (ESR) that is within the limits of 33 m (typ) to 2.2  is required.
 
 ***********************************************************************
 
@@ -59,7 +59,7 @@ PB7--M1CB(TIM4_CH2)
 PC7--M2CA(TIM3_CH2)
 PC6--M2CB(TIM3_CH1)
 
-CONNECT to infarred sensor(Logic Level Converter?)
+CONNECT to infrared sensor(Logic Level Converter?)
 PC0--IR_IN1
 PC1--IR_IN2
 PC2--IR_IN3
