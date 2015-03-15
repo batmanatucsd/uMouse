@@ -23,30 +23,30 @@ uint8_t I2C_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_
   I2C_GenerateSTART(IIC, ENABLE);
 
   /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (I2C_GetFlagStatus(IIC,I2C_FLAG_SB) == RESET)
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Transmit the slave address and enable writing operation */
   I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
 
   /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Transmit the first address for r/w operations */
   I2C_SendData(IIC, RegisterAddr);
 
   /* Test on TXE FLag (data dent) */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Enable I2C DMA request */
@@ -56,10 +56,10 @@ uint8_t I2C_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_
   DMA_Cmd(IIC_DMA_TX_CHANNEL, ENABLE);
 
   /* Wait until DMA Transfer Complete */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!DMA_GetFlagStatus(IIC_DMA_TX_TCFLAG))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Wait until BTF Flag is set before generating STOP */
@@ -122,50 +122,50 @@ uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
   I2C_GenerateSTART(IIC, ENABLE);
 
   /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send device address for write */
   I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
 
   /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send the device's internal address to write to */
   I2C_SendData(IIC, RegisterAddr);
 
   /* Test on TXE FLag (data dent) */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send START condition a second time */
   I2C_GenerateSTART(IIC, ENABLE);
 
   /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send IICxpander address for read */
   I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Receiver);
 
   /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Enable I2C DMA request */
@@ -178,7 +178,7 @@ uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
   //IIC_TimeOut = 2 * TIMEOUT_MAX;
   while (!DMA_GetFlagStatus(IIC_DMA_RX_TCFLAG))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send STOP Condition */
@@ -219,50 +219,50 @@ uint16_t I2C_ReadDataBuffer(uint8_t DeviceAddr, uint32_t RegisterAddr)
   I2C_GenerateSTART(IIC, ENABLE);
 
   /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send device address for write */
   I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
 
   /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send the device's internal address to write to */
   I2C_SendData(IIC, RegisterAddr);
 
   /* Test on TXE FLag (data dent) */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send START condition a second time */
   I2C_GenerateSTART(IIC, ENABLE);
 
   /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send IICxpander address for read */
   I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Receiver);
 
   /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
+  IIC_TimeOut = TIMEOUT_MAX;
   while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Enable I2C DMA request */
@@ -275,7 +275,7 @@ uint16_t I2C_ReadDataBuffer(uint8_t DeviceAddr, uint32_t RegisterAddr)
   //IIC_TimeOut = 2 * TIMEOUT_MAX;
   while (!DMA_GetFlagStatus(IIC_DMA_RX_TCFLAG))
   {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
+    if (IIC_TimeOut-- == 0) return(-1);
   }
 
   /* Send STOP Condition */
