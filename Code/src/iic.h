@@ -49,6 +49,8 @@ typedef enum
 #define IIC_IT_EXTI_LINE                 EXTI_Line12
 #define IIC_IT_EXTI_IRQn                 EXTI15_10_IRQn
 
+#define TIMEOUT_MAX 100
+
 void IIC_GPIO_Config(void);
 void IIC_Config(void);
 void IIC_DMA_Config(IIC_DMADirection_TypeDef Direction, uint8_t* buffer);
