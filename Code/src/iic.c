@@ -63,7 +63,7 @@ uint8_t I2C_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_
   }
 
   /* Wait until BTF Flag is set before generating STOP */
-  //IIC_TimeOut = 2 * TIMEOUT_MAX;
+  IIC_TimeOut = 2 * TIMEOUT_MAX;
   while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
   {
   }
@@ -175,7 +175,7 @@ uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
   DMA_Cmd(IIC_DMA_RX_CHANNEL, ENABLE);
 
   /* Wait until DMA Transfer Complete */
-  //IIC_TimeOut = 2 * TIMEOUT_MAX;
+  IIC_TimeOut = 2 * TIMEOUT_MAX;
   while (!DMA_GetFlagStatus(IIC_DMA_RX_TCFLAG))
   {
     if (IIC_TimeOut-- == 0) return(-1);
@@ -272,7 +272,7 @@ uint16_t I2C_ReadDataBuffer(uint8_t DeviceAddr, uint32_t RegisterAddr)
   DMA_Cmd(IIC_DMA_RX_CHANNEL, ENABLE);
 
   /* Wait until DMA Transfer Complete */
-  //IIC_TimeOut = 2 * TIMEOUT_MAX;
+  IIC_TimeOut = 2 * TIMEOUT_MAX;
   while (!DMA_GetFlagStatus(IIC_DMA_RX_TCFLAG))
   {
     if (IIC_TimeOut-- == 0) return(-1);
@@ -314,7 +314,7 @@ void IIC_GPIO_Config(void)
                          | RCC_APB2Periph_AFIO, ENABLE);
 
 #ifdef IIC_REMAP_EN
-  GPIO_PinRemapConfig(IIC_REMAP, ENABLE);
+  GPIO_PinRemapConfig(IIC_REMAP_EN, ENABLE);
 #endif
   /* Reset IIC IP */
   RCC_APB1PeriphResetCmd(IIC_CLK, ENABLE);

@@ -42,5 +42,11 @@ notes:
 3.	debug:
 	1.use texane/stlink to start the gdb server: st-util --stlinkv1
 	2.load the compiled code: arm-none-eabi-gdb uMouse.elf
+			Which can be awoke by: make debug
 	3.connect to gdb server: (gdb) target extended localhost:4242
+			Or simply tar ext :4242
 	4.load the code: load
+
+The second debug approach:
+		1. use openocd to start gdb server: openocd -f interface/stlink-v1.cfg -f board/stm32vldiscovery.cfg
+		2. Follow the same step as before.

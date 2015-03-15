@@ -16,7 +16,7 @@ typedef enum
   */
 #define IIC                          I2C1
 #define IIC_CLK                      RCC_APB1Periph_I2C1
-#define IIC_REMAP_EN
+#define IIC_REMAP_EN  GPIO_Remap_I2C1
 #define IIC_REMAP                    GPIO_Remap_I2C1
 #define IIC_SCL_PIN                  GPIO_Pin_8
 #define IIC_SCL_GPIO_PORT            GPIOB
@@ -50,6 +50,8 @@ typedef enum
 #define IIC_IT_EXTI_IRQn                 EXTI15_10_IRQn
 
 #define TIMEOUT_MAX 100
+
+uint16_t IIC_TimeOut;
 
 void IIC_GPIO_Config(void);
 void IIC_Config(void);
