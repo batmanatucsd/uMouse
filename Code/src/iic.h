@@ -58,9 +58,9 @@ void IIC_Config(void);
 void IIC_DMA_Config(IIC_DMADirection_TypeDef Direction, uint8_t* buffer);
 void IIC_EXTI_Config(void);
 
-uint8_t I2C_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_t RegisterValue);
-uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr);
-uint16_t I2C_ReadDataBuffer(uint8_t DeviceAddr, uint32_t RegisterAddr);
+uint8_t IIC_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_t RegisterValue);
+uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr);
+uint16_t IIC_ReadDataBuffer(uint8_t DeviceAddr, uint32_t RegisterAddr);
 
 
 #endif // _IIC_H
