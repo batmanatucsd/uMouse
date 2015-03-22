@@ -31,6 +31,18 @@ reference: http://www.atollic.com/index.php/kb/1-kb_building/117-kb_error_in_str
 
 5.type make and the whole program should be compiled, although not sure if it is right because no test tools
 
+uMouse Pin out(HEAD UP)
+RST|VCC
+TMS|TX			TMS:SWDIO
+TDO|RX
+TCK|GND			TCK:SWCLK
+
+Discovery(USB UP)
+VDD(use 3.3V on board)
+SWCLK
+GND
+SWDIO
+
 
 notes:
 1.	stm32f10x_conf.h comes from /STM32F10x_StdPeriph_Lib_V3.5.0/Project/STM32F10x_StdPeriph_Template/
