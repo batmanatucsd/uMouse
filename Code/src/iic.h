@@ -1,31 +1,62 @@
-#ifndef _IIC_H
-#define _IIC_H
+#ifndef __IIC_H
+#define __IIC_H
 
 #include <stm32f10x.h>
 
-//I2C Universal Requirement
-#define IIC_RX_DMA_Channel DMA1_Channel7 //note the NVIC is not change simultaneously
-#define IIC_DR_Address 0x40005410
-#define IIC_RX_BUFF_SIZE 1
+typedef enum
+{
+  IIC_DMA_TX = 0,
+  IIC_DMA_RX = 1
+}IIC_DMADirection_TypeDef;
+/*------------------------------------------------------------------------------
+    Hardware Configuration
+------------------------------------------------------------------------------*/
+/**
+  * @brief  I2C port definitions
+  */
+#define IIC                          I2C1
+#define IIC_CLK                      RCC_APB1Periph_I2C1
+#define IIC_REMAP_EN
+#define IIC_REMAP                    GPIO_Remap_I2C1
+#define IIC_SCL_PIN                  GPIO_Pin_8
+#define IIC_SCL_GPIO_PORT            GPIOB
+#define IIC_SCL_GPIO_CLK             RCC_APB2Periph_GPIOB
+#define IIC_SDA_PIN                  GPIO_Pin_9
+#define IIC_SDA_GPIO_PORT            GPIOB
+#define IIC_SDA_GPIO_CLK             RCC_APB2Periph_GPIOB
+#define IIC_DR                       ((uint32_t)0x40005810)
+#define IIC_SPEED                    300000
 
-//I2C Slave Address
-#define MPU_ADDR  0x53<<1
+/**
+  * @brief  IIC DMA definitions
+  * @REMIND Change DMA channel according to I2C
+  */
+#define IIC_DMA                          DMA1
+#define IIC_DMA_CLK                      RCC_AHBPeriph_DMA1
+#define IIC_DMA_TX_CHANNEL               DMA1_Channel6
+#define IIC_DMA_RX_CHANNEL               DMA1_Channel7
+#define IIC_DMA_TX_TCFLAG                DMA1_FLAG_TC6
+#define IIC_DMA_RX_TCFLAG                DMA1_FLAG_TC7
 
-//I2C Slave Register
-#define DEVID 0x00
+/**
+  * @brief  IO Expander Interrupt line on EXTI
+  */
+#define IIC_IT_PIN                       GPIO_Pin_12
+#define IIC_IT_GPIO_PORT                 GPIOA
+#define IIC_IT_GPIO_CLK                  RCC_APB2Periph_GPIOA
+#define IIC_IT_EXTI_PORT_SOURCE          GPIO_PortSourceGPIOA
+#define IIC_IT_EXTI_PIN_SOURCE           GPIO_PinSource12
+#define IIC_IT_EXTI_LINE                 EXTI_Line12
+#define IIC_IT_EXTI_IRQn                 EXTI15_10_IRQn
 
-#define IIC_DMA_EN 6
+void IIC_GPIO_Config(void);
+void IIC_Config(void);
+void IIC_DMA_Config(IIC_DMADirection_TypeDef Direction, uint8_t* buffer);
+void IIC_EXTI_Config(void);
 
-extern uint8_t IIC_RX_Buffer[];
-extern uint8_t IIC_RX_OUTPUT;
+uint8_t I2C_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_t RegisterValue);
+uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr);
+uint16_t I2C_ReadDataBuffer(uint8_t DeviceAddr, uint32_t RegisterAddr);
 
-void sensor_init(void);
 
-void IIC_Configuration(void);
-void IIC_DMA_Configuration(void);
-void IIC_NVIC_Configuration(void);
-uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr);
-void IIC_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_t Data);
-
-void IIC_DMA_Read(uint8_t DeviceAddr, uint8_t readAddr);
 #endif // _IIC_H

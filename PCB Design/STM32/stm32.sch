@@ -6016,8 +6016,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="GND29" library="supply1" deviceset="GND" device=""/>
 <part name="GND36" library="supply1" deviceset="GND" device=""/>
-<part name="R19" library="SparkFun-Resistors" deviceset="RESISTOR" device="0805-RES"/>
-<part name="R22" library="SparkFun-Resistors" deviceset="RESISTOR" device="0805-RES"/>
+<part name="R19" library="SparkFun-Resistors" deviceset="RESISTOR" device="0805-RES" value="47k"/>
+<part name="R22" library="SparkFun-Resistors" deviceset="RESISTOR" device="0805-RES" value="47k"/>
 <part name="GND41" library="supply1" deviceset="GND" device=""/>
 <part name="SUPPLY20" library="SparkFun-Aesthetics" deviceset="VCC" device=""/>
 <part name="S1" library="switch-tact copy" deviceset="DTS-3" device=""/>
@@ -6086,7 +6086,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="U4" gate="G$1" x="340.36" y="170.18"/>
 <instance part="SUPPLY6" gate="G$1" x="309.88" y="182.88"/>
 <instance part="C20" gate="G$1" x="312.42" y="157.48"/>
-<instance part="C18" gate="G$1" x="304.8" y="160.02"/>
+<instance part="C18" gate="G$1" x="302.26" y="160.02"/>
 <instance part="C21" gate="G$1" x="363.22" y="185.42" rot="R180"/>
 <instance part="SUPPLY11" gate="G$1" x="370.84" y="182.88"/>
 <instance part="GND22" gate="1" x="363.22" y="193.04" rot="R180"/>
@@ -6163,7 +6163,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="GND32" gate="1" x="375.92" y="172.72" rot="R90"/>
 <instance part="GND33" gate="1" x="304.8" y="172.72" rot="R270"/>
 <instance part="GND34" gate="1" x="320.04" y="147.32"/>
-<instance part="GND35" gate="1" x="304.8" y="152.4"/>
+<instance part="GND35" gate="1" x="302.26" y="149.86"/>
 <instance part="SUPPLY18" gate="G$1" x="86.36" y="101.6"/>
 <instance part="C8" gate="G$1" x="93.98" y="91.44"/>
 <instance part="C14" gate="G$1" x="127" y="91.44"/>
@@ -6295,7 +6295,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <segment>
 <pinref part="GND35" gate="1" pin="GND"/>
 <pinref part="C18" gate="G$1" pin="2"/>
-<wire x1="304.8" y1="157.48" x2="304.8" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="302.26" y1="157.48" x2="302.26" y2="152.4" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="C20" gate="G$1" pin="2"/>
@@ -6941,7 +6941,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="U4" gate="G$1" pin="REGOUT"/>
 <wire x1="322.58" y1="167.64" x2="304.8" y2="167.64" width="0.1524" layer="91"/>
 <pinref part="C18" gate="G$1" pin="1"/>
-<wire x1="304.8" y1="167.64" x2="304.8" y2="165.1" width="0.1524" layer="91"/>
+<wire x1="304.8" y1="167.64" x2="302.26" y2="165.1" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="INT" class="0">

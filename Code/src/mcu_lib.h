@@ -3,11 +3,17 @@
 
 #include "stm32f10x.h"
 #include "iic.h"
+#include "mpu6050.h"
 
 /*****************************************************************************/
 // For USART
 /*****************************************************************************/
-#define USART_BAUDRATE 115200
+#define USART_BAUDRATE 9600
+
+/*****************************************************************************/
+// For ADC
+/*****************************************************************************/
+#define ONESENSOR 8
 
 /*****************************************************************************/
 // For PWM
@@ -27,6 +33,8 @@ void GPIO_Configuration(void);
 
 void ADC_Configuration(void);
 void PWM_Configuration(void);
+
+uint16_t readADC(uint8_t channel);
 
 #ifdef  SERIAL_DEBUG
 void USART_Configuration(void);

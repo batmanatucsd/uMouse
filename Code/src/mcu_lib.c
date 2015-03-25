@@ -21,7 +21,7 @@ void RCC_Configuration(void)
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
   /* GPIO, ADC clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | 
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
                          RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO |
                          RCC_APB2Periph_ADC1, ENABLE);
 }
@@ -35,23 +35,34 @@ void GPIO_Configuration(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
+	// **** For MOUSE **** //
 	// **** GPIO config for digital output push-pull *** //
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+  /*GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_4;*/
+  /*GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;*/
+	/*GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;*/
+	/*GPIO_Init(GPIOC, &GPIO_InitStructure);*/
+
+  /*GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;*/
+  /*GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;*/
+	/*GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;*/
+	/*GPIO_Init(GPIOB, &GPIO_InitStructure);*/
+
+  // **** DISCOVERY **** //
+	// **** GPIO config for digital output push-pull *** //
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	// **** GPIO config for analog input *** //
-	/*
-  GPIO_InitTypeDef GPIO_InitStructure;
-
   // Configure PC.02, PC.03 and PC.04 (ADC Channel12, ADC Channel13 and
   //   ADC Channel14) as analog inputs
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4;
+  /*GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4;*/
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-	*/
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
 
+	// **** GPIO config for PWM output *** //
   // GPIOA Configuration:TIM3 Channel1, 2, 3 and 4 as alternate function push-pull
   // TIM3
   // Channel 1 : PA6
@@ -59,11 +70,10 @@ void GPIO_Configuration(void)
   // Channel 3 : PB0
   // Channel 4 : PB1
   //
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
+  /*GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;*/
+  /*GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;*/
+  /*GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;*/
+  /*GPIO_Init(GPIOB, &GPIO_InitStructure);*/
 }
 
 #ifdef SERIAL_DEBUG
@@ -81,10 +91,12 @@ void USART_Configuration(void)
   GPIO_InitTypeDef GPIO_InitStructure;
 
 	// **** GPIO config for serial connection *** //
+  // USART_RX
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+  // USART_TX
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -105,8 +117,8 @@ void USART_Configuration(void)
 
 void USART_Write(uint16_t Data)
 {
-  USART_SendData(USART1, Data);
   while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET){}
+  USART_SendData(USART1, Data);
 }
 
 #endif // SERIAL_DEBUG
@@ -120,13 +132,6 @@ void USART_Write(uint16_t Data)
 /*****************************************************************************/
 void ADC_Configuration(void)
 {
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOC, ENABLE);
-
-  GPIO_InitTypeDef GPIO_InitStructure;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-
   ADC_InitTypeDef  ADC_InitStructure;
 
   /* Put everything back to power-on defaults */
@@ -162,6 +167,21 @@ void ADC_Configuration(void)
 }
 
 /*****************************************************************************/
+// readADC
+//
+// Gets analog input
+/*****************************************************************************/
+uint16_t readADC(uint8_t channel) {
+  ADC_RegularChannelConfig(ADC1, channel, 1, ADC_SampleTime_1Cycles5);
+  // Start the conversion
+  ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+  // Wait until conversion completion
+  while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+  // Get the conversion value
+  return ADC_GetConversionValue(ADC1);
+}
+
+/*****************************************************************************/
 // PWM_Configuration
 //
 // Set configurations for PWM
@@ -189,7 +209,7 @@ void PWM_Configuration(void)
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
-  // TIM 3 Channel3 
+  // TIM 3 Channel3
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
   TIM_OCInitStructure.TIM_Pulse = PWIDTH_MAX;
 

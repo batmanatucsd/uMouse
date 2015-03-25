@@ -3,9 +3,11 @@ PROJECT=uMouse
 
 # DEVICE(MOUSE,DISCOVERY)
 BOARD  =DISCOVERY
+#BOARD  =MOUSE
 
 # Serial Debug(DEBUG)
 SERIAL =DEBUG
+#SERIAL =NOTDEBUG
 
 # Tool PATH
 TOOLDIR=./arm-none-eabi/bin
@@ -60,6 +62,7 @@ SRC += system_stm32f10x.c
 SRC += misc.c
 SRC	+= stm32f10x_adc.c
 SRC += stm32f10x_dma.c
+SRC += stm32f10x_exti.c
 SRC	+= stm32f10x_gpio.c
 SRC += stm32f10x_i2c.c
 SRC	+= stm32f10x_rcc.c

@@ -3,7 +3,7 @@ stm32f10x library: http://www.st.com/web/en/catalog/tools/PF257890
 STM flash loader: http://www.st.com/web/en/catalog/tools/PF257525
 ST-LINK utility: http://www.st.com/web/en/catalog/tools/PF258168
 
-1.make sure you have make. For windows install MINGW. For MAC install XCODE. Make usually come with a linux distro. 
+1.make sure you have make. For windows install MINGW. For MAC install XCODE. Make usually come with a linux distro.
 
 2.download the arm-none-eabi toolchain for your system and extract them into /Code folder (and pls rename to arm-none-eabi)
 
@@ -29,12 +29,18 @@ in the end should look like this:
 4.there is a known error in core_cm3.c, updated accord to the reference.
 reference: http://www.atollic.com/index.php/kb/1-kb_building/117-kb_error_in_strexb
 
-5.type make and the whole program should be compiled, althougth not sure if it is right because no test tools
+5.type make and the whole program should be compiled, although not sure if it is right because no test tools
 
 
-notes: 
+notes:
 1.	stm32f10x_conf.h comes from /STM32F10x_StdPeriph_Lib_V3.5.0/Project/STM32F10x_StdPeriph_Template/
 	reason: USE_STDPERIPH_DRIVER
 
 2.	stm32_flash.ld comes from /STM32F10x_StdPeriph_Lib_V3.5.0/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM3210E-EVAL_XL
-	reason: need to modify linker scrpit for different MCU
+	reason: need to modify linker script for different MCU
+
+3.	debug:
+	1.use texane/stlink to start the gdb server: st-util --stlinkv1
+	2.load the compiled code: arm-none-eabi-gdb uMouse.elf
+	3.connect to gdb server: (gdb) target extended localhost:4242
+	4.load the code: load
