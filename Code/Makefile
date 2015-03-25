@@ -22,10 +22,11 @@ OBJDIR =./build
 SRCDIR =./src
 
 # Tools
-CC =$(TOOLDIR)/arm-none-eabi-gcc
-LD =$(TOOLDIR)/arm-none-eabi-gcc
-AS =$(TOOLDIR)/arm-none-eabi-as
-CP =$(TOOLDIR)/arm-none-eabi-objcopy
+CC	= $(TOOLDIR)/arm-none-eabi-gcc
+LD	= $(TOOLDIR)/arm-none-eabi-gcc
+AS	= $(TOOLDIR)/arm-none-eabi-as
+CP	= $(TOOLDIR)/arm-none-eabi-objcopy
+GDB	= $(TOOLDIR)/arm-none-eabi-gdb
 
 # Main folder
 CORE   =$(LIBDIR)/Libraries/CMSIS/CM3/CoreSupport
