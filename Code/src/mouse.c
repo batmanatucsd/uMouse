@@ -3,12 +3,12 @@
 /*****************************************************************************/
 // General Functions
 /*****************************************************************************/
-void delay(int i)
+void delay(int i)/*{{{*/
 {
 	while(i--);
-}
+}/*}}}*/
 
-void listen_for_button(void)
+void listen_for_button(void)/*{{{*/
 {
   if(GPIO_ReadInputDataBit(GPIOB, BUTTON) != Bit_RESET) {
     state  next_state;
@@ -22,12 +22,12 @@ void listen_for_button(void)
       mouse_state = next_state;
     } while(GPIO_ReadInputDataBit(GPIOB, BUTTON) != Bit_RESET);
   }
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // Motor Controls
 /*****************************************************************************/
-void turnMotorOn(void)
+void turnMotorOn(void)/*{{{*/
 {
   GPIO_SetBits(MOTOR, STBY);
 
@@ -38,26 +38,26 @@ void turnMotorOn(void)
   // CCW
   GPIO_ResetBits(MOTOR, RIGHTIN1);
   GPIO_SetBits(MOTOR, RIGHTIN2);
-}
+}/*}}}*/
 
-void turnMotorOff(void)
+void turnMotorOff(void)/*{{{*/
 {
   // TODO: should we change the way we turn off the motors?
   // perhaps turn the inputs off or the pwm (might save battery time)
   GPIO_WriteBit(MOTOR, STBY, 0);
-}
+}/*}}}*/
 
-void change_LeftMotorSpeed(uint16_t speed)
+void change_LeftMotorSpeed(uint16_t speed)/*{{{*/
 {
   // TODO: change to right timer
   TIM3->CCR3 = speed;
-}
+}/*}}}*/
 
-void change_RightMotorSpeed(uint16_t speed)
+void change_RightMotorSpeed(uint16_t speed)/*{{{*/
 {
   // TODO: change to right timer
   TIM3->CCR4 = speed;
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // Turns

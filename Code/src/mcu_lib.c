@@ -6,7 +6,7 @@
 //
 // Configure clocks for the peripherals
 /*****************************************************************************/
-void RCC_Configuration(void) 
+void RCC_Configuration(void) /*{{{*/
 {
 	/* PCLK2 is the APB2 clock */
   /* ADCCLK = PCLK2/6 = 72/6 = 12MHz*/
@@ -25,14 +25,14 @@ void RCC_Configuration(void)
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
                          RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO |
                          RCC_APB2Periph_ADC1, ENABLE);
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // GPIO_Configuration
 //
 // Set general purpose input & output pin configurations
 /*****************************************************************************/
-void GPIO_Configuration(void) 
+void GPIO_Configuration(void) /*{{{*/
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -81,7 +81,7 @@ void GPIO_Configuration(void)
 	// ***** For Encoder Inputs ***** //
   // TODO: Configure PB6,7 for RIGHT
   // TODO: Configure PC6,7 for LEFT
-}
+}/*}}}*/
 
 #ifdef SERIAL_DEBUG
 /*****************************************************************************/
@@ -90,7 +90,7 @@ void GPIO_Configuration(void)
 // Set configurations for serial connection
 // Only called when in debug mode
 /*****************************************************************************/
-void USART_Configuration(void) 
+void USART_Configuration(void) /*{{{*/
 {
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
@@ -120,15 +120,15 @@ void USART_Configuration(void)
 
   USART_Init(USART1, &USART_InitStructure);
   USART_Cmd(USART1, ENABLE);
-}
+}/*}}}*/
 
-void USART_Write(uint16_t Data) 
+void USART_Write(uint16_t Data) /*{{{*/
 {
   while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET){}
   USART_SendData(USART1, Data);
-}
+}/*}}}*/
 
-void USART_SendInt(uint16_t num) 
+void USART_SendInt(uint16_t num) /*{{{*/
 {
   char data[6], *ptr;
   ptr = data;
@@ -136,7 +136,7 @@ void USART_SendInt(uint16_t num)
 
   /*while(*ptr != '\0')*/
     /*USART_Write(*ptr);*/
-}
+}/*}}}*/
 
 #endif // SERIAL_DEBUG
 
@@ -145,7 +145,7 @@ void USART_SendInt(uint16_t num)
 //
 // Set configurations for analog input
 /*****************************************************************************/
-void ADC_Configuration(void) 
+void ADC_Configuration(void) /*{{{*/
 {
   ADC_InitTypeDef  ADC_InitStructure;
 
@@ -179,14 +179,14 @@ void ADC_Configuration(void)
   ADC_StartCalibration(ADC1);
   /* Check the end of ADC1 calibration */
   while(ADC_GetCalibrationStatus(ADC1));
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // readADC
 //
 // Gets analog input
 /*****************************************************************************/
-uint16_t readADC(uint8_t channel) 
+uint16_t readADC(uint8_t channel) /*{{{*/
 {
   ADC_RegularChannelConfig(ADC1, channel, 1, ADC_SampleTime_1Cycles5);
   // Start the conversion
@@ -195,14 +195,14 @@ uint16_t readADC(uint8_t channel)
   while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
   // Get the conversion value
   return ADC_GetConversionValue(ADC1);
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // PWM_Configuration
 //
 // Set configurations for PWM
 /*****************************************************************************/
-void PWM_Configuration(void) 
+void PWM_Configuration(void) /*{{{*/
 {
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
   TIM_OCInitTypeDef  TIM_OCInitStructure;
@@ -246,4 +246,4 @@ void PWM_Configuration(void)
   // TIM3,5 enable counter
   TIM_Cmd(TIM5, ENABLE);
   TIM_Cmd(TIM3, ENABLE);
-}
+}/*}}}*/
