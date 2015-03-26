@@ -83,8 +83,8 @@ void update(unsigned short row, unsigned short col)
     unsigned char min = 255;
     unsigned char next = (row << 4) | col;
 
-    // If (current row - 1) exists, and there is no NORTH wall for this cell
-	if (row - 1 >= 0 && !(tile & NORTH_WALL))
+    // If there is no NORTH wall for this cell
+	if (!(tile & NORTH_WALL))
 	{
 		if ((maze[row - 1][col] & DIST) < min)
 		{
@@ -94,8 +94,8 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-	// If (current col + 1) exists, and there is no EAST wall for this cell
-	if (col + 1 <= 15 && !(tile & EAST_WALL))
+	// If there is no EAST wall for this cell
+	if (!(tile & EAST_WALL))
 	{
 		if ((maze[row][col + 1] & DIST) < min)
 		{
@@ -105,8 +105,8 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-	// If (current row + 1) exists, and there is no SOUTH wall for this cell
-	if (row + 1 <= 15 && !(tile & SOUTH_WALL))
+	// If there is no SOUTH wall for this cell
+	if (!(tile & SOUTH_WALL))
 	{
 		if ((maze[row + 1][col] & DIST) < min)
 		{
@@ -116,8 +116,8 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-	// If (current cel - 1) exists, and there is no WEST wall for this cell
-	if (col - 1 >= 0 && !(tile & WEST_WALL))
+	// If there is no WEST wall for this cell
+	if (!(tile & WEST_WALL))
 	{
 		if ((maze[row][col - 1] & DIST) < min)
 		{
