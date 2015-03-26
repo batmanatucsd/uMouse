@@ -52,7 +52,7 @@ vpath %.c $(PERIPH)/src
 vpath %.o $(OBJDIR)
 
 # Include Path
-INC := $(SRCDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
+INC := $(SRCDIR) $(CORE) $(DEVICE) $(PERIPH)/inc 
 
 # The project file
 SRC	 = $(notdir $(wildcard $(SRCDIR)/*.c))

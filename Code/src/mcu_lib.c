@@ -132,8 +132,11 @@ void USART_SendInt(uint16_t num) /*{{{*/
 {
   char data[6], *ptr;
   ptr = data;
-  /*sprintf(data, "%d", num);*/
 
+  while(num > 0) {
+    num 
+    num /= 10;  
+  }
   /*while(*ptr != '\0')*/
     /*USART_Write(*ptr);*/
 }/*}}}*/
