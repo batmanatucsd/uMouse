@@ -192,7 +192,7 @@ void ADC_Configuration(void) /*{{{*/
 //
 // Gets analog input
 /*****************************************************************************/
-uint16_t readADC(uint8_t channel) /*{{{*/
+uint16_t ADC_Read(uint8_t channel) /*{{{*/
 {
   ADC_RegularChannelConfig(ADC1, channel, 1, ADC_SampleTime_1Cycles5);
   // Start the conversion

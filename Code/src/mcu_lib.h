@@ -13,10 +13,17 @@
 /*****************************************************************************/
 // For ADC
 /*****************************************************************************/
-#define LEFT     10
-#define LEFT45   11
-#define RIGHT45  12
-#define RIGHT    13
+#define PT_LEFT     10
+#define PT_LEFT45   11
+#define PT_RIGHT45  12
+#define PT_RIGHT    13
+
+#define EMITTER GPIOB
+
+#define E_LEFT     GPIO_Pin_15
+#define E_LEFT45   GPIO_Pin_14
+#define E_RIGHT45  GPIO_Pin_13
+#define E_RIGHT    GPIO_Pin_12
 
 /*****************************************************************************/
 // For Motor Control
@@ -53,7 +60,7 @@ void GPIO_Configuration(void);
 void ADC_Configuration(void);
 void PWM_Configuration(void);
 
-uint16_t readADC(uint8_t channel);
+uint16_t ADC_Read(uint8_t channel);
 
 #ifdef  SERIAL_DEBUG
 void USART_Configuration(void);

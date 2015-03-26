@@ -5,7 +5,7 @@
 /*****************************************************************************/
 int main(void)
 {
-  /*volatile uint16_t sensorReading = 0;*/
+  volatile uint16_t sensorReading = 0;
 
   // MCU Configurations
   RCC_Configuration();
@@ -26,7 +26,7 @@ int main(void)
     listen_for_button();
 
     // Do PID
-
+    
     switch(mouse_state) {
       case GO:
         GPIO_ResetBits(GPIOB, RED);
@@ -40,7 +40,12 @@ int main(void)
         break;
     }
     
-    USART_SendInt(100);
+    // IR Sensors
+    GPIO_SetBits(EMITTER, E_LEFT);
+    sensorReading = ADC_Read(PT_LEFT);
+
+    /*USART_SendInt(sensorReading);*/
+    USART_Write(' ');
     /* IR_Sensor Debug *//*{{{*/
     /*sensorReading = readADC(ONESENSOR);*/
     /*if(sensorReading > 200)*/
