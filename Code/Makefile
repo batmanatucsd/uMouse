@@ -2,8 +2,7 @@
 PROJECT=uMouse
 
 # DEVICE(MOUSE,DISCOVERY)
-BOARD  =DISCOVERY
-#BOARD  =MOUSE
+BOARD  =MOUSE
 
 # Serial Debug(DEBUG)
 SERIAL =DEBUG
@@ -120,6 +119,6 @@ clean:
 	rm -f $(PROJECT).bin $(PROJECT).elf
 
 debug:
-	$(GDB) $(PROJECT).elf
+	$(GDB) -q $(PROJECT).elf
 
 -include $(addprefix $(OBJDIR)/, $(SRC:.c=.d))
