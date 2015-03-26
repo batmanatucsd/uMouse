@@ -52,6 +52,6 @@ int main(void)
     /*else */
       /*USART_Write('f');*/
 
-    USART_Write(125);
+    USART_Write('b');
   }
 }
