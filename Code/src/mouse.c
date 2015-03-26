@@ -31,11 +31,11 @@ void listen_for_button(void)
 /*{*/
   /*GPIO_SetBits(MOTOR, STBY);*/
 
-  CW
+  /*[>CW<]*/
   /*GPIO_SetBits(MOTOR, LEFTIN1);*/
   /*GPIO_ResetBits(MOTOR, LEFTIN2);*/
 
-  CCW
+  /*[>CCW<]*/
   /*GPIO_ResetBits(MOTOR, RIGHTIN1);*/
   /*GPIO_SetBits(MOTOR, RIGHTIN2);*/
 /*}*/
