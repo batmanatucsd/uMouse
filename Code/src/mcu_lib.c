@@ -130,15 +130,18 @@ void USART_Write(uint16_t Data) /*{{{*/
 
 void USART_SendInt(uint16_t num) /*{{{*/
 {
-  char data[6], *ptr;
-  ptr = data;
+  int i = 5;
+  char num_char[6] = {0};
 
   while(num > 0) {
-    num 
-    num /= 10;  
+    num_char[i--] = num%10 + 48;
+    num /= 10;
   }
-  /*while(*ptr != '\0')*/
-    /*USART_Write(*ptr);*/
+
+  for(i=0; i<6; ++i) {
+    if(num_char[i])
+      USART_Write(num_char[i]);
+  }
 }/*}}}*/
 
 #endif // SERIAL_DEBUG

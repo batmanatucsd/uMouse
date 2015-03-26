@@ -16,7 +16,7 @@ int main(void)
   /*MPU_Configuration();*/
 
   // Only for debug
-  /*USART_Configuration();*/
+  USART_Configuration();
 
   mouse_state = STOP;
 
@@ -40,6 +40,7 @@ int main(void)
         break;
     }
     
+    USART_SendInt(100);
     /* IR_Sensor Debug *//*{{{*/
     /*sensorReading = readADC(ONESENSOR);*/
     /*if(sensorReading > 200)*/
