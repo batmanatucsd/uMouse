@@ -27,25 +27,25 @@ void listen_for_button(void)
 /*****************************************************************************/
 // Motor Controls
 /*****************************************************************************/
-void turnMotorOn(void)
-{
-  GPIO_SetBits(MOTOR, STBY);
+/*void turnMotorOn(void)*/
+/*{*/
+  /*GPIO_SetBits(MOTOR, STBY);*/
 
-  // CW
-  GPIO_SetBits(MOTOR, LEFTIN1);
-  GPIO_ResetBits(MOTOR, LEFTIN2);
+  CW
+  /*GPIO_SetBits(MOTOR, LEFTIN1);*/
+  /*GPIO_ResetBits(MOTOR, LEFTIN2);*/
 
-  // CCW
-  GPIO_ResetBits(MOTOR, RIGHTIN1);
-  GPIO_SetBits(MOTOR, RIGHTIN2);
-}
+  CCW
+  /*GPIO_ResetBits(MOTOR, RIGHTIN1);*/
+  /*GPIO_SetBits(MOTOR, RIGHTIN2);*/
+/*}*/
 
-void turnMotorOff(void)
-{
-  // TODO: should we change the way we turn off the motors?
-  // perhaps turn the inputs off or the pwm (might save battery time)
-  GPIO_WriteBit(MOTOR, STBY, 0);
-}
+/*void turnMotorOff(void)*/
+/*{*/
+  /*[>TODO: should we change the way we turn off the motors?<]*/
+  /*[>perhaps turn the inputs off or the pwm (might save battery time)<]*/
+  /*GPIO_WriteBit(MOTOR, STBY, 0);*/
+/*}*/
 
 void change_LeftMotorSpeed(uint16_t speed)
 {
