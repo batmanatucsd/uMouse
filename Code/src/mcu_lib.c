@@ -124,8 +124,13 @@ void USART_Configuration(void) /*{{{*/
 
 void USART_Write(uint16_t Data) /*{{{*/
 {
-  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET){}
   USART_SendData(USART1, Data);
+  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
+}/*}}}*/
+
+uint8_t USART_Read(void) {/*{{{*/
+  while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+  return (uint8_t) USART_ReceiveData(USART1);
 }/*}}}*/
 
 void USART_SendInt(uint16_t num) /*{{{*/
@@ -194,7 +199,7 @@ void ADC_Configuration(void) /*{{{*/
 /*****************************************************************************/
 uint16_t ADC_Read(uint8_t channel) /*{{{*/
 {
-  ADC_RegularChannelConfig(ADC1, channel, 1, ADC_SampleTime_1Cycles5);
+  ADC_RegularChannelConfig(ADC1, ADC_Channel_10, 1, ADC_SampleTime_1Cycles5);
   // Start the conversion
   ADC_SoftwareStartConvCmd(ADC1, ENABLE);
   // Wait until conversion completion

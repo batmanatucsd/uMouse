@@ -65,6 +65,7 @@ uint16_t ADC_Read(uint8_t channel);
 #ifdef  SERIAL_DEBUG
 void USART_Configuration(void);
 void USART_Write(uint16_t Data);
+uint8_t USART_Read(void);
 void USART_SendInt(uint16_t num);
 #endif // SERIAL_DEBUG
 

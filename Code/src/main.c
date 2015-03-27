@@ -10,7 +10,7 @@ int main(void)
   // MCU Configurations
   RCC_Configuration();
   GPIO_Configuration();
-  /*ADC_Configuration();*/
+  ADC_Configuration();
   PWM_Configuration();
   /*IIC_Configuration();*/
   /*MPU_Configuration();*/
@@ -18,7 +18,7 @@ int main(void)
   // Only for debug
   USART_Configuration();
 
-  mouse_state = STOP;
+  mouse_state = GO;
 
   while(1)
   {
@@ -45,7 +45,7 @@ int main(void)
     sensorReading = ADC_Read(PT_LEFT);
 
     /*USART_SendInt(sensorReading);*/
-    USART_Write(' ');
+    /*USART_Write(' ');*/
     /* IR_Sensor Debug *//*{{{*/
     /*sensorReading = readADC(ONESENSOR);*/
     /*if(sensorReading > 200)*/
