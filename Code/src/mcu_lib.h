@@ -13,44 +13,44 @@
 /*****************************************************************************/
 // For ADC
 /*****************************************************************************/
-#define PT_LEFT     10
-#define PT_LEFT45   11
-#define PT_RIGHT45  12
-#define PT_RIGHT    13
+#define L_RECEIVER     10
+#define LF_RECEIVER   11
+#define RF_RECEIVER  12
+#define R_RECEIVER    13
 
 #define EMITTER GPIOB
 
-#define E_LEFT     GPIO_Pin_15
-#define E_LEFT45   GPIO_Pin_14
-#define E_RIGHT45  GPIO_Pin_13
-#define E_RIGHT    GPIO_Pin_12
+#define L_EMITTER     GPIO_Pin_15
+#define LF_EMITTER    GPIO_Pin_14
+#define RF_EMITTER    GPIO_Pin_13
+#define R_EMITTER     GPIO_Pin_12
 
 /*****************************************************************************/
 // For Motor Control
 /*****************************************************************************/
-#define MOTOR     GPIOA
-#define STBY      GPIO_Pin_4
-#define LEFTIN1   GPIO_Pin_5
-#define LEFTIN2   GPIO_Pin_6
-#define RIGHTIN1  GPIO_Pin_3
-#define RIGHTIN2  GPIO_Pin_2
+#define MOTOR       GPIOA
+#define STBY        GPIO_Pin_4
+#define LEFTIN1     GPIO_Pin_5
+#define LEFTIN2     GPIO_Pin_6
+#define RIGHTIN1    GPIO_Pin_3
+#define RIGHTIN2    GPIO_Pin_2
 
 /*****************************************************************************/
 // For PWM
 /*****************************************************************************/
-#define PWIDTH_0    0
-#define PWIDTH_25   187.5
-#define PWIDTH_50   375
-#define PWIDTH_75   562.5
-#define PWIDTH_MAX  750
+#define PWIDTH_0      0
+#define PWIDTH_25     187.5
+#define PWIDTH_50     375
+#define PWIDTH_75     562.5
+#define PWIDTH_MAX    750
 
 /*****************************************************************************/
 // For Indications
 /*****************************************************************************/
-#define BUTTON  GPIO_Pin_10
-#define GREEN   GPIO_Pin_4 // GPIOC
-#define YELLOW  GPIO_Pin_5
-#define RED     GPIO_Pin_0 //GPIOB
+#define BUTTON   GPIO_Pin_10
+#define GREEN    GPIO_Pin_4 // GPIOC
+#define YELLOW   GPIO_Pin_5
+#define RED      GPIO_Pin_0 //GPIOB
 
 /*****************************************************************************/
 // Functions
