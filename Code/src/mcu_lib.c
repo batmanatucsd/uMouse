@@ -117,7 +117,8 @@ void DMA_Configuration(void) /*{{{*/
 
   //source and destination start addresses
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)sensor_readings;
+  /*DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)sensor_readings;*/
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&ADC1->JOFR1;
 
   //source address increment disable
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -163,7 +164,22 @@ void ADC_Configuration(void) /*{{{*/
   ADC_RegularChannelConfig(ADC1, LF_RECEIVER, 3, ADC_SampleTime_41Cycles5);
   ADC_RegularChannelConfig(ADC1, RF_RECEIVER, 4, ADC_SampleTime_41Cycles5);
 
-  // Start the conversion
+  /* Set injected sequencer length */
+  ADC_InjectedSequencerLengthConfig(ADC1, 4);
+  /* ADC1 injected channel Configuration */ 
+  ADC_InjectedChannelConfig(ADC1, L_RECEIVER, 1, ADC_SampleTime_41Cycles5);
+  ADC_InjectedChannelConfig(ADC1, R_RECEIVER, 2, ADC_SampleTime_41Cycles5);
+  ADC_InjectedChannelConfig(ADC1, LF_RECEIVER, 3, ADC_SampleTime_41Cycles5);
+  ADC_InjectedChannelConfig(ADC1, RF_RECEIVER, 4, ADC_SampleTime_41Cycles5);
+  /* ADC1 injected external trigger configuration */
+  ADC_ExternalTrigInjectedConvConfig(ADC1, ADC_ExternalTrigInjecConv_None);
+
+  /* Enable ADC1 Injected Channels in discontinous mode */
+  ADC_InjectedDiscModeCmd(ADC1, ENABLE);
+
+  /* Enable ADC2 EOC interrupt */
+  ADC_ITConfig(ADC2, ADC_IT_JEOC, ENABLE);
+
   /* Now do the setup */
   ADC_Init(ADC1, &ADC_InitStructure);
   /* Enable ADC1 */
@@ -180,6 +196,7 @@ void ADC_Configuration(void) /*{{{*/
   /* Check the end of ADC1 calibration */
   while(ADC_GetCalibrationStatus(ADC1));
 
+  /* Start the conversion */
   ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }/*}}}*/
 
@@ -191,13 +208,15 @@ void ADC_Configuration(void) /*{{{*/
 /*****************************************************************************/
 uint16_t ADC_Read(uint8_t channel, int rank) /*{{{*/
 {
-  ADC_RegularChannelConfig(ADC1, channel, rank, ADC_SampleTime_7Cycles5);
+  /*ADC_RegularChannelConfig(ADC1, channel, rank, ADC_SampleTime_7Cycles5);*/
   // Start the conversion
-  ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+  /*ADC_SoftwareStartConvCmd(ADC1, ENABLE);*/
   /*Wait until conversion completion*/
   /*while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);*/
   /*Get the conversion value*/
   /*return ADC_GetConversionValue(ADC1);*/
+  ADC_SoftwareStartInjectedConvCmd(ADC1, ENABLE);
+  (ADC_GetFlagStatus(ADC1, ADC_FLAG_JEOC) == RESET);
   return;
 }/*}}}*/
 
@@ -258,7 +277,7 @@ void PWM_Configuration(void) /*{{{*/
 // @brief: Set configurations for delay functions
 // @param: SYSCLK : System Clock
 /*****************************************************************************/
-void Delay_Init(uint8_t SYSCLK) //SYSCLK1000000??72MHz?72  /*{{{*/
+void Delay_Init() //SYSCLK1000000??72MHz?72  /*{{{*/
 {  
     SysTick->CTRL&=0xFFFFFFFB;  
     /*FAC_US=SYSCLK/8;  */

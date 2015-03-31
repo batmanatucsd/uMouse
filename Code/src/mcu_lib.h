@@ -69,7 +69,7 @@ void PWM_Configuration(void);
 
 uint16_t ADC_Read(uint8_t, int);
 
-void Delay_Init(uint8_t);
+void Delay_Init(void);
 void Delay_us(uint32_t);
 void Delay_ms(uint16_t);
 
