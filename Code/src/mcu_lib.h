@@ -5,18 +5,18 @@
 #include "iic.h"
 #include "mpu6050.h"
 
-/*****************************************************************************/
-// For USART
-/*****************************************************************************/
-#define USART_BAUDRATE 9600
+#ifdef  SERIAL_DEBUG
+#include "usart.h"
+#include <stdio.h>
+#endif // SERIAL_DEBUG
 
 /*****************************************************************************/
 // For ADC
 /*****************************************************************************/
-#define L_RECEIVER     10
-#define LF_RECEIVER   11
-#define RF_RECEIVER  12
-#define R_RECEIVER    13
+#define L_RECEIVER    ADC_Channel_10
+#define LF_RECEIVER   ADC_Channel_11
+#define RF_RECEIVER   ADC_Channel_12
+#define R_RECEIVER    ADC_Channel_13
 
 #define EMITTER GPIOB
 
@@ -53,20 +53,25 @@
 #define RED      GPIO_Pin_0 //GPIOB
 
 /*****************************************************************************/
-// Functions
+// For Delays
+/*****************************************************************************/
+#define FAC_US   SystemCoreClock/8
+#define FAC_MS   FAC_US*1000
+
+/*****************************************************************************/
+// Functions Prototypes
 /*****************************************************************************/
 void RCC_Configuration(void);
 void GPIO_Configuration(void);
+void DMA_Configuration(void);
 void ADC_Configuration(void);
 void PWM_Configuration(void);
 
-uint16_t ADC_Read(uint8_t channel);
+uint16_t ADC_Read(uint8_t, int);
 
-#ifdef  SERIAL_DEBUG
-void USART_Configuration(void);
-void USART_Write(uint16_t Data);
-uint8_t USART_Read(void);
-void USART_SendInt(uint16_t num);
-#endif // SERIAL_DEBUG
+void Delay_Init(uint8_t);
+void Delay_us(uint32_t);
+void Delay_ms(uint16_t);
+
 
 #endif // _MCU_LIB_H

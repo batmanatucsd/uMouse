@@ -1,16 +1,19 @@
-#include <stdio.h>
+#include "mouse.h"
 #include "mcu_lib.h"
 
 /*****************************************************************************/
 // RCC_Configuration
 //
-// Configure clocks for the peripherals
+// @brief: Configure clocks for the peripherals
 /*****************************************************************************/
 void RCC_Configuration(void) /*{{{*/
 {
 	/* PCLK2 is the APB2 clock */
   /* ADCCLK = PCLK2/6 = 72/6 = 12MHz*/
   // RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+
+  //enable DMA1 clock
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
   /* ADCCLK = PCLK2/4 for ADC */
   RCC_ADCCLKConfig(RCC_PCLK2_Div4);
@@ -30,7 +33,7 @@ void RCC_Configuration(void) /*{{{*/
 /*****************************************************************************/
 // GPIO_Configuration
 //
-// Set general purpose input & output pin configurations
+// @brief: Set general purpose input & output pin configurations
 /*****************************************************************************/
 void GPIO_Configuration(void) /*{{{*/
 {
@@ -83,78 +86,55 @@ void GPIO_Configuration(void) /*{{{*/
   // TODO: Configure PC6,7 for LEFT
 }/*}}}*/
 
-#ifdef SERIAL_DEBUG
 /*****************************************************************************/
-// USART_Configuration
+// DMA_Configuration
 //
-// Set configurations for serial connection
-// Only called when in debug mode
+// @brief: Set configurations for DMA
 /*****************************************************************************/
-void USART_Configuration(void) /*{{{*/
+void DMA_Configuration(void) /*{{{*/
 {
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+  //create DMA structure
+  DMA_InitTypeDef  DMA_InitStructure;
 
-  GPIO_InitTypeDef GPIO_InitStructure;
+  //reset DMA1 channe1 to default values;
+  DMA_DeInit(DMA1_Channel1);
 
-	// **** GPIO config for serial connection *** //
-  // USART_RX
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  //channel will be used for memory to memory transfer
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+  //setting normal mode (non circular)
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  //medium priority
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
 
-  // USART_TX
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  //chunk of data to be transfered
+  DMA_InitStructure.DMA_BufferSize = 4; // use 4 when using 4 IR sensors
+  //source and destination data size word=32bit
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
 
-  USART_InitTypeDef USART_InitStructure;
+  //Location assigned to peripheral register will be source
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
 
-  USART_InitStructure.USART_BaudRate = USART_BAUDRATE;
-  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-  USART_InitStructure.USART_StopBits = USART_StopBits_1;
-  USART_InitStructure.USART_Parity = USART_Parity_No;
-  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+  //source and destination start addresses
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)sensor_readings;
 
-  USART_Init(USART1, &USART_InitStructure);
-  USART_Cmd(USART1, ENABLE);
+  //source address increment disable
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  //automatic memory destination increment enable.
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+
+  //send values to DMA registers
+  DMA_Init(DMA1_Channel1, &DMA_InitStructure);
+  // Enable DMA1 Channel Transfer Complete interrupt
+  /*DMA_ITConfig(DMA1_Channel1, DMA_IT_TC, ENABLE);*/
+  DMA_Cmd(DMA1_Channel1, ENABLE); //Enable the DMA1 - Channel1
 }/*}}}*/
-
-void USART_Write(uint16_t Data) /*{{{*/
-{
-  USART_SendData(USART1, Data);
-  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
-}/*}}}*/
-
-uint8_t USART_Read(void) {/*{{{*/
-  while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
-  return (uint8_t) USART_ReceiveData(USART1);
-}/*}}}*/
-
-void USART_SendInt(uint16_t num) /*{{{*/
-{
-  int i = 5;
-  char num_char[6] = {0};
-
-  while(num > 0) {
-    num_char[i--] = num%10 + 48;
-    num /= 10;
-  }
-
-  for(i=0; i<6; ++i) {
-    if(num_char[i])
-      USART_Write(num_char[i]);
-  }
-}/*}}}*/
-
-#endif // SERIAL_DEBUG
 
 /*****************************************************************************/
 // ADC_Configuration
 //
-// Set configurations for analog input
+// @brief: Set configurations for analog input
 /*****************************************************************************/
 void ADC_Configuration(void) /*{{{*/
 {
@@ -167,20 +147,29 @@ void ADC_Configuration(void) /*{{{*/
   /* ADC1 and ADC2 operate independently */
   ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
   /* Disable the scan conversion so we do one at a time */
-  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+  ADC_InitStructure.ADC_ScanConvMode = ENABLE;
   /* Don't do contimuous conversions - do them on demand */
-  ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
+  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
+
   // Start conversin by software, not an external trigger
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
   /* Conversions are 12 bit - put them in the lower 12 bits of the result */
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
   /* Say how many channels would be used by the sequencer */
-  ADC_InitStructure.ADC_NbrOfChannel = 1;
+  ADC_InitStructure.ADC_NbrOfChannel = 4;
 
+  ADC_RegularChannelConfig(ADC1, L_RECEIVER, 1, ADC_SampleTime_41Cycles5);
+  ADC_RegularChannelConfig(ADC1, R_RECEIVER, 2, ADC_SampleTime_41Cycles5);
+  ADC_RegularChannelConfig(ADC1, LF_RECEIVER, 3, ADC_SampleTime_41Cycles5);
+  ADC_RegularChannelConfig(ADC1, RF_RECEIVER, 4, ADC_SampleTime_41Cycles5);
+
+  // Start the conversion
   /* Now do the setup */
   ADC_Init(ADC1, &ADC_InitStructure);
   /* Enable ADC1 */
   ADC_Cmd(ADC1, ENABLE);
+  /*Enable DMA for ADC*/
+  ADC_DMACmd(ADC1, ENABLE);
 
   /* Enable ADC1 reset calibaration register */
   ADC_ResetCalibration(ADC1);
@@ -190,28 +179,32 @@ void ADC_Configuration(void) /*{{{*/
   ADC_StartCalibration(ADC1);
   /* Check the end of ADC1 calibration */
   while(ADC_GetCalibrationStatus(ADC1));
+
+  ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }/*}}}*/
 
 /*****************************************************************************/
-// readADC
+// ADC_Read
 //
-// Gets analog input
+// @brief: Gets analog input
+// @param: channel : adc_channel to get the result from
 /*****************************************************************************/
-uint16_t ADC_Read(uint8_t channel) /*{{{*/
+uint16_t ADC_Read(uint8_t channel, int rank) /*{{{*/
 {
-  ADC_RegularChannelConfig(ADC1, ADC_Channel_10, 1, ADC_SampleTime_1Cycles5);
+  ADC_RegularChannelConfig(ADC1, channel, rank, ADC_SampleTime_7Cycles5);
   // Start the conversion
   ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-  // Wait until conversion completion
-  while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
-  // Get the conversion value
-  return ADC_GetConversionValue(ADC1);
+  /*Wait until conversion completion*/
+  /*while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);*/
+  /*Get the conversion value*/
+  /*return ADC_GetConversionValue(ADC1);*/
+  return;
 }/*}}}*/
 
 /*****************************************************************************/
 // PWM_Configuration
 //
-// Set configurations for PWM
+// @brief: Set configurations for PWM
 /*****************************************************************************/
 void PWM_Configuration(void) /*{{{*/
 {
@@ -258,3 +251,58 @@ void PWM_Configuration(void) /*{{{*/
   TIM_Cmd(TIM5, ENABLE);
   TIM_Cmd(TIM3, ENABLE);
 }/*}}}*/
+
+/*****************************************************************************/
+// Delay_Init
+//
+// @brief: Set configurations for delay functions
+// @param: SYSCLK : System Clock
+/*****************************************************************************/
+void Delay_Init(uint8_t SYSCLK) //SYSCLK1000000??72MHz?72  /*{{{*/
+{  
+    SysTick->CTRL&=0xFFFFFFFB;  
+    /*FAC_US=SYSCLK/8;  */
+    /*FAC_MS=(u16t)(FAC_US*1000);       */
+}  /*}}}*/
+
+/*****************************************************************************/
+// Delay_us
+//
+// @brief: Delay for given amount of microseconds
+// @param: nus : microseconds
+/*****************************************************************************/
+void Delay_us(uint32_t nus)  /*{{{*/
+{  
+    uint32_t temp;  
+    SysTick->LOAD=nus*FAC_US;  
+    SysTick->VAL=0x00;  
+    SysTick->CTRL=0x01;  
+    do  
+    {  
+        temp=SysTick->CTRL;  
+    }  
+    while(temp&0x01&&!(temp&0x10000));  
+    SysTick->CTRL=0x00;  
+    SysTick->VAL=0x00;     
+}  /*}}}*/
+
+/*****************************************************************************/
+// Delay_ms
+//
+// @brief: Delay for given amount of miliseconds
+// @param: nms : milliseconds to delay
+/*****************************************************************************/
+void Delay_ms(uint16_t nms)  /*{{{*/
+{  
+    uint32_t temp;  
+    SysTick->LOAD=(uint32_t)(nms*FAC_MS);  
+    SysTick->VAL=0x00;  
+    SysTick->CTRL=0x01;  
+    do  
+    {  
+        temp=SysTick->CTRL;  
+    }  
+    while(temp&0x01&&!(temp&0x10000));  
+    SysTick->CTRL=0x00;  
+    SysTick->VAL=0x00;     
+}  /*}}}*/

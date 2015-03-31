@@ -1,6 +1,4 @@
 #include "mouse.h"
-#include <stdio.h>
-#include "usart.h"
 
 /*****************************************************************************/
 // Main Function
@@ -11,7 +9,9 @@ int main(void)
 
   // MCU Configurations
   RCC_Configuration();
+  DMA_Configuration();
   GPIO_Configuration();
+
   ADC_Configuration();
   PWM_Configuration();
   /*IIC_Configuration();*/
@@ -22,7 +22,7 @@ int main(void)
 
   mouse_state = STOP;
 
-  while(1)
+  while(2)
   {
     // Listen to button push
     listen_for_button();
@@ -35,6 +35,7 @@ int main(void)
         GPIO_SetBits(GPIOC, GREEN);
         turnMotorOn();
         break;
+
       case STOP:
         GPIO_SetBits(GPIOB, RED);
         GPIO_ResetBits(GPIOC, GREEN);
@@ -42,10 +43,15 @@ int main(void)
         break;
     }
     
-    // IR Sensors
-    GPIO_SetBits(EMITTER, L_EMITTER);
-    sensorReading = ADC_Read(L_RECEIVER);
+  // IR Sensors
+  GPIO_SetBits(EMITTER, L_EMITTER);
+  /*GPIO_SetBits(EMITTER, LF_EMITTER);*/
+  /*GPIO_SetBits(EMITTER, RF_EMITTER);*/
+  /*GPIO_SetBits(EMITTER, R_EMITTER);*/
+  
 
-    printf("sensor reading: %d\r\n", sensorReading);
+
+    printf("sensor reading: %d         %d        %d        %d\r\n",
+            sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);
   }
 }
