@@ -1,12 +1,14 @@
 # Project Name
-PROJECT=uMouse
+PROJECT = uMouse
 
-# DEVICE(MOUSE,DISCOVERY)
-BOARD  =MOUSE
+# DEVICE(MOUSE, DISCOVERY)
+BOARD = DISCOVERY
 
-# Serial Debug(DEBUG)
-SERIAL =DEBUG
-#SERIAL =NOTDEBUG
+# Make Mode(DEBUG, RELEASE)
+MAKEMODE = RELEASE
+
+# Serial Debug(DEBUG,RELEASE)
+SERIAL = DEBUG
 
 # Tool PATH
 TOOLDIR=./arm-none-eabi/bin
@@ -52,7 +54,7 @@ vpath %.c $(PERIPH)/src
 vpath %.o $(OBJDIR)
 
 # Include Path
-INC := $(SRCDIR) $(CORE) $(DEVICE) $(PERIPH)/inc 
+INC := $(SRCDIR) $(CORE) $(DEVICE) $(PERIPH)/inc
 
 # The project file
 SRC	 = $(notdir $(wildcard $(SRCDIR)/*.c))
@@ -70,15 +72,22 @@ SRC += stm32f10x_tim.c
 
 ifeq ($(SERIAL), DEBUG)
 SRC += stm32f10x_usart.c
-FEATURES+=-DSERIAL_DEBUG
+FEATURES += -DSERIAL_DEBUG
 endif
 
 # the object file to be compiled
 OBJ := $(notdir $(STARTUP:.s=.o)) $(SRC:.c=.o)
 
 #FLAGS
-GFLAGS  = -mthumb -mcpu=cortex-m3
-OPT		= -Os
+GFLAGS = -mthumb -mcpu=cortex-m3
+OPT =
+
+ifeq ($(MAKEMODE), DEBUG)
+OPT += -Og
+else ifeq ($(MAKEMODE), RELEASE)
+OPT	+= -Os
+endif
+
 
 LDFLAGS = $(OPT) $(GFLAGS) -T$(LDSCRIPT) -nostartfiles
 CFLAGS  = $(OPT) $(GFLAGS) -g -Wall
