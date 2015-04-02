@@ -66,8 +66,9 @@ void GPIO_Configuration(void);
 void DMA_Configuration(void);
 void ADC_Configuration(void);
 void PWM_Configuration(void);
+void NVIC_Configuration(void);
 
-uint16_t ADC_Read(uint8_t, int);
+void ADC_Read();
 
 void Delay_Init(void);
 void Delay_us(uint32_t);

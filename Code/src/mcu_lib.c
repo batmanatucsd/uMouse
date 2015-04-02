@@ -139,7 +139,7 @@ void DMA_Configuration(void) /*{{{*/
 /*****************************************************************************/
 void ADC_Configuration(void) /*{{{*/
 {
-  ADC_InitTypeDef  ADC_InitStructure;
+  ADC_InitTypeDef ADC_InitStructure;
 
   /* Put everything back to power-on defaults */
   ADC_DeInit(ADC1);
@@ -159,26 +159,26 @@ void ADC_Configuration(void) /*{{{*/
   /* Say how many channels would be used by the sequencer */
   ADC_InitStructure.ADC_NbrOfChannel = 4;
 
-  ADC_RegularChannelConfig(ADC1, L_RECEIVER, 1, ADC_SampleTime_41Cycles5);
-  ADC_RegularChannelConfig(ADC1, R_RECEIVER, 2, ADC_SampleTime_41Cycles5);
+  ADC_RegularChannelConfig(ADC1, R_RECEIVER, 1, ADC_SampleTime_41Cycles5);
+  ADC_RegularChannelConfig(ADC1, RF_RECEIVER, 2, ADC_SampleTime_41Cycles5);
   ADC_RegularChannelConfig(ADC1, LF_RECEIVER, 3, ADC_SampleTime_41Cycles5);
-  ADC_RegularChannelConfig(ADC1, RF_RECEIVER, 4, ADC_SampleTime_41Cycles5);
+  ADC_RegularChannelConfig(ADC1, L_RECEIVER, 4, ADC_SampleTime_41Cycles5);
 
   /* Set injected sequencer length */
   ADC_InjectedSequencerLengthConfig(ADC1, 4);
   /* ADC1 injected channel Configuration */ 
-  ADC_InjectedChannelConfig(ADC1, L_RECEIVER, 1, ADC_SampleTime_41Cycles5);
-  ADC_InjectedChannelConfig(ADC1, R_RECEIVER, 2, ADC_SampleTime_41Cycles5);
+  ADC_InjectedChannelConfig(ADC1, R_RECEIVER, 1, ADC_SampleTime_41Cycles5);
+  ADC_InjectedChannelConfig(ADC1, RF_RECEIVER, 2, ADC_SampleTime_41Cycles5);
   ADC_InjectedChannelConfig(ADC1, LF_RECEIVER, 3, ADC_SampleTime_41Cycles5);
-  ADC_InjectedChannelConfig(ADC1, RF_RECEIVER, 4, ADC_SampleTime_41Cycles5);
+  ADC_InjectedChannelConfig(ADC1, L_RECEIVER, 4, ADC_SampleTime_41Cycles5);
   /* ADC1 injected external trigger configuration */
   ADC_ExternalTrigInjectedConvConfig(ADC1, ADC_ExternalTrigInjecConv_None);
 
   /* Enable ADC1 Injected Channels in discontinous mode */
   ADC_InjectedDiscModeCmd(ADC1, ENABLE);
 
-  /* Enable ADC2 EOC interrupt */
-  ADC_ITConfig(ADC2, ADC_IT_JEOC, ENABLE);
+  /* Enable ADC1 EOC interrupt */
+  /*ADC_ITConfig(ADC1, ADC_IT_JEOC, ENABLE);*/
 
   /* Now do the setup */
   ADC_Init(ADC1, &ADC_InitStructure);
@@ -206,7 +206,7 @@ void ADC_Configuration(void) /*{{{*/
 // @brief: Gets analog input
 // @param: channel : adc_channel to get the result from
 /*****************************************************************************/
-uint16_t ADC_Read(uint8_t channel, int rank) /*{{{*/
+void ADC_Read() /*{{{*/
 {
   /*ADC_RegularChannelConfig(ADC1, channel, rank, ADC_SampleTime_7Cycles5);*/
   // Start the conversion
@@ -215,9 +215,9 @@ uint16_t ADC_Read(uint8_t channel, int rank) /*{{{*/
   /*while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);*/
   /*Get the conversion value*/
   /*return ADC_GetConversionValue(ADC1);*/
+  GPIO_SetBits(EMITTER, R_EMITTER);
   ADC_SoftwareStartInjectedConvCmd(ADC1, ENABLE);
-  (ADC_GetFlagStatus(ADC1, ADC_FLAG_JEOC) == RESET);
-  return;
+  /*(ADC_GetFlagStatus(ADC1, ADC_FLAG_JEOC) == RESET);*/
 }/*}}}*/
 
 /*****************************************************************************/
@@ -269,6 +269,23 @@ void PWM_Configuration(void) /*{{{*/
   // TIM3,5 enable counter
   TIM_Cmd(TIM5, ENABLE);
   TIM_Cmd(TIM3, ENABLE);
+}/*}}}*/
+
+/*****************************************************************************/
+// NVIC_Configuration
+//
+// @brief: Set configurations for NVIC
+/*****************************************************************************/
+void NVIC_Configuration(void)/*{{{*/
+{
+  NVIC_InitTypeDef NVIC_InitStructure;
+
+  /* Configure and enable ADC interrupt */
+  NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
 }/*}}}*/
 
 /*****************************************************************************/

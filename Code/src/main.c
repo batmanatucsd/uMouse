@@ -9,8 +9,9 @@ int main(void)
 
   // MCU Configurations
   RCC_Configuration();
-  DMA_Configuration();
   GPIO_Configuration();
+  DMA_Configuration();
+  /*NVIC_Configuration();*/
 
   ADC_Configuration();
   /*PWM_Configuration();*/
@@ -39,7 +40,7 @@ int main(void)
 
       case STOP:
         GPIO_SetBits(GPIOB, RED);
-        GPIO_ResetBits(GPIOC, GREEN);
+        /*GPIO_ResetBits(GPIOC, GREEN);*/
         /*turnMotorOff();*/
         break;
     }
@@ -54,15 +55,12 @@ int main(void)
           /*sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);*/
 
 
-  GPIO_SetBits(EMITTER, RF_EMITTER);
-  /*Delay_us(60);*/
-  ADC_Read(ADC1, 1);
+  ADC_Read();
   printf("sensor reading: %d         %d        %d        %d\r\n",
           /*ADC1->JDR1, ADC1->JDR2, ADC1->JDR3, ADC1->JDR4);*/
-          ADC1->JDR4, 0, 0, 0);
+          ADC1->JDR1, 0, 0, 0);
   /*printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$OFFSET reading: %d         %d        %d        %d\r\n",*/
           /*ADC1->JOFR1, ADC1->JOFR2, ADC1->JOFR3, ADC1->JOFR4);*/
-  GPIO_ResetBits(EMITTER, RF_EMITTER);
   
   }
 }
