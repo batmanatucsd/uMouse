@@ -5,7 +5,6 @@
 /*****************************************************************************/
 int main(void)
 {
-  volatile uint16_t sensorReading = 0;
 
   // MCU Configurations
   RCC_Configuration();
@@ -20,7 +19,6 @@ int main(void)
 
   // Only for debug
   USART_Configuration();
-  Delay_Init();
 
   mouse_state = STOP;
 
@@ -45,22 +43,20 @@ int main(void)
         break;
     }
     
-  // IR Sensors
-  /*GPIO_SetBits(EMITTER, L_EMITTER);*/
-  /*GPIO_SetBits(EMITTER, LF_EMITTER);*/
-  /*GPIO_SetBits(EMITTER, RF_EMITTER);*/
-  /*GPIO_SetBits(EMITTER, R_EMITTER);*/
+    // IR Sensors
+    /*GPIO_SetBits(EMITTER, L_EMITTER);*/
+    /*GPIO_SetBits(EMITTER, LF_EMITTER);*/
+    /*GPIO_SetBits(EMITTER, RF_EMITTER);*/
+    /*GPIO_SetBits(EMITTER, R_EMITTER);*/
   
-  /*printf("sensor reading: %d         %d        %d        %d\r\n",*/
-          /*sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);*/
 
+    ADC_Read();
 
-  ADC_Read();
-  printf("sensor reading: %d         %d        %d        %d\r\n",
-          /*ADC1->JDR1, ADC1->JDR2, ADC1->JDR3, ADC1->JDR4);*/
-          ADC1->JDR1, 0, 0, 0);
-  /*printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$OFFSET reading: %d         %d        %d        %d\r\n",*/
-          /*ADC1->JOFR1, ADC1->JOFR2, ADC1->JOFR3, ADC1->JOFR4);*/
+    printf("ADC1 reading: %u         %u        %u        %u\r\n",
+            ADC3->JOFR1, ADC3->JOFR2, ADC3->JOFR3, ADC3->JOFR4);
+    printf("                                              sensor reading: %u         %u        %u        %u\r\n",
+            sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);
+            /*ADC3->DR, sensor_readings[1], sensor_readings[2], sensor_readings[3]);*/
   
   }
 }
