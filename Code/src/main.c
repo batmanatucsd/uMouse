@@ -52,8 +52,8 @@ int main(void)
 
     ADC_Read();
 
-    printf("ADC1 reading: %u         %u        %u        %u\r\n",
-            ADC3->JOFR1, ADC3->JOFR2, ADC3->JOFR3, ADC3->JOFR4);
+    /*printf("ADC1 reading: %u         %u        %u        %u\r\n",*/
+            /*ADC3->JOFR1, ADC3->JOFR2, ADC3->JOFR3, ADC3->JOFR4);*/
     printf("                                              sensor reading: %u         %u        %u        %u\r\n",
             sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);
             /*ADC3->DR, sensor_readings[1], sensor_readings[2], sensor_readings[3]);*/

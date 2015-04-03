@@ -273,7 +273,7 @@ void ADC_Read() /*{{{*/
   GPIO_SetBits(EMITTER, LF_EMITTER);
   GPIO_SetBits(EMITTER, L_EMITTER);
   GPIO_SetBits(EMITTER, R_EMITTER);
-  ADC_SoftwareStartInjectedConvCmd(ADC3, ENABLE);
+  /*ADC_SoftwareStartInjectedConvCmd(ADC3, ENABLE);*/
   /*(ADC_GetFlagStatus(ADC1, ADC_FLAG_JEOC) == RESET);*/
   /*ADC_SoftwareStartConvCmd(ADC1, ENABLE);*/
 }/*}}}*/
