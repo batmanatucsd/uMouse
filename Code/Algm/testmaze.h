@@ -18,7 +18,8 @@ unsigned short testMaze[16][16];		//This represents the actual testMaze,
 //		Moves through columns from 0->15, left to right. 
 //		Then for each column, rows 0->15, top to bottom. 
 /****************************************************************************/
-void setupTest() {
+void setupTest() 
+{
 
 	//Initialize edge cells -------------------------------------------------
 	for (unsigned short row = 0; row < 16; row++) {
@@ -39,7 +40,7 @@ void setupTest() {
 	testMaze[15][0] |= EAST_WALL;
 
 	//Open text file that represents a maze to read walls in, read-only
-	FILE *file = fopen("testmaze2.txt", "r");
+	FILE *file = fopen("testmaze1.txt", "r");
 	if (!file) {
 		printf("Sorry, that test maze file does not exist.\n");
 		exit(1);
@@ -52,36 +53,48 @@ void setupTest() {
     int col = 0;
 
 	//Read til the end of file
-	while(!feof(file)) {
+	while(!feof(file)) 
+	{
 		fgets(line, 15, file);
-
+		
         //If the value is not "/" or whitespace, grab value to fill testmaze
-        if (line[0] != '/' && line[0] != ' ') 
+        if (line[0] != '/' && !(isspace(line[0])) ) 
         {
 			//Convert the value in file into an int
-			printf("\nraw line value: %s", line);
+			printf("\nraw int value: %s", line);
 			value = atoi(line);
-			
+			printf("\nint value: %d\n", value);
+
 			//int value should be = 0000 [RAWLINE] 0000 0000
 			value = value << 8;
-			printf("int value: %d\n", value);
+			printf("int value after shift: %d\n", value);
 
+			//Create testMaze by OR'ing the values inputted in txt file
+			printf("testMaze[%d][%d] |= %d\n\n", row, col, value);
+			testMaze [row][col] |= value;
 			row++;
 
 			//Move onto next column after 15 rows have been filled
-			if (row == 15) 
+			if (row == 16) 
 			{
 				col++;
 				row = 0;
 			}
-
-			//Create testMaze by OR'ing the values inputted in txt file
-			testMaze [row][col] |= value;
+			//Testmaze complete.
+			if (col == 16)
+			{
+				break;
+			}
 
 			//Reset line value
 			memset(line, 0, sizeof(line));
 		}
+
+		else
+			printf("raw line value: %s\n", line);
 	}
+
+	//Value printed should be the int representation of bitmask xxxV_NESW_DIST
 	printf("Testing testmaze access: %u\n",testMaze[0][0]);
 
 }
