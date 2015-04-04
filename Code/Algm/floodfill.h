@@ -6,7 +6,6 @@ unsigned short current = 0x0;  // Cell on stack mouse is looking at
 unsigned char location = 0x0;  // First four bits = ROW, last four = COL
 unsigned char direction = 0x0; // 0x0 north 0x1 east 0x2 south 0x3 west
 
-
 /*****************************************************************************/
 // Bit masks
 // xxxV_NESW_DIST
@@ -32,5 +31,7 @@ unsigned short stackptr = 0;
 /*****************************************************************************/
 void setup();
 unsigned short init(unsigned short row, unsigned short col);
+void lookAhead();
+void move();
 void update(unsigned short row, unsigned short col);
 void print();

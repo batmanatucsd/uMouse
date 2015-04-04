@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "floodfill.h"
+
 
 unsigned short testMaze[16][16];		//This represents the actual testMaze, 
 										//mouse does not know this yet.
@@ -23,11 +23,7 @@ void setupTest() {
 	//Initialize edge cells -------------------------------------------------
 	for (unsigned short row = 0; row < 16; row++) {
 		for (unsigned short col = 0; col < 16; col++) {
-
-			//Call init from floodfill.c
 			//Pre-fills cells with distance from center, assuming no walls
-			//testMaze[row][col] = init(row, col);
-
 			if (row == 0) testMaze[row][col] |= NORTH_WALL;
 			if (col == 0) testMaze[row][col] |= WEST_WALL;
 			if (col == 15) testMaze[row][col] |= EAST_WALL;
@@ -88,6 +84,8 @@ void setupTest() {
 	printf("Testing testmaze access: %u\n",testMaze[0][0]);
 
 }
+
+
 	//Loop through text file to create the maze.
 	/**unsigned short c = 0;
 	for (int row = 0; row < 16; row++) {
@@ -99,6 +97,19 @@ void setupTest() {
 
 /**	//Column 0 WALLS:
 	testMaze[14][0] |= 
+=======
+	// Initialize mouse, position in bottom left corner, facing up
+	location = 0xf0;				// testMaze[15,0]
+	direction = 0x0;				// 0x0 = up direction
+
+
+	// Initialize the right wall for the bottom left corner 
+	// *** THIS WILL ALWAYS BE THE SAME ***
+	testMaze[15][0] |= EAST_WALL;
+
+	//Column 0 WALLS:
+	//testMaze[14][0] |= 
+>>>>>>> 2e2c19e543b5718f4f7a4a934154fa1f9896301a
 	testMaze[13][0] |= EAST_WALL;
 	testMaze[12][0] |= EAST_WALL;
 	testMaze[11][0] |= NORTH_WALL;
@@ -114,7 +125,11 @@ void setupTest() {
 	testMaze[1][0] |= EAST_WALL; 
 	//testMaze[0][0] |=
 
+<<<<<<< HEAD
 	//Column 1 WALLS: --------------------------------------------------------
+=======
+	//Column 1 WALLS:
+>>>>>>> 2e2c19e543b5718f4f7a4a934154fa1f9896301a
 	testMaze[15][1] |= WEST_WALL;
 	testMaze[14][1] |= EAST_WALL;
 	testMaze[13][1] |= WEST_WALL;
@@ -123,6 +138,7 @@ void setupTest() {
 	testMaze[10][1] |= (SOUTH_WALL | NORTH_WALL);
 	testMaze[9][1] |= (SOUTH_WALL | NORTH_WALL);
 	testMaze[8][1] |= (SOUTH_WALL | NORTH_WALL);
+<<<<<<< HEAD
 	testMaze[7][1] |= (SOUTH_WALL | EAST_WALL);
 	testMaze[6][1] |= (NORTH_WALL | WEST_WALL);
 	testMaze[5][1] |= (SOUTH_WALL | EAST_WALL);
@@ -330,4 +346,19 @@ void setupTest() {
 
 
 
-} **/
+} 
+
+	//testMaze[7][0] |= 
+	testMaze[6][1] |= EAST_WALL;
+	//testMaze[5][0] |= 
+	testMaze[4][1] |= EAST_WALL;
+	//testMaze[3][0] |= 
+	testMaze[2][1] |= EAST_WALL;
+	testMaze[1][1] |= EAST_WALL; 
+	//testMaze[0][0] |=**/
+
+
+
+
+
+
