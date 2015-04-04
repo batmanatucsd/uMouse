@@ -28,8 +28,8 @@ void setup()
 	current = 0xf0;
 	location = 0xf0;				// maze[15,0]
 	direction = 0x0;				// 0x0 = up direction
-
-
+	maze[15][0] |= EAST_WALL;
+	maze[15][1] |= WEST_WALL;
 }
 
 /*****************************************************************************/
@@ -58,10 +58,32 @@ unsigned short init(unsigned short row, unsigned short col)
 /*****************************************************************************/
 void lookAhead()
 {
-	if ((direction == 0 && (!maze[(location & ROW) >> 4][(location & COL)] & NORTH_WALL)) ||
-	    (direction == 1 && (!maze[(location & ROW) >> 4][(location & COL)] & EAST_WALL)) ||
-	    (direction == 2 && (!maze[(location & ROW) >> 4][(location & COL)] & SOUTH_WALL)) ||
-	    (direction == 3 && (!maze[(location & ROW) >> 4][(location & COL)] & WEST_WALL)))
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
+
+	if (direction == 0 && !(maze[row][col] & NORTH_WALL))
+	{
+		maze[row - 1][col] |= testMaze[row - 1][col];
+		if (maze[row - 1][col] & WEST_WALL && col - 1 >= 0)
+		{
+			maze[row - 1][col - 1] |= EAST_WALL;
+		}
+		if (maze[row - 1][col] & NORTH_WALL && row - 2 >= 0)
+		{
+			maze[row - 2][col] |= SOUTH_WALL;
+		}
+		if (maze[row - 1][col] & EAST_WALL && col + 1 <= 15)
+		{
+			maze[row - 1][col + 1] |= WEST_WALL;
+		}
+	}
+	else if (direction == 1 && !(maze[(location & ROW) >> 4][(location & COL)] & EAST_WALL))
+	{
+	}
+	else if (direction == 2 && !(maze[(location & ROW) >> 4][(location & COL)] & SOUTH_WALL))
+	{
+	}
+	else if (direction == 3 && !(maze[(location & ROW) >> 4][(location & COL)] & WEST_WALL))
 	{
 	}
 }
@@ -84,8 +106,9 @@ void update(unsigned short row, unsigned short col)
 	unsigned short tile = maze[row][col];
 
 	// Update wall map
-	printf("\nTEST LOCATION:%u\n", location);
-	printf("\nTEST TILE:%u\n\n", tile);
+	printf("\nTEST LOCATION:%u,%u\n", (location & ROW) >> 4, location & COL);
+	printf("\nTEST TILE:%u\n\n", tile & DIST);
+	printf("Direction:%u\n", direction);
 /*
 	// left wall
 	if (abs(analogRead(IR_IN1) - THRESHOLD) > abs(analogREAD(IR_IN1) - leftAmbientLight))
