@@ -36,7 +36,7 @@ void setupTest() {
 	testMaze[15][0] |= EAST_WALL;
 
 	//Column 0 WALLS:
-	testMaze[14][0] |= 
+	//testMaze[14][0] |= 
 	testMaze[13][0] |= EAST_WALL;
 	testMaze[12][0] |= EAST_WALL;
 	testMaze[11][0] |= NORTH_WALL;
