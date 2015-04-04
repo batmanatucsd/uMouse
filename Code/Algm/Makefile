@@ -1,15 +1,15 @@
+
 CC=gcc
 
 CFLAGS=-Wall -std=c99
 
-all: floodfill
+all: pid.o floodfill
 
 floodfill: floodfill.o
 
-floodfill.o: floodfill.c testmaze.h pid.h
+floodfill.o: floodfill.h floodfill.c
 
 pid.o: pid.h
 
 clean:
-	rm -f *.o floodfill
-
+	rm -f *.o *.gch a.out floodfill
