@@ -29,7 +29,6 @@ void setup()
 	location = 0xf0;				// maze[15,0]
 	direction = 0x0;				// 0x0 = up direction
 
-
 }
 
 /*****************************************************************************/
@@ -235,13 +234,13 @@ int main() {
 
 	//Initialize maze, testmaze, and mouse location
 	//char name[99999];
-	setup();
+	//setup();
 	setupTest();
 	
 	// Push first cell into stack
-	stack[stackptr++] = location;
+	//stack[stackptr++] = location;
 
-	//print();
+	print();
 
 	/**while (current != 0x77 && current != 0x78 &&
 		current != 0x87 && current != 0x88)

@@ -15,12 +15,12 @@ unsigned short testMaze[16][16];		//This represents the actual testMaze,
 /****************************************************************************/
 // setupTest():
 //		This actually just hardcodes the maze... lmao
-//		Moves through columns from 0 -> 15, left to right. 
+//		Moves through columns from 0->15, left to right. 
 //		Then for each column, rows 0->15, top to bottom. 
 /****************************************************************************/
 void setupTest() {
 
-	//Initialize edge cells
+	//Initialize edge cells -------------------------------------------------
 	for (unsigned short row = 0; row < 16; row++) {
 		for (unsigned short col = 0; col < 16; col++) {
 
@@ -35,15 +35,15 @@ void setupTest() {
 		}
 	}
 
-	// Initialize mouse, position in bottom left corner, facing up
+	//Initialize mouse, position in bottom left corner, facing up
 	location = 0xf0;					// testMaze[15,0]
 	direction = 0x0;					// 0x0 = up direction
 
-	// Initialize the right wall for the bottom left corner, always
+	//Initialize the right wall for the bottom left corner, always
 	testMaze[15][0] |= EAST_WALL;
 
-	//Open text file to read walls in, read-only
-	FILE *file = fopen("testmaze1.txt", "r");
+	//Open text file that represents a maze to read walls in, read-only
+	FILE *file = fopen("testmaze2.txt", "r");
 	if (!file) {
 		printf("Sorry, that test maze file does not exist.\n");
 		exit(1);
@@ -58,34 +58,34 @@ void setupTest() {
 	size_t len = 0;
 	ssize_t read;
 
-
-	//Read to end of file
+	//Read til the end of file
 	while(!feof(file)) {
+		//Skip lines that denote column number.
 		if ((read = getline(&line, &len, file)) != -1 && line[0] != '/') {
 			
 			//Convert the value in file into an int
-			printf("line value: %s\n", line);
+			printf("\nraw line value: %s", line);
 			value = atoi(line);
 			
+			//int value should be = 0000 [RAWLINE] 0000 0000
 			value = value << 8;
 			printf("int value: %d\n", value);
 
-			// = 0; //|= value;
-			//testMaze[row][col] |= value;
 			row++;
+			//Move onto next column after 15 rows have been filled
 			if (row == 15) {
 				col++;
 				row = 0;
 			}
 
-			//Create maze by OR'ing the values inputted in txt file
+			//Create testMaze by OR'ing the values inputted in txt file
 			testMaze [row][col] |= value;
 
 			//Reset line value
 			memset(line, 0, sizeof(*line));
 		}
 	}
-	//printf("Testing testmaze access: %u\n",testMaze[1][3]);
+	printf("Testing testmaze access: %u\n",testMaze[0][0]);
 
 }
 	//Loop through text file to create the maze.
