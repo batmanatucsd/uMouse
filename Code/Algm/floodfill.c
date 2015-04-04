@@ -334,24 +334,28 @@ int main() {
 	// Push first cell into stack
 	stack[stackptr++] = location;
 
-	while (current != 0x77 && current != 0x78 &&
-		current != 0x87 && current != 0x88)
+	while (location != 0x77 && location != 0x78 &&
+		location != 0x87 && location != 0x88)
 	{
 	  	printf("Press RETURN to contine");
 	    	fgets(name, sizeof(name), stdin);
-	    	// DEBUG
-		printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
-		printf("Current stack: ");
-		for (int i = 0; i < stackptr; i++)
-			printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
-		printf("\n");
-		// DEBUG
 		lookAhead();
-		move();
 		print();
-		--stackptr;
-		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-		// if (stackptr == 0) move();
+
+		while (stackptr > 1)
+		{
+			--stackptr;
+			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+
+		    	// DEBUG
+			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
+			printf("Current stack: ");
+			for (int i = 0; i < stackptr; i++)
+				printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
+			printf("\n");
+			// DEBUG
+		}
+		move();
 	}
 
 }
