@@ -79,6 +79,7 @@ void lookAhead()
 	}
 	else if (direction == 1 && !(maze[(location & ROW) >> 4][(location & COL)] & EAST_WALL))
 	{
+		maze[row][col + 1] |= testMaze[row][col + 1];
 	}
 	else if (direction == 2 && !(maze[(location & ROW) >> 4][(location & COL)] & SOUTH_WALL))
 	{
@@ -91,9 +92,60 @@ void lookAhead()
 /*****************************************************************************/
 // move():
 //		Move to the cell closest to the center
-/*****************************************************************************/\
+/*****************************************************************************/
 void move()
 {
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
+
+	unsigned char min = 255;
+	unsigned char next = (row << 4) | col;
+	unsigned short tile = maze[row][col];
+
+	// If there is no NORTH wall for this cell
+	if (!(tile & NORTH_WALL))
+	{
+		if ((maze[row - 1][col] & DIST) < min)
+		{
+			min = maze[row - 1][col] & DIST;
+			next = ((row - 1) << 4) | col;
+			direction = 0;
+		}
+	}
+
+	// If there is no EAST wall for this cell
+	if (!(tile & EAST_WALL))
+	{
+		if ((maze[row][col + 1] & DIST) < min)
+		{
+			min = maze[row][col + 1] & DIST;
+			next = (row << 4) | (col + 1);
+			direction = 1;
+		}
+	}
+
+	// If there is no SOUTH wall for this cell
+	if (!(tile & SOUTH_WALL))
+	{
+		if ((maze[row + 1][col] & DIST) < min)
+		{
+			min = maze[row + 1][col] & DIST;
+			next = ((row + 1) << 4) | col;
+			direction = 2;
+		}
+	}
+
+	// If there is no WEST wall for this cell
+	if (!(tile & WEST_WALL))
+	{
+		if ((maze[row][col - 1] & DIST) < min)
+		{
+			min = maze[row][col - 1] & DIST;
+			next = (row << 4) | (col - 1);
+			direction = 3;
+		}
+	}
+	location = next;
 }
 
 /*****************************************************************************/
