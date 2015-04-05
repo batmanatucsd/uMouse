@@ -47,20 +47,14 @@ void turnMotorOff(void)/*{{{*/
   GPIO_WriteBit(MOTOR, STBY, 0);
 }/*}}}*/
 
-void change_LeftMotorSpeed(uint16_t speed)/*{{{*/
+void change_LeftMotorSpeed(float speed)/*{{{*/
 {
-  if(speed > LEFT_MAX_SPEED)
-    TIM3->CCR2 = LEFT_MAX_SPEED;
-  else 
-    TIM3->CCR2 = speed;
+  TIM3->CCR2 = speed;
 }/*}}}*/
 
-void change_RightMotorSpeed(uint16_t speed)/*{{{*/
+void change_RightMotorSpeed(float speed)/*{{{*/
 {
-  if(speed > RIGHT_MAX_SPEED)
-    TIM5->CCR2 = RIGHT_MAX_SPEED;
-  else 
-    TIM5->CCR2 = speed;
+  TIM5->CCR2 = speed;
 }/*}}}*/
 
 /*****************************************************************************/

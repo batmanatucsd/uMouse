@@ -2,13 +2,9 @@
 #define _MOUSE_H
 
 #include "mcu_lib.h"
-#include "pid.h"
 
 #define ON 1
 #define OFF 0
-
-#define LEFT_MAX_SPEED 175
-#define RIGHT_MAX_SPEED 190
 
 // TODO: change to appropriate states
 typedef enum {
@@ -42,8 +38,8 @@ void listen_for_button(void);
 *************************/
 void turnMotorOn(void);
 void turnMotorOff(void);
-void change_LeftMotorSpeed(uint16_t);
-void change_RightMotorSpeed(uint16_t);
+void change_LeftMotorSpeed(float);
+void change_RightMotorSpeed(float);
 
 /*****************************************************************************/
 // Turns

@@ -39,7 +39,7 @@ int main(void)
       case GO:
         turnMotorOn();
         // Do PID
-        pid();
+        /*pid();*/
         GPIO_ResetBits(GPIOB, RED);
         GPIO_SetBits(GPIOC, GREEN);
         break;
