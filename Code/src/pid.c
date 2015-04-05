@@ -21,21 +21,28 @@ void pid()
 {
   ADC_Read();
 
-  /*printf("sensor reading: %u         %u        %u        %u\r\n",*/
-          /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
 	if ((sensor_buffers[LF_IR] >= THRESHOLD &&  sensor_buffers[RF_IR] >= THRESHOLD))
   { // BOTH WALLS
     difference = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
-    if(difference > 20 || difference < -20)
+    if(difference > 20 || difference < -22)
       currentError = difference;
+      GPIO_SetBits(GPIOC, GREEN); // GREEN
+      GPIO_ResetBits(GPIOB, RED);
+      GPIO_ResetBits(GPIOC, YELLOW);
 	}
   else if (sensor_buffers[LF_IR] < THRESHOLD && sensor_buffers[RF_IR] >= THRESHOLD)
   {  // ONLY RIGHT WALL
-		currentError =  THRESHOLD - sensor_buffers[RF_IR];
+		currentError =  NOLEFTWALL_THRESHOLD - sensor_buffers[RF_IR];
+      GPIO_ResetBits(GPIOC, GREEN);
+      GPIO_SetBits(GPIOB, RED); // RED
+      GPIO_ResetBits(GPIOC, YELLOW);
 	}
   else if (sensor_buffers[LF_IR] >= THRESHOLD && sensor_buffers[RF_IR] < THRESHOLD)
   { // ONLY LEFT WALL
-		currentError = sensor_buffers[LF_IR] - THRESHOLD;
+		currentError = sensor_buffers[LF_IR] - NORIGHTWALL_THRESHOLD;
+      GPIO_ResetBits(GPIOC, GREEN);
+      GPIO_ResetBits(GPIOB, RED);
+      GPIO_SetBits(GPIOC, YELLOW); // YELLOW
 	}
   /*else if (sensor_buffers[LF_IR] < THRESHOLD && sensor_buffers[RF_IR] < THRESHOLD)*/
   /*{*/
@@ -73,6 +80,8 @@ void pid()
     leftSpeed = 110;
 
   /*printf("%d         %f          %f\r\n", total, leftSpeed, rightSpeed);*/
+  /*printf("sensor reading: %u         %u        %u        %u\r\n",*/
+          /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
   change_RightMotorSpeed(rightSpeed);
   change_LeftMotorSpeed(leftSpeed);
 

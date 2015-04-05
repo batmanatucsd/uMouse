@@ -8,8 +8,10 @@
 #define RF_IR 1
 
 #define THRESHOLD 200
-#define KP 0.00195
-#define KD 0.245
+#define NOLEFTWALL_THRESHOLD 300
+#define NORIGHTWALL_THRESHOLD 300
+#define KP 0.00120
+#define KD 0.250
 #define ADJUST 100
 
 #define LEFT_MAX_SPEED 170

@@ -8,8 +8,9 @@
 
 // TODO: change to appropriate states
 typedef enum {
-  GO,
-  STOP
+  GO, // should be the first state
+  TEST,
+  STOP // should be the last state
 } state;
 
 /*****************************************************************************/

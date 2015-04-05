@@ -40,17 +40,27 @@ int main(void)
         turnMotorOn();
         // Do PID
         pid();
-        GPIO_ResetBits(GPIOB, RED);
+        /*GPIO_SetBits(GPIOC, GREEN);*/
+        /*GPIO_ResetBits(GPIOB, RED);*/
+        /*GPIO_ResetBits(GPIOC, YELLOW);*/
+        break;
+
+      case TEST:
+        turnMotorOn();
+        change_LeftMotorSpeed(115);
+        change_RightMotorSpeed(120);
+        GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
+        GPIO_ResetBits(GPIOB, RED);
         break;
 
       case STOP:
         /*ADC_Read();*/
 
-        /*printf("STOP");*/
         turnMotorOff();
         GPIO_SetBits(GPIOB, RED);
         GPIO_ResetBits(GPIOC, GREEN);
+        GPIO_SetBits(GPIOC, YELLOW);
         break;
     }
     
