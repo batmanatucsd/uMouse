@@ -1,4 +1,5 @@
 #include "pid.h"
+#include "mouse.h"
 
 /*****************************************************************************/
 // PID Globals
@@ -20,6 +21,8 @@ void pid()
 {
   ADC_Read();
 
+  /*printf("sensor reading: %u         %u        %u        %u\r\n",*/
+          /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
 	if ((sensor_buffers[LF_IR] >= THRESHOLD &&  sensor_buffers[RF_IR] >= THRESHOLD))
   { // BOTH WALLS
     difference = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
@@ -46,7 +49,7 @@ void pid()
 
 
   leftSpeed += total; // ADJUST;
-  rightSpeed -= (total-25); // ADJUST;
+  rightSpeed -= (total); // ADJUST;
 
   /*if(total >= 0)*/
   /*{*/
@@ -67,11 +70,12 @@ void pid()
   if(leftSpeed > LEFT_MAX_SPEED)
     leftSpeed = LEFT_MAX_SPEED;
   else if(leftSpeed < 0)
-    leftSpeed = 100;
+    leftSpeed = 110;
 
-  printf("%d         %f          %f\r\n", total, leftSpeed, rightSpeed);
+  /*printf("%d         %f          %f\r\n", total, leftSpeed, rightSpeed);*/
   change_RightMotorSpeed(rightSpeed);
   change_LeftMotorSpeed(leftSpeed);
 
 	pastError = currentError;
+  /*Delay_us(15);*/
 }

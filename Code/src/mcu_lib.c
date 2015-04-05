@@ -343,8 +343,8 @@ void PWM_Configuration(void) /*{{{*/
 
   // TIM 5 Channel2 for RIGHT Motor
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  /*TIM_OCInitStructure.TIM_Pulse = 120;*/
-  TIM_OCInitStructure.TIM_Pulse = 190;
+  TIM_OCInitStructure.TIM_Pulse = 120;
+  /*TIM_OCInitStructure.TIM_Pulse = 190;*/
 
   TIM_OC2Init(TIM5, &TIM_OCInitStructure);
   TIM_OC2PreloadConfig(TIM5, TIM_OCPreload_Enable);
@@ -352,8 +352,8 @@ void PWM_Configuration(void) /*{{{*/
   // TODO: might need to change the TIMer
   // TIM3 Channel2 for LEFT Motor
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  /*TIM_OCInitStructure.TIM_Pulse = 115;*/
-  TIM_OCInitStructure.TIM_Pulse = 190;
+  TIM_OCInitStructure.TIM_Pulse = 115;
+  /*TIM_OCInitStructure.TIM_Pulse = 190;*/
 
   TIM_OC2Init(TIM3, &TIM_OCInitStructure);
   TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
