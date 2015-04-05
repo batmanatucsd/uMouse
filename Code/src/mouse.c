@@ -5,7 +5,7 @@
 /*****************************************************************************/
 void delay(volatile int i)/*{{{*/
 {
-	while(i--);
+  while(i--);
 }/*}}}*/
 
 void listen_for_button(void)/*{{{*/
@@ -49,14 +49,18 @@ void turnMotorOff(void)/*{{{*/
 
 void change_LeftMotorSpeed(uint16_t speed)/*{{{*/
 {
-  // TODO: change to right timer
-  TIM3->CCR3 = speed;
+  if(speed > LEFT_MAX_SPEED)
+    TIM3->CCR2 = LEFT_MAX_SPEED;
+  else 
+    TIM3->CCR2 = speed;
 }/*}}}*/
 
 void change_RightMotorSpeed(uint16_t speed)/*{{{*/
 {
-  // TODO: change to right timer
-  TIM3->CCR4 = speed;
+  if(speed > RIGHT_MAX_SPEED)
+    TIM5->CCR2 = RIGHT_MAX_SPEED;
+  else 
+    TIM5->CCR2 = speed;
 }/*}}}*/
 
 /*****************************************************************************/
