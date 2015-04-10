@@ -60,3 +60,63 @@ void change_RightMotorSpeed(float speed)/*{{{*/
 /*****************************************************************************/
 // Turns
 /*****************************************************************************/
+/*
+void turnLeft(void)
+{
+  //turn for a certain about of time
+  //or turn using the motor encoder by a certain number of rotations
+  //in mcu.h what is LEFTIN1....RIGHTIN2 
+  leftSpeed = x;
+  change_LeftMotorSpeed(leftSpeed);
+  //how to use timer?
+}
+void turnRight(void)
+{
+  rightSpeed = -x;
+  change_RightMotorSpeed(rightSpeed);
+  //how to use timer?
+}
+*/
+/*****************************************************************************/
+// Stop
+/*****************************************************************************/
+/*
+void stopFrontWall(void)
+{
+  if(sensor_buffers[L_IR] > 900)
+  {
+    leftSpeed = 0;
+  }
+  if(sensor_buffers[R_IR] > 700)
+  {
+    rightSpeed = 0;
+  }
+  change_RightMotorSpeed(rightSpeed);
+  change_LeftMotorSpeed(leftSpeed);
+}
+*/
+
+/*
+void stopFrontWall(void)
+{
+  if(sensor_buffers[L_IR] > 70)
+  {
+    while(leftSpeed > 0)
+    {
+      leftSpeed = LEFT_MAX_SPEED - 10; 
+      change_LeftMotorSpeed(leftSpeed);
+    }
+  }
+  if(sensor_buffers[R_IR] > 70)
+  {
+    while(rightSpeed > 0) 
+    {
+      rightSpeed = RIGHT_MAX_SPEED - 11;
+      change_LeftMotorSpeed(leftSpeed);
+    }
+  }
+}
+*/
+
+
+
