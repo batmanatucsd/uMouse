@@ -43,12 +43,15 @@ int main(void)
         /*GPIO_SetBits(GPIOC, GREEN);*/
         /*GPIO_ResetBits(GPIOB, RED);*/
         /*GPIO_ResetBits(GPIOC, YELLOW);*/
+        turnMotorOff();
         break;
 
       case TEST:
-        turnMotorOn();
-        change_LeftMotorSpeed(115);
-        change_RightMotorSpeed(120);
+        //turnMotorOn();
+        //change_LeftMotorSpeed(120);
+        //change_RightMotorSpeed(120);
+        leftTurn(); 
+	//Delay_ms(10);
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);

@@ -1,4 +1,6 @@
 #include "mouse.h"
+#define L_ENC TIM8
+#define R_ENC TIM4
 
 /*****************************************************************************/
 // General Functions
@@ -57,32 +59,61 @@ void change_RightMotorSpeed(float speed)/*{{{*/
   TIM5->CCR2 = speed;
 }/*}}}*/
 
+void leftForward(void)
+{
+  GPIO_SetBits(MOTOR, STBY);
+  // CW
+  GPIO_SetBits(MOTOR, LEFTIN1);
+  GPIO_ResetBits(MOTOR, LEFTIN2);
+}
+void rightForward(void)
+{
+  GPIO_SetBits(MOTOR, STBY);
+  // CCW
+  GPIO_ResetBits(MOTOR, RIGHTIN1);
+  GPIO_SetBits(MOTOR, RIGHTIN2);
+}
+void leftBackward(void)
+{
+  GPIO_SetBits(MOTOR, STBY);
+  // CCW
+  GPIO_SetBits(MOTOR, LEFTIN2);
+  GPIO_ResetBits(MOTOR, LEFTIN1);
+}
+void rightBackward(void)
+{
+  GPIO_SetBits(MOTOR, STBY);
+  // CW
+  GPIO_ResetBits(MOTOR, RIGHTIN2);
+  GPIO_SetBits(MOTOR, RIGHTIN1);
+}
+
 /*****************************************************************************/
 // Turns
 /*****************************************************************************/
-/*
-void turnLeft(void)
+
+void leftTurn(void)
 {
-  leftSpeed = x;
-  rightSpeed = -x;
-  change_LeftMotorSpeed(leftSpeed);
-  change_RightMotorSpeed(rightSpeed);
+  leftForward();
+  rightBackward();
+  change_LeftMotorSpeed(150);
+  change_RightMotorSpeed(150);
   while(L_ENC->CNT < 5000);
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
 }
-void turnRight(void)
+void rightTurn(void)
 {
-  leftSpeed = -x;
-  rightSpeed = x;
-  change_RightMotorSpeed(rightSpeed);
-  change_LeftMotorSpeed(leftSpeed);
-  while(R_ENC_CNT < 5000);
+  leftBackward();
+  rightForward();
+  change_RightMotorSpeed(120);
+  change_LeftMotorSpeed(115);
+  while(R_ENC->CNT < 5000);
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
 }
 
-*/
+
 /*****************************************************************************/
 // Stop
 /*****************************************************************************/
@@ -92,17 +123,17 @@ void stopFrontWall(void)
   if(sensor_buffers[L_IR] > 330)
   {
     leftSpeed = 0;
+    change_LeftMotorSpeed(leftSpeed);
   }
   if(sensor_buffers[R_IR] > 330)
   {
     rightSpeed = 0;
+    change_RightMotorSpeed(rightSpeed);
   }
 
-  change_RightMotorSpeed(rightSpeed);
-  change_LeftMotorSpeed(leftSpeed);
 }
-*/
 
+*/
 /*
 void stopFrontWall(void)
 {

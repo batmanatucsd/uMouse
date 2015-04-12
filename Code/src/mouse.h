@@ -41,9 +41,18 @@ void turnMotorOn(void);
 void turnMotorOff(void);
 void change_LeftMotorSpeed(float);
 void change_RightMotorSpeed(float);
+void leftForward(void);
+void rightForward(void);
+void leftBackward(void);
+void rightBackward(void);
 
 /*****************************************************************************/
 // Turns
 /*****************************************************************************/
+
+void leftTurn(void);
+void rightTurn(void);
+void stopFrontWall(void);
+
 // TODO: Add functions for turns
 #endif
