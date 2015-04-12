@@ -27,17 +27,30 @@ void listen_for_button(void)/*{{{*/
 /*****************************************************************************/
 // Motor Controls
 /*****************************************************************************/
-void turnMotorOn(void)/*{{{*/
+void forward(void)/*{{{*/
 {
   GPIO_SetBits(MOTOR, STBY);
 
-  // CW
+  // LEFT Motor CCW
   GPIO_SetBits(MOTOR, LEFTIN1);
   GPIO_ResetBits(MOTOR, LEFTIN2);
 
-  // CCW
+  // RIGHT MOtor CW
   GPIO_ResetBits(MOTOR, RIGHTIN1);
   GPIO_SetBits(MOTOR, RIGHTIN2);
+}/*}}}*/
+
+void backward(void)/*{{{*/
+{
+  GPIO_SetBits(MOTOR, STBY);
+
+  // LEFT Motor CCW
+  GPIO_SetBits(MOTOR, LEFTIN2);
+  GPIO_ResetBits(MOTOR, LEFTIN1);
+
+  // RIGHT MOtor CW
+  GPIO_ResetBits(MOTOR, RIGHTIN2);
+  GPIO_SetBits(MOTOR, RIGHTIN1);
 }/*}}}*/
 
 void turnMotorOff(void)/*{{{*/
@@ -49,12 +62,26 @@ void turnMotorOff(void)/*{{{*/
 
 void change_LeftMotorSpeed(float speed)/*{{{*/
 {
-  TIM3->CCR2 = speed;
+  if(speed > 0)
+    forward();
+  else {
+    backward();
+    speed *= -1;
+  }
+  
+  L_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM3
 }/*}}}*/
 
 void change_RightMotorSpeed(float speed)/*{{{*/
 {
-  TIM5->CCR2 = speed;
+  if(speed > 0)
+    forward();
+  else {
+    backward();
+    speed *= -1;
+  }
+
+  R_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM5
 }/*}}}*/
 
 /*****************************************************************************/
