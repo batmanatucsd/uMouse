@@ -4,8 +4,6 @@
 // 2 - front left
 // 3 - front right
 // 4 - right
-#define LF_IR 2
-#define RF_IR 1
 
 #define THRESHOLD 200
 #define NOLEFTWALL_THRESHOLD 300
