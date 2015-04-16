@@ -144,6 +144,17 @@ void rightTurn(void)
 /*****************************************************************************/
 // Stop
 /*****************************************************************************/
+
+void stopFrontWall(void)
+{
+  //ADC_Read();
+//  change_LeftMotorSpeed(330  - sensor_readings(L_IR));
+  //change_RightMotorSpeed(330 - sensor_readings(R_IR));
+  //L_ENC->CNT = 5000;
+  //R_ENC->CNT = 5000;
+  
+}
+
 /*
 void stopFrontWall(void)
 {
@@ -160,27 +171,6 @@ void stopFrontWall(void)
 
 }
 
-*/
-/*
-void stopFrontWall(void)
-{
-  if(sensor_buffers[L_IR] > 70)
-  {
-    while(leftSpeed > 0)
-    {
-      leftSpeed = LEFT_MAX_SPEED - 10; 
-      change_LeftMotorSpeed(leftSpeed);
-    }
-  }
-  if(sensor_buffers[R_IR] > 70)
-  {
-    while(rightSpeed > 0) 
-    {
-      rightSpeed = RIGHT_MAX_SPEED - 11;
-      change_LeftMotorSpeed(leftSpeed);
-    }
-  }
-}
 */
 
 
