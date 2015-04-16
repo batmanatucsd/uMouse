@@ -6,6 +6,11 @@
 #define ON 1
 #define OFF 0
 
+#define L_IR 3
+#define LF_IR 2
+#define RF_IR 1
+#define R_IR 0
+
 // TODO: change to appropriate states
 typedef enum {
   GO, // should be the first state
@@ -37,7 +42,8 @@ void listen_for_button(void);
    L   L   H    STOP
            L    STBY
 *************************/
-void turnMotorOn(void);
+void forward(void);
+void backward(void);
 void turnMotorOff(void);
 void change_LeftMotorSpeed(float);
 void change_RightMotorSpeed(float);

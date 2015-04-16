@@ -332,8 +332,8 @@ void PWM_Configuration(void) /*{{{*/
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); // Initialize TIM3
-  TIM_TimeBaseInit(TIM5, &TIM_TimeBaseStructure); // Initialize TIM5
+  TIM_TimeBaseInit(L_PWM, &TIM_TimeBaseStructure); // Initialize TIM3
+  TIM_TimeBaseInit(R_PWM, &TIM_TimeBaseStructure); // Initialize TIM5
 
   // Channel Configuration
   // Mode: PWM1
@@ -346,8 +346,8 @@ void PWM_Configuration(void) /*{{{*/
   TIM_OCInitStructure.TIM_Pulse = 120;
   /*TIM_OCInitStructure.TIM_Pulse = 190;*/
 
-  TIM_OC2Init(TIM5, &TIM_OCInitStructure);
-  TIM_OC2PreloadConfig(TIM5, TIM_OCPreload_Enable);
+  TIM_OC2Init(R_PWM, &TIM_OCInitStructure);
+  TIM_OC2PreloadConfig(R_PWM, TIM_OCPreload_Enable);
 
   // TODO: might need to change the TIMer
   // TIM3 Channel2 for LEFT Motor
@@ -355,15 +355,15 @@ void PWM_Configuration(void) /*{{{*/
   TIM_OCInitStructure.TIM_Pulse = 115;
   /*TIM_OCInitStructure.TIM_Pulse = 190;*/
 
-  TIM_OC2Init(TIM3, &TIM_OCInitStructure);
-  TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
+  TIM_OC2Init(L_PWM, &TIM_OCInitStructure);
+  TIM_OC2PreloadConfig(L_PWM, TIM_OCPreload_Enable);
 
-  TIM_ARRPreloadConfig(TIM5, ENABLE);
-  TIM_ARRPreloadConfig(TIM3, ENABLE);
+  TIM_ARRPreloadConfig(R_PWM, ENABLE);
+  TIM_ARRPreloadConfig(L_PWM, ENABLE);
 
   // TIM3,5 enable counter
-  TIM_Cmd(TIM5, ENABLE);
-  TIM_Cmd(TIM3, ENABLE);
+  TIM_Cmd(R_PWM, ENABLE);
+  TIM_Cmd(L_PWM, ENABLE);
 }/*}}}*/
 
 /*****************************************************************************/
@@ -377,28 +377,28 @@ void ENCODER_Configuration(void) {/*{{{*/
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
   TIM_ICInitTypeDef  TIM_ICInitStructure;
 
-  TIM_DeInit(TIM8);
-  TIM_DeInit(TIM4);
+  TIM_DeInit(L_ENC);
+  TIM_DeInit(R_ENC);
 
   TIM_TimeBaseStructure.TIM_Prescaler = 0;  // No prescaling 
   TIM_TimeBaseStructure.TIM_Period = 65535; // max resolution value
   TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
-  TIM_TimeBaseInit(TIM8, &TIM_TimeBaseStructure);
-  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+  TIM_TimeBaseInit(L_ENC, &TIM_TimeBaseStructure);
+  TIM_TimeBaseInit(R_ENC, &TIM_TimeBaseStructure);
 
-  TIM_EncoderInterfaceConfig(TIM8, TIM_EncoderMode_TI12, 
+  TIM_EncoderInterfaceConfig(L_ENC, TIM_EncoderMode_TI12, 
+                         TIM_ICPolarity_Falling, TIM_ICPolarity_Falling);
+  TIM_ICStructInit(&TIM_ICInitStructure);
+  TIM_ICInitStructure.TIM_ICFilter = 6;//ICx_FILTER;
+  TIM_ICInit(L_ENC, &TIM_ICInitStructure);
+
+  TIM_EncoderInterfaceConfig(R_ENC, TIM_EncoderMode_TI12, 
                          TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
   TIM_ICStructInit(&TIM_ICInitStructure);
   TIM_ICInitStructure.TIM_ICFilter = 6;//ICx_FILTER;
-  TIM_ICInit(TIM8, &TIM_ICInitStructure);
-
-  TIM_EncoderInterfaceConfig(TIM4, TIM_EncoderMode_TI12, 
-                         TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
-  TIM_ICStructInit(&TIM_ICInitStructure);
-  TIM_ICInitStructure.TIM_ICFilter = 6;//ICx_FILTER;
-  TIM_ICInit(TIM4, &TIM_ICInitStructure);
+  TIM_ICInit(R_ENC, &TIM_ICInitStructure);
 
   // Initial interuppt structures
   // //  NVIC_InitStructure.NVIC_IRQChannel = TIM3_UP_IRQChannel;
@@ -414,10 +414,10 @@ void ENCODER_Configuration(void) {/*{{{*/
   // //  TIM_ITConfig(ENCODER_TIM, TIM_IT_Update, ENABLE);
     
   // reset encoder counts
-  TIM8->CNT = 0; // prevent counts to become negative when the moved backwards
-  TIM4->CNT = 0;
-  TIM_Cmd(TIM8, ENABLE);
-  TIM_Cmd(TIM4, ENABLE);
+  L_ENC->CNT = 0; // prevent counts to become negative when the moved backwards
+  R_ENC->CNT = 0;
+  TIM_Cmd(L_ENC, ENABLE);
+  TIM_Cmd(R_ENC, ENABLE);
 }/*}}}*/
 
 /*****************************************************************************/
