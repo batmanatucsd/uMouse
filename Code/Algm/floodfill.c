@@ -119,7 +119,22 @@ void lookAhead()
 	// Fill in maze info for cells around SOUTH CELL
 	else if (direction == 2 && !(maze[row][col] & SOUTH_WALL))
 	{
-		// Fill in maze info for cells around south cell 
+		maze[row + 1][col] |= testmaze[row + 1][col];
+		
+		// if south cell has east wall, and column is at least second column,
+		// set the west wall of cell to the right of east cell
+		if (maze[row + 1][col] & EAST_WALL && col + 2 >= 15) 
+		{
+			maze[row + 1][col + 1] |= WEST_WALL;
+		}
+
+		// if south cell has west wall, and column is at least second column,
+		// set east wall of cell left of north wall
+		if (maze[row - 1][col] & WEST_WALL && col - 1 >= 0)
+		{
+			maze[row + 1][col - 1] |= EAST_WALL;
+		}
+		
 	}
 
 	// Fill in maze info for cells around WEST CELL
