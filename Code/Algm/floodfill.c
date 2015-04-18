@@ -148,7 +148,6 @@ void lookAhead()
 	else if (direction == 3 && !(maze[row][col] & WEST_WALL))
 	{
 		maze[row][col - 1] |= testmaze[row][col - 1];
-		
 		if (maze[row][col - 1] & WEST_WALL && col - 2 >= 0) 
 		{
 			maze[row][col - 2] |= EAST_WALL;
