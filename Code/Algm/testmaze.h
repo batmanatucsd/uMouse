@@ -7,9 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 
-unsigned short testMaze[16][16];		//This represents the actual testMaze, 
+unsigned short testmaze[16][16];		//This represents the actual testMaze, 
 										//mouse does not know this yet.
 
 /****************************************************************************/
@@ -25,10 +26,10 @@ void setupTest()
 	for (unsigned short row = 0; row < 16; row++) {
 		for (unsigned short col = 0; col < 16; col++) {
 			//Pre-fills cells with distance from center, assuming no walls
-			if (row == 0) testMaze[row][col] |= NORTH_WALL;
-			if (col == 0) testMaze[row][col] |= WEST_WALL;
-			if (col == 15) testMaze[row][col] |= EAST_WALL;
-			if (row == 15) testMaze[row][col] |= SOUTH_WALL;
+			if (row == 0) testmaze[row][col] |= NORTH_WALL;
+			if (col == 0) testmaze[row][col] |= WEST_WALL;
+			if (col == 15) testmaze[row][col] |= EAST_WALL;
+			if (row == 15) testmaze[row][col] |= SOUTH_WALL;
 		}
 	}
 
@@ -37,7 +38,7 @@ void setupTest()
 	direction = 0x0;					// 0x0 = up direction
 
 	//Initialize the right wall for the bottom left corner, always
-	testMaze[15][0] |= EAST_WALL;
+	testmaze[15][0] |= EAST_WALL;
 
 	//Open text file that represents a maze to read walls in, read-only
 	FILE *file = fopen("testmaze1.txt", "r");
@@ -71,7 +72,7 @@ void setupTest()
 
 			//Create testMaze by OR'ing the values inputted in txt file
 			printf("testMaze[%d][%d] |= %d\n\n", row, col, value);
-			testMaze [row][col] |= value;
+			testmaze [row][col] |= value;
 			row++;
 
 			//Move onto next column after 15 rows have been filled
@@ -95,7 +96,7 @@ void setupTest()
 	}
 
 	//Value printed should be the int representation of bitmask xxxV_NESW_DIST
-	printf("Testing testmaze access: %u\n",testMaze[0][0]);
+	printf("Testing testmaze access: %u\n",testmaze[0][0]);
 
 }
 
