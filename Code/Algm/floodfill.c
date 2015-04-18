@@ -105,7 +105,7 @@ void lookAhead()
 		// set south wall of cell above east wall
 		if (maze[row][col + 1] & NORTH_WALL && row - 1 >= 0) 
 		{
-			maze[row - 1][col - 1] |= SOUTH_WALL;
+			maze[row - 1][col + 1] |= SOUTH_WALL;
 		}
 
 		// if east cell has south wall, and it is not bottom row,
@@ -147,8 +147,8 @@ void lookAhead()
 	// Fill in maze info for cells around WEST CELL
 	else if (direction == 3 && !(maze[row][col] & WEST_WALL))
 	{
-		maze[row][col - 1] |= testMaze[row][col - 1];
-		
+		maze[row][col - 1] |= testmaze[row][col - 1];
+
 		if (maze[row][col - 1] & WEST_WALL && col - 2 >= 0) 
 		{
 			maze[row][col - 2] |= EAST_WALL;
