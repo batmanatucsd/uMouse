@@ -147,7 +147,22 @@ void lookAhead()
 	// Fill in maze info for cells around WEST CELL
 	else if (direction == 3 && !(maze[row][col] & WEST_WALL))
 	{
+		maze[row][col - 1] |= testMaze[row][col - 1];
 		
+		if (maze[row][col - 1] & WEST_WALL && col - 2 >= 0) 
+		{
+			maze[row][col - 2] |= EAST_WALL;
+		}
+
+		if (maze[row][col - 1] & NORTH_WALL && row - 2 >= 0) 
+		{
+			maze[row - 1][col - 1] |= SOUTH_WALL;
+		}
+
+		if (maze[row][col - 1] & SOUTH_WALL && row + 2 <= 15) 
+		{
+			maze[row + 1][col - 1] |= NORTH_WALL;
+		}
 	}
 }
 
@@ -197,7 +212,7 @@ void move()
 		}
 	}
 
-	// If there is no WEST wall for this cell
+	// If ther`e is no WEST wall for this cell
 	if (!(tile & WEST_WALL))
 	{
 		if ((maze[row][col - 1] & DIST) < min)
