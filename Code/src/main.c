@@ -46,9 +46,13 @@ int main(void)
         break;
 
       case TEST:
-        forward();
-        change_LeftMotorSpeed(115);
-        change_RightMotorSpeed(120);
+        //turnMotorOn();
+        //change_LeftMotorSpeed(120);
+        //change_RightMotorSpeed(120);
+        /*leftTurn();*/
+        rightTurn();
+        Delay_us(1000000);
+
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);

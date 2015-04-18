@@ -6,14 +6,14 @@
 // 4 - right
 
 #define THRESHOLD 200
-#define NOLEFTWALL_THRESHOLD 300
-#define NORIGHTWALL_THRESHOLD 300
-#define KP 0.00120
+#define NOLEFTWALL_THRESHOLD 290
+#define NORIGHTWALL_THRESHOLD 290
+#define KP 0.0005
 #define KD 0.250
 #define ADJUST 100
 
-#define LEFT_MAX_SPEED 170
-#define RIGHT_MAX_SPEED 190
+#define LEFT_MAX_SPEED 200
+#define RIGHT_MAX_SPEED 200
 
 #ifndef HIGH
 #define HIGH 1

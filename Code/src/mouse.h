@@ -11,6 +11,9 @@
 #define RF_IR 1
 #define R_IR 0
 
+#define L_ENC TIM8
+#define R_ENC TIM4
+
 // TODO: change to appropriate states
 typedef enum {
   GO, // should be the first state
@@ -47,9 +50,18 @@ void backward(void);
 void turnMotorOff(void);
 void change_LeftMotorSpeed(float);
 void change_RightMotorSpeed(float);
+void leftForward(void);
+void rightForward(void);
+void leftBackward(void);
+void rightBackward(void);
 
 /*****************************************************************************/
 // Turns
 /*****************************************************************************/
+
+void leftTurn(void);
+void rightTurn(void);
+void stopFrontWall(void);
+
 // TODO: Add functions for turns
 #endif
