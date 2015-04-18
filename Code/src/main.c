@@ -43,15 +43,15 @@ int main(void)
         /*GPIO_SetBits(GPIOC, GREEN);*/
         /*GPIO_ResetBits(GPIOB, RED);*/
         /*GPIO_ResetBits(GPIOC, YELLOW);*/
-        turnMotorOff();
         break;
 
       case TEST:
         //turnMotorOn();
         //change_LeftMotorSpeed(120);
         //change_RightMotorSpeed(120);
-        leftTurn(); 
-	//Delay_ms(10);
+        /*leftTurn();*/
+        rightTurn();
+        Delay_us(1000000);
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);
@@ -75,7 +75,7 @@ int main(void)
     /*printf("                                              sensor reading: %u         %u        %u        %u\r\n",*/
             /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
             /*ADC1->JOFR1, ADC1->JOFR2, ADC1->JOFR3, ADC1->JOFR4);*/
-    /*printf("%u            %u\r\n", TIM8->CNT, TIM4->CNT);*/
+    /*printf("%u            %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
     /*if(TIM8->CNT > 7000)*/
         /*turnMotorOff();*/
   

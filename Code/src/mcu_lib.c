@@ -389,7 +389,7 @@ void ENCODER_Configuration(void) {/*{{{*/
   TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
 
   TIM_EncoderInterfaceConfig(TIM8, TIM_EncoderMode_TI12, 
-                         TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+                         TIM_ICPolarity_Falling, TIM_ICPolarity_Falling);
   TIM_ICStructInit(&TIM_ICInitStructure);
   TIM_ICInitStructure.TIM_ICFilter = 6;//ICx_FILTER;
   TIM_ICInit(TIM8, &TIM_ICInitStructure);

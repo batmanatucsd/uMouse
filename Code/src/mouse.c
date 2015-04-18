@@ -1,6 +1,4 @@
 #include "mouse.h"
-#define L_ENC TIM8
-#define R_ENC TIM4
 
 /*****************************************************************************/
 // General Functions
@@ -92,25 +90,34 @@ void rightBackward(void)
 // Turns
 /*****************************************************************************/
 
-void leftTurn(void)
-{
-  leftForward();
-  rightBackward();
-  change_LeftMotorSpeed(150);
-  change_RightMotorSpeed(150);
-  while(L_ENC->CNT < 5000);
-  change_LeftMotorSpeed(0);
-  change_RightMotorSpeed(0);
-}
 void rightTurn(void)
 {
-  leftBackward();
-  rightForward();
-  change_RightMotorSpeed(120);
-  change_LeftMotorSpeed(115);
-  while(R_ENC->CNT < 5000);
+  
+  L_ENC->CNT = 0; 
+  R_ENC->CNT = 0; 
+  leftForward();
+  rightBackward();
+  change_LeftMotorSpeed(250);
+  change_RightMotorSpeed(250);
+  while(L_ENC->CNT < 2125);
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
+  L_ENC->CNT = 0; 
+  R_ENC->CNT = 0; 
+}
+void leftTurn(void)
+{
+  L_ENC->CNT = 0; 
+  R_ENC->CNT = 0; 
+  leftBackward();
+  rightForward();
+  change_RightMotorSpeed(250);
+  change_LeftMotorSpeed(250);
+  while(R_ENC->CNT < 2100);
+  change_LeftMotorSpeed(0);
+  change_RightMotorSpeed(0);
+  L_ENC->CNT = 0; 
+  R_ENC->CNT = 0; 
 }
 
 
