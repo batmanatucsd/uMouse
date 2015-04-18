@@ -90,13 +90,13 @@ void lookAhead()
 	}
 
 	// Fill in maze info for cells around EAST CELL
-	else if (direction == 1 && !(maze[row][col] & EAST_WALL))
+	if (direction == 1 && !(maze[row][col] & EAST_WALL))
 	{
 		maze[row][col + 1] |= testmaze[row][col + 1];
 
 		// if east cell has east wall, and column is at least second clumn,
 		// set the west wall of cell to right of east cell
-		if (maze[row][col + 1] & EAST_WALL && col + 2 >= 15) 
+		if (maze[row][col + 1] & EAST_WALL && col + 2 <= 15) 
 		{
 			maze[row][col + 2] |= WEST_WALL;
 		}
@@ -412,7 +412,7 @@ int main() {
 			--stackptr;
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 
-		    	// DEBUG
+		    // DEBUG
 			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
 			printf("Current stack: ");
 			for (int i = 0; i < stackptr; i++)
