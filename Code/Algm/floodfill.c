@@ -96,7 +96,7 @@ void lookAhead()
 
 		// if east cell has east wall, and column is at least second clumn,
 		// set the west wall of cell to right of east cell
-		if (maze[row][col + 1] & EAST_WALL && col + 2 >= 15) 
+		if (maze[row][col + 1] & EAST_WALL && col + 2 <= 15) 
 		{
 			maze[row][col + 2] |= WEST_WALL;
 		}
@@ -105,7 +105,7 @@ void lookAhead()
 		// set south wall of cell above east wall
 		if (maze[row][col + 1] & NORTH_WALL && row - 1 >= 0) 
 		{
-			maze[row - 1][col - 1] |= SOUTH_WALL;
+			maze[row - 1][col + 1] |= SOUTH_WALL;
 		}
 
 		// if east cell has south wall, and it is not bottom row,
@@ -123,14 +123,14 @@ void lookAhead()
 		
 		// if south cell has east wall, and column is at least second column,
 		// set the west wall of cell to the right of east cell
-		if (maze[row + 1][col] & EAST_WALL && col + 2 >= 15) 
+		if (maze[row + 1][col] & EAST_WALL && col + 1 <= 15) 
 		{
 			maze[row + 1][col + 1] |= WEST_WALL;
 		}
 
 		// if south cell has west wall, and column is at least second column,
 		// set east wall of cell left of north wall
-		if (maze[row - 1][col] & WEST_WALL && col - 1 >= 0)
+		if (maze[row + 1][col] & WEST_WALL && col - 1 >= 0)
 		{
 			maze[row + 1][col - 1] |= EAST_WALL;
 		}
@@ -138,7 +138,7 @@ void lookAhead()
 
 		// if south cell has south wall, and it is not bottom row,
 		// set north wall on cell below south cell
-		if (maze[row - 1][col] & SOUTH_WALL && row + 1 <= 15) 
+		if (maze[row + 1][col] & SOUTH_WALL && row + 2 <= 15) 
 		{
 			maze[row + 2][col] |= NORTH_WALL;
 		}
@@ -147,19 +147,19 @@ void lookAhead()
 	// Fill in maze info for cells around WEST CELL
 	else if (direction == 3 && !(maze[row][col] & WEST_WALL))
 	{
-		maze[row][col - 1] |= testMaze[row][col - 1];
+		maze[row][col - 1] |= testmaze[row][col - 1];
 		
 		if (maze[row][col - 1] & WEST_WALL && col - 2 >= 0) 
 		{
 			maze[row][col - 2] |= EAST_WALL;
 		}
 
-		if (maze[row][col - 1] & NORTH_WALL && row - 2 >= 0) 
+		if (maze[row][col - 1] & NORTH_WALL && row - 1 >= 0) 
 		{
 			maze[row - 1][col - 1] |= SOUTH_WALL;
 		}
 
-		if (maze[row][col - 1] & SOUTH_WALL && row + 2 <= 15) 
+		if (maze[row][col - 1] & SOUTH_WALL && row + 1 <= 15) 
 		{
 			maze[row + 1][col - 1] |= NORTH_WALL;
 		}
@@ -222,6 +222,7 @@ void move()
 			direction = 3;
 		}
 	}
+	lookAhead();
 	location = next;
 }
 
