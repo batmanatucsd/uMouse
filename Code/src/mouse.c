@@ -64,10 +64,14 @@ void turnMotorOff(void)/*{{{*/
 
 void change_LeftMotorSpeed(float speed)/*{{{*/
 {
+  if(speed > 200)
+     speed = 200;
+  if(speed<-200)
+     speed = -200;
   if(speed > 0)
-    forward();
+    leftForward();
   else {
-    backward();
+    leftBackward();
     speed *= -1;
   }
   
@@ -76,10 +80,14 @@ void change_LeftMotorSpeed(float speed)/*{{{*/
 
 void change_RightMotorSpeed(float speed)/*{{{*/
 {
+  if(speed > 200)
+    speed = 200;
+  if(speed < -200)
+    speed = -200;
   if(speed > 0)
-    forward();
+    rightForward();
   else {
-    backward();
+    rightBackward();
     speed *= -1;
   }
 
@@ -148,30 +156,25 @@ void rightTurn(void)
 void stopFrontWall(void)
 {
   //ADC_Read();
-//  change_LeftMotorSpeed(330  - sensor_readings(L_IR));
-  //change_RightMotorSpeed(330 - sensor_readings(R_IR));
-  //L_ENC->CNT = 5000;
-  //R_ENC->CNT = 5000;
+
+  change_LeftMotorSpeed(330  - sensor_buffers[3]);
+  change_RightMotorSpeed(330 - sensor_buffers[0]);
+  L_ENC->CNT = 5000;
+  R_ENC->CNT = 5000; 
+}
+
+
+
+
+
+
+
+
+ 
+
+
+ 
   
-}
-
-/*
-void stopFrontWall(void)
-{
-  if(sensor_buffers[L_IR] > 330)
-  {
-    leftSpeed = 0;
-    change_LeftMotorSpeed(leftSpeed);
-  }
-  if(sensor_buffers[R_IR] > 330)
-  {
-    rightSpeed = 0;
-    change_RightMotorSpeed(rightSpeed);
-  }
-
-}
-
-*/
 
 
 

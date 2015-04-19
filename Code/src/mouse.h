@@ -22,7 +22,7 @@ typedef enum {
 // Global Variables
 /*****************************************************************************/
 volatile state mouse_state; 
-__IO uint16_t sensor_readings[4];
+__IO uint16_t sensor_buffers[4];
 
 /*****************************************************************************/
 // General Functions

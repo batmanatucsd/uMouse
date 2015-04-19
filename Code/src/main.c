@@ -1,4 +1,4 @@
-include "mouse.h"
+#include "mouse.h"
 
 /*****************************************************************************/
 // Global Variables
@@ -37,7 +37,7 @@ int main(void)
 
     switch(mouse_state) {
       case GO:
-        turnMotorOn();
+        
         // Do PID
         pid();
         /*GPIO_SetBits(GPIOC, GREEN);*/
@@ -47,10 +47,11 @@ int main(void)
         break;
 
       case TEST:
+	ADC_Read();
         //turnMotorOn();
         //change_LeftMotorSpeed(120);
         //change_RightMotorSpeed(120);
-        leftTurn(); 
+        stopFrontWall(); 
 	//Delay_ms(10);
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
