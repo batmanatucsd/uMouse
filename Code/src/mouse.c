@@ -62,7 +62,6 @@ void turnMotorOff(void)/*{{{*/
 
 void change_LeftMotorSpeed(float speed)/*{{{*/
 {
-  // might want to change this part.. i dnt know
   if(speed > 0)
     leftForward();
   else {
@@ -70,18 +69,23 @@ void change_LeftMotorSpeed(float speed)/*{{{*/
     speed *= -1;
   }
   
+  if(speed > LEFT_MAX_SPEED)
+    speed = LEFT_MAX_SPEED;
+  
   L_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM3
 }/*}}}*/
 
 void change_RightMotorSpeed(float speed)/*{{{*/
 {
-  // might want to change this part.. i dnt know
   if(speed > 0)
     rightForward();
   else {
     rightBackward();
     speed *= -1;
   }
+
+  if(speed > RIGHT_MAX_SPEED)
+    speed = RIGHT_MAX_SPEED;
 
   R_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM5
 }/*}}}*/
@@ -173,44 +177,13 @@ void leftTurn(void)
 /*****************************************************************************/
 // Stop
 /*****************************************************************************/
-/*
+
 void stopFrontWall(void)
 {
-  if(sensor_buffers[L_IR] > 330)
-  {
-    leftSpeed = 0;
-    change_LeftMotorSpeed(leftSpeed);
-  }
-  if(sensor_buffers[R_IR] > 330)
-  {
-    rightSpeed = 0;
-    change_RightMotorSpeed(rightSpeed);
-  }
-
+  //ADC_Read();
+  change_LeftMotorSpeed(330  - sensor_buffers[L_IR]);
+  change_RightMotorSpeed(330 - sensor_buffers[R_IR]);
 }
-
-*/
-/*
-void stopFrontWall(void)
-{
-  if(sensor_buffers[L_IR] > 70)
-  {
-    while(leftSpeed > 0)
-    {
-      leftSpeed = LEFT_MAX_SPEED - 10; 
-      change_LeftMotorSpeed(leftSpeed);
-    }
-  }
-  if(sensor_buffers[R_IR] > 70)
-  {
-    while(rightSpeed > 0) 
-    {
-      rightSpeed = RIGHT_MAX_SPEED - 11;
-      change_LeftMotorSpeed(leftSpeed);
-    }
-  }
-}
-*/
 
 
 

@@ -25,9 +25,6 @@
 #define KD 0
 #define ADJUST 1
 
-#define LEFT_MAX_SPEED 200
-#define RIGHT_MAX_SPEED 200
-
 #ifndef HIGH
 #define HIGH 1
 #endif
