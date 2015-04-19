@@ -59,7 +59,7 @@ int main(void)
         break;
 
       case STOP:
-        /*ADC_Read();*/
+        ADC_Read();
 
         turnMotorOff();
         GPIO_SetBits(GPIOB, RED);
@@ -76,7 +76,8 @@ int main(void)
     /*printf("                                              sensor reading: %u         %u        %u        %u\r\n",*/
             /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
             /*ADC1->JOFR1, ADC1->JOFR2, ADC1->JOFR3, ADC1->JOFR4);*/
-    printf("%u            %u\r\n", L_ENC->CNT, R_ENC->CNT);
+    /*printf("%u            %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
+    printf("%u            %u\r\n", sensor_buffers[L_IR], sensor_buffers[R_IR]);
     /*if(TIM8->CNT > 7000)*/
         /*turnMotorOff();*/
   

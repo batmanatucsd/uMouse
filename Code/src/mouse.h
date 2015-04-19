@@ -11,9 +11,6 @@
 #define RF_IR 1
 #define R_IR 0
 
-#define L_ENC TIM8
-#define R_ENC TIM4
-
 // TODO: change to appropriate states
 typedef enum {
   GO, // should be the first state

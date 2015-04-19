@@ -62,10 +62,11 @@ void turnMotorOff(void)/*{{{*/
 
 void change_LeftMotorSpeed(float speed)/*{{{*/
 {
+  // might want to change this part.. i dnt know
   if(speed > 0)
-    forward();
+    leftForward();
   else {
-    backward();
+    leftBackward();
     speed *= -1;
   }
   
@@ -74,44 +75,49 @@ void change_LeftMotorSpeed(float speed)/*{{{*/
 
 void change_RightMotorSpeed(float speed)/*{{{*/
 {
+  // might want to change this part.. i dnt know
   if(speed > 0)
-    forward();
+    rightForward();
   else {
-    backward();
+    rightBackward();
     speed *= -1;
   }
 
   R_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM5
 }/*}}}*/
 
-void leftForward(void)
+void leftForward(void)/*{{{*/
 {
   GPIO_SetBits(MOTOR, STBY);
   // CW
   GPIO_SetBits(MOTOR, LEFTIN1);
   GPIO_ResetBits(MOTOR, LEFTIN2);
-}
-void rightForward(void)
+}/*}}}*/
+
+void rightForward(void)/*{{{*/
 {
   GPIO_SetBits(MOTOR, STBY);
   // CCW
   GPIO_ResetBits(MOTOR, RIGHTIN1);
   GPIO_SetBits(MOTOR, RIGHTIN2);
-}
-void leftBackward(void)
+}/*}}}*/
+
+void leftBackward(void)/*{{{*/
 {
   GPIO_SetBits(MOTOR, STBY);
   // CCW
   GPIO_SetBits(MOTOR, LEFTIN2);
   GPIO_ResetBits(MOTOR, LEFTIN1);
-}
-void rightBackward(void)
+}/*}}}*/
+
+void rightBackward(void)/*{{{*/
 {
   GPIO_SetBits(MOTOR, STBY);
   // CW
   GPIO_ResetBits(MOTOR, RIGHTIN2);
   GPIO_SetBits(MOTOR, RIGHTIN1);
-}
+}/*}}}*/
+
 
 /*****************************************************************************/
 // Turns
@@ -120,29 +126,45 @@ void rightBackward(void)
 void rightTurn(void)
 {
   
+  // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
-  leftForward();
-  rightBackward();
+
+  // set motor directions and speed
+  /*leftForward();*/
+  /*rightBackward();*/
   change_LeftMotorSpeed(250);
-  change_RightMotorSpeed(250);
-  while(L_ENC->CNT < 2125);
+  change_RightMotorSpeed(-250);
+
+  while(L_ENC->CNT < 2125); // wait for encoder counts
+
+  // stop motors
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
+
+  // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
 }
 void leftTurn(void)
 {
+  // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
-  leftBackward();
-  rightForward();
-  change_RightMotorSpeed(250);
+
+  // set motor directions and speed
+  /*leftBackward();*/
+  /*rightForward();*/
+  change_RightMotorSpeed(-250);
   change_LeftMotorSpeed(250);
-  while(R_ENC->CNT < 2100);
+
+  while(R_ENC->CNT < 2100); // wait for encoder counts
+
+  // stop motors
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
+
+  // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
 }

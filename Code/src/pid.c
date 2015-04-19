@@ -1,16 +1,15 @@
 #include "pid.h"
-#include "mouse.h"
 
 /*****************************************************************************/
 // PID Globals
 /*****************************************************************************/
 static int32_t pastError = 0, currentError = 0;
 static float leftEncoder=0, rightEncoder=0, 
-      leftSpeed=0, rightSpeed=0;
+             leftSpeed=0, rightSpeed=0;
 
 __IO uint16_t sensor_buffers[4];
 __IO uint16_t sensor_readings[4];
-int32_t difference = 0 ;
+float difference = 0 ;
 
 /*****************************************************************************/
 // pid
@@ -20,54 +19,57 @@ int32_t difference = 0 ;
 void pid()
 {
   ADC_Read();
-
-	if ((sensor_buffers[LF_IR] >= THRESHOLD &&  sensor_buffers[RF_IR] >= THRESHOLD))
-  { // BOTH WALLS
-    difference = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
+	
+  /////////////////////
+  // BOTH WALLS
+  /////////////////////
+	if ((sensor_buffers[LF_IR] >= LEFT_THRESHOLD &&  sensor_buffers[RF_IR] >= RIGHT_THRESHOLD))
+  { 
+    difference = map_LF() - map_RF(); 
     if(difference > 20 || difference < -22)
       currentError = difference;
+
       GPIO_SetBits(GPIOC, GREEN); // GREEN
       GPIO_ResetBits(GPIOB, RED);
       GPIO_ResetBits(GPIOC, YELLOW);
 	}
-  else if (sensor_buffers[LF_IR] < THRESHOLD && sensor_buffers[RF_IR] >= THRESHOLD)
-  {  // ONLY RIGHT WALL
-		currentError =  NOLEFTWALL_THRESHOLD - sensor_buffers[RF_IR];
+  /////////////////////
+  // ONLY RIGHT WALL
+  ///////////////////// 
+  else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD)
+  {  
+		currentError =  TARGET - map_RF();
+
       GPIO_ResetBits(GPIOC, GREEN);
       GPIO_SetBits(GPIOB, RED); // RED
       GPIO_ResetBits(GPIOC, YELLOW);
 	}
-  else if (sensor_buffers[LF_IR] >= THRESHOLD && sensor_buffers[RF_IR] < THRESHOLD)
-  { // ONLY LEFT WALL
-		currentError = sensor_buffers[LF_IR] - NORIGHTWALL_THRESHOLD;
+  /////////////////////
+  // ONLY LEFT WALL
+  ///////////////////// 
+  else if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)
+  { 
+		currentError = map_LF() - TARGET; 
+
       GPIO_ResetBits(GPIOC, GREEN);
       GPIO_ResetBits(GPIOB, RED);
       GPIO_SetBits(GPIOC, YELLOW); // YELLOW
 	}
-  /*else if (sensor_buffers[LF_IR] < THRESHOLD && sensor_buffers[RF_IR] < THRESHOLD)*/
+  /////////////////////
+  // NO WALLS
+  ///////////////////// 
+  // TODO: finish the one with no walls
+  /*else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)*/
   /*{*/
 		/*currentError = (rightEncoder - leftEncoder) * ADJUST ; // * some constant*/
 	/*}*/
 
   /*printf("%u       %u\r\n", currentError, pastError);*/
-  // TODO:
-  // set limits to total error value
 	float total = KP * currentError + KD * (currentError - pastError);
 
 
-  leftSpeed += total; // ADJUST;
-  rightSpeed -= (total); // ADJUST;
-
-  /*if(total >= 0)*/
-  /*{*/
-    /*leftSpeed += total / ADJUST;*/
-    /*rightSpeed -= total / LEFT_MAX_SPEED;*/
-  /*}*/
-  /*else*/
-  /*{*/
-    /*leftSpeed += total / RIGHT_MAX_SPEED;*/
-    /*rightSpeed -= (total-25)/ ADJUST;*/
-  /*}*/
+  leftSpeed += total; 
+  rightSpeed -= (total);
   
   if(rightSpeed > RIGHT_MAX_SPEED)
     rightSpeed = RIGHT_MAX_SPEED;
@@ -77,7 +79,7 @@ void pid()
   if(leftSpeed > LEFT_MAX_SPEED)
     leftSpeed = LEFT_MAX_SPEED;
   else if(leftSpeed < 0)
-    leftSpeed = 110;
+    leftSpeed = 120;
 
   /*printf("%d         %f          %f\r\n", total, leftSpeed, rightSpeed);*/
   /*printf("sensor reading: %u         %u        %u        %u\r\n",*/
@@ -88,3 +90,22 @@ void pid()
 	pastError = currentError;
   /*Delay_us(15);*/
 }
+
+/*****************************************************************************/
+// map_readings
+//
+// Map sensor readings
+/*****************************************************************************/
+float map_RF() {
+  if(sensor_buffers[RF_IR] > IN_MAX) 
+    sensor_buffers[RF_IR];
+  return distance_RF[sensor_buffers[RF_IR]*RATIO];
+}
+
+float map_LF() {
+  if(sensor_buffers[LF_IR] > IN_MAX) 
+    sensor_buffers[LF_IR];
+  return distance_LF[sensor_buffers[LF_IR]*RATIO];
+}
+
+
