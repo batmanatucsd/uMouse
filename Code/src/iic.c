@@ -2,305 +2,7 @@
 #include "mcu_lib.h"
 
 /**
-  * @brief  Writes a value in a register of the device through I2C.
-  * @param  DeviceAddr: The address of the IICxpander, could be : IIC_1_ADDR.
-  * @param  RegisterAddr: The target register adress
-  * @param  RegisterValue: The target register value to be written
-  * @retval IIC_OK: if all operations are OK. Other value if error.
-  */
-uint8_t I2C_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_t RegisterValue)
-{
-  uint32_t read_verif = 0;
-  uint8_t IIC_BufferTX = 0;
-
-  /* Get Value to be written */
-  IIC_BufferTX = RegisterValue;
-
-  /* Configure DMA Peripheral */
-  IIC_DMA_Config(IIC_DMA_TX, (uint8_t*)(&IIC_BufferTX));
-
-  /* Enable the I2C peripheral */
-  I2C_GenerateSTART(IIC, ENABLE);
-
-  /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (I2C_GetFlagStatus(IIC,I2C_FLAG_SB) == RESET)
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Transmit the slave address and enable writing operation */
-  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
-
-  /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Transmit the first address for r/w operations */
-  I2C_SendData(IIC, RegisterAddr);
-
-  /* Test on TXE FLag (data dent) */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Enable I2C DMA request */
-  I2C_DMACmd(IIC,ENABLE);
-
-  /* Enable DMA TX Channel */
-  DMA_Cmd(IIC_DMA_TX_CHANNEL, ENABLE);
-
-  /* Wait until DMA Transfer Complete */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!DMA_GetFlagStatus(IIC_DMA_TX_TCFLAG))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Wait until BTF Flag is set before generating STOP */
-  //IIC_TimeOut = 2 * TIMEOUT_MAX;
-  while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
-  {
-  }
-
-  /* Send STOP Condition */
-  I2C_GenerateSTOP(IIC, ENABLE);
-
-  /* Disable DMA TX Channel */
-  DMA_Cmd(IIC_DMA_TX_CHANNEL, DISABLE);
-
-  /* Disable I2C DMA request */
-  I2C_DMACmd(IIC,DISABLE);
-
-  /* Clear DMA TX Transfer Complete Flag */
-  DMA_ClearFlag(IIC_DMA_TX_TCFLAG);
-
-#ifdef VERIFY_WRITTENDATA
-  /* Verify (if needed) that the loaded data is correct  */
-
-  /* Read the just written register*/
-  read_verif = I2C_ReadDeviceRegister(DeviceAddr, RegisterAddr);
-  /* Load the register and verify its value  */
-  if (read_verif != RegisterValue)
-  {
-    /* Control data wrongly tranfered */
-    read_verif = IIC_FAILURE;
-  }
-  else
-  {
-    /* Control data correctly transfered */
-    read_verif = 0;
-  }
-#endif
-
-  /* Return the verifying value: 0 (Passed) or 1 (Failed) */
-  return read_verif;
-}
-
-/**
-  * @brief  Reads a register of the device through I2C.
-  * @param  DeviceAddr: The address of the device, could be : IIC_1_ADDR.
-  * @param  RegisterAddr: The target register adress (between 00x and 0x24)
-  * @retval The value of the read register (0xAA if Timout occured)
-  */
-uint8_t I2C_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
-{
-  uint8_t IIC_BufferRX[2] = {0x00, 0x00};
-
-  /* Configure DMA Peripheral */
-  IIC_DMA_Config(IIC_DMA_RX, (uint8_t*)IIC_BufferRX);
-
-  /* Enable DMA NACK automatic generation */
-  I2C_DMALastTransferCmd(IIC, ENABLE);
-
-  /* Enable the I2C peripheral */
-  I2C_GenerateSTART(IIC, ENABLE);
-
-  /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send device address for write */
-  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
-
-  /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send the device's internal address to write to */
-  I2C_SendData(IIC, RegisterAddr);
-
-  /* Test on TXE FLag (data dent) */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send START condition a second time */
-  I2C_GenerateSTART(IIC, ENABLE);
-
-  /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send IICxpander address for read */
-  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Receiver);
-
-  /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Enable I2C DMA request */
-  I2C_DMACmd(IIC,ENABLE);
-
-  /* Enable DMA RX Channel */
-  DMA_Cmd(IIC_DMA_RX_CHANNEL, ENABLE);
-
-  /* Wait until DMA Transfer Complete */
-  //IIC_TimeOut = 2 * TIMEOUT_MAX;
-  while (!DMA_GetFlagStatus(IIC_DMA_RX_TCFLAG))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send STOP Condition */
-  I2C_GenerateSTOP(IIC, ENABLE);
-
-  /* Disable DMA RX Channel */
-  DMA_Cmd(IIC_DMA_RX_CHANNEL, DISABLE);
-
-  /* Disable I2C DMA request */
-  I2C_DMACmd(IIC,DISABLE);
-
-  /* Clear DMA RX Transfer Complete Flag */
-  DMA_ClearFlag(IIC_DMA_RX_TCFLAG);
-
-  /* return a pointer to the IIC_Buffer */
-  return (uint8_t)IIC_BufferRX[0];
-}
-
-
-/**
-  * @brief  Reads a buffer of 2 bytes from the device registers.
-  * @param  DeviceAddr: The address of the device, could be : IIC_1_ADDR.
-  * @param  RegisterAddr: The target register adress (between 00x and 0x24)
-  * @retval A pointer to the buffer containing the two returned bytes (in halfword).
-  */
-uint16_t I2C_ReadDataBuffer(uint8_t DeviceAddr, uint32_t RegisterAddr)
-{
-  uint8_t tmp= 0;
-  uint8_t IIC_BufferRX[2] = {0x00, 0x00};
-
-  /* Configure DMA Peripheral */
-  IIC_DMA_Config(IIC_DMA_RX, (uint8_t*)IIC_BufferRX);
-
-  /* Enable DMA NACK automatic generation */
-  I2C_DMALastTransferCmd(IIC, ENABLE);
-
-  /* Enable the I2C peripheral */
-  I2C_GenerateSTART(IIC, ENABLE);
-
-  /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send device address for write */
-  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
-
-  /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send the device's internal address to write to */
-  I2C_SendData(IIC, RegisterAddr);
-
-  /* Test on TXE FLag (data dent) */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send START condition a second time */
-  I2C_GenerateSTART(IIC, ENABLE);
-
-  /* Test on SB Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send IICxpander address for read */
-  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Receiver);
-
-  /* Test on ADDR Flag */
-  //IIC_TimeOut = TIMEOUT_MAX;
-  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Enable I2C DMA request */
-  I2C_DMACmd(IIC,ENABLE);
-
-  /* Enable DMA RX Channel */
-  DMA_Cmd(IIC_DMA_RX_CHANNEL, ENABLE);
-
-  /* Wait until DMA Transfer Complete */
-  //IIC_TimeOut = 2 * TIMEOUT_MAX;
-  while (!DMA_GetFlagStatus(IIC_DMA_RX_TCFLAG))
-  {
-    //if (IIC_TimeOut-- == 0) return(IIC_TimeoutUserCallback());
-  }
-
-  /* Send STOP Condition */
-  I2C_GenerateSTOP(IIC, ENABLE);
-
-  /* Disable DMA RX Channel */
-  DMA_Cmd(IIC_DMA_RX_CHANNEL, DISABLE);
-
-  /* Disable I2C DMA request */
-  I2C_DMACmd(IIC,DISABLE);
-
-  /* Clear DMA RX Transfer Complete Flag */
-  DMA_ClearFlag(IIC_DMA_RX_TCFLAG);
-
-  /* Reorganize received data */
-  tmp = IIC_BufferRX[0];
-  IIC_BufferRX[0] = IIC_BufferRX[1];
-  IIC_BufferRX[1] = tmp;
-
-  /* return a pointer to the IIC_Buffer */
-  return *(uint16_t *)IIC_BufferRX;
-}
-
-/**
-  * @brief  Initializes the GPIO pins used by the IO expander.
+  * @brief  Initializes the GPIO pins used.
   * @param  None
   * @retval None
   */
@@ -314,7 +16,7 @@ void IIC_GPIO_Config(void)
                          | RCC_APB2Periph_AFIO, ENABLE);
 
 #ifdef IIC_REMAP_EN
-  GPIO_PinRemapConfig(IIC_REMAP, ENABLE);
+  GPIO_PinRemapConfig(IIC_REMAP_EN, ENABLE);
 #endif
   /* Reset IIC IP */
   RCC_APB1PeriphResetCmd(IIC_CLK, ENABLE);
@@ -457,4 +159,302 @@ void IIC_EXTI_Config(void)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
+}
+
+/**
+  * @brief  Writes a value in a register of the device through I2C.
+  * @param  DeviceAddr: The address of the IICxpander, could be : IIC_1_ADDR.
+  * @param  RegisterAddr: The target register adress
+  * @param  RegisterValue: The target register value to be written
+  * @retval IIC_OK: if all operations are OK. Other value if error.
+  */
+uint8_t IIC_WriteDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr, uint8_t RegisterValue)
+{
+  uint32_t read_verif = 0;
+  uint8_t IIC_BufferTX = 0;
+
+  /* Get Value to be written */
+  IIC_BufferTX = RegisterValue;
+
+  /* Configure DMA Peripheral */
+  IIC_DMA_Config(IIC_DMA_TX, (uint8_t*)(&IIC_BufferTX));
+
+  /* Enable the I2C peripheral */
+  I2C_GenerateSTART(IIC, ENABLE);
+
+  /* Test on SB Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (I2C_GetFlagStatus(IIC,I2C_FLAG_SB) == RESET)
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Transmit the slave address and enable writing operation */
+  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
+
+  /* Test on ADDR Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Transmit the first address for r/w operations */
+  I2C_SendData(IIC, RegisterAddr);
+
+  /* Test on TXE FLag (data dent) */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Enable I2C DMA request */
+  I2C_DMACmd(IIC,ENABLE);
+
+  /* Enable DMA TX Channel */
+  DMA_Cmd(IIC_DMA_TX_CHANNEL, ENABLE);
+
+  /* Wait until DMA Transfer Complete */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!DMA_GetFlagStatus(IIC_DMA_TX_TCFLAG))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Wait until BTF Flag is set before generating STOP */
+  IIC_TimeOut = 2 * TIMEOUT_MAX;
+  while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
+  {
+  }
+
+  /* Send STOP Condition */
+  I2C_GenerateSTOP(IIC, ENABLE);
+
+  /* Disable DMA TX Channel */
+  DMA_Cmd(IIC_DMA_TX_CHANNEL, DISABLE);
+
+  /* Disable I2C DMA request */
+  I2C_DMACmd(IIC,DISABLE);
+
+  /* Clear DMA TX Transfer Complete Flag */
+  DMA_ClearFlag(IIC_DMA_TX_TCFLAG);
+
+#ifdef VERIFY_WRITTENDATA
+  /* Verify (if needed) that the loaded data is correct  */
+
+  /* Read the just written register*/
+  read_verif = I2C_ReadDeviceRegister(DeviceAddr, RegisterAddr);
+  /* Load the register and verify its value  */
+  if (read_verif != RegisterValue)
+  {
+    /* Control data wrongly tranfered */
+    read_verif = IIC_FAILURE;
+  }
+  else
+  {
+    /* Control data correctly transfered */
+    read_verif = 0;
+  }
+#endif
+
+  /* Return the verifying value: 0 (Passed) or 1 (Failed) */
+  return read_verif;
+}
+
+/**
+  * @brief  Reads a register of the device through I2C.
+  * @param  DeviceAddr: The address of the device, could be : IIC_1_ADDR.
+  * @param  RegisterAddr: The target register adress (between 00x and 0x24)
+  * @retval The value of the read register (0xAA if Timout occured)
+  */
+uint8_t IIC_ReadDeviceRegister(uint8_t DeviceAddr, uint8_t RegisterAddr)
+{
+  uint8_t IIC_BufferRX[2] = {0x00, 0x00};
+
+  /* Configure DMA Peripheral */
+  IIC_DMA_Config(IIC_DMA_RX, (uint8_t*)IIC_BufferRX);
+
+  /* Enable DMA NACK automatic generation */
+  I2C_DMALastTransferCmd(IIC, ENABLE);
+
+  /* Enable the I2C peripheral */
+  I2C_GenerateSTART(IIC, ENABLE);
+
+  /* Test on SB Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send device address for write */
+  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
+
+  /* Test on ADDR Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send the device's internal address to write to */
+  I2C_SendData(IIC, RegisterAddr);
+
+  /* Test on TXE FLag (data dent) */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send START condition a second time */
+  I2C_GenerateSTART(IIC, ENABLE);
+
+  /* Test on SB Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send IICxpander address for read */
+  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Receiver);
+
+  /* Test on ADDR Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Enable I2C DMA request */
+  I2C_DMACmd(IIC,ENABLE);
+
+  /* Enable DMA RX Channel */
+  DMA_Cmd(IIC_DMA_RX_CHANNEL, ENABLE);
+
+  /* Wait until DMA Transfer Complete */
+  IIC_TimeOut = 2 * TIMEOUT_MAX;
+  while (!DMA_GetFlagStatus(IIC_DMA_RX_TCFLAG))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send STOP Condition */
+  I2C_GenerateSTOP(IIC, ENABLE);
+
+  /* Disable DMA RX Channel */
+  DMA_Cmd(IIC_DMA_RX_CHANNEL, DISABLE);
+
+  /* Disable I2C DMA request */
+  I2C_DMACmd(IIC,DISABLE);
+
+  /* Clear DMA RX Transfer Complete Flag */
+  DMA_ClearFlag(IIC_DMA_RX_TCFLAG);
+
+  /* return a pointer to the IIC_Buffer */
+  return (uint8_t)IIC_BufferRX[1];
+}
+
+
+/**
+  * @brief  Reads a buffer of 2 bytes from the device registers.
+  * @param  DeviceAddr: The address of the device, could be : IIC_1_ADDR.
+  * @param  RegisterAddr: The target register adress (between 00x and 0x24)
+  * @retval A pointer to the buffer containing the two returned bytes (in halfword).
+  */
+uint16_t IIC_ReadDataBuffer(uint8_t DeviceAddr, uint32_t RegisterAddr)
+{
+  uint8_t tmp= 0;
+  uint8_t IIC_BufferRX[2] = {0x00, 0x00};
+
+  /* Configure DMA Peripheral */
+  IIC_DMA_Config(IIC_DMA_RX, (uint8_t*)IIC_BufferRX);
+
+  /* Enable DMA NACK automatic generation */
+  I2C_DMALastTransferCmd(IIC, ENABLE);
+
+  /* Enable the I2C peripheral */
+  I2C_GenerateSTART(IIC, ENABLE);
+
+  /* Test on SB Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send device address for write */
+  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Transmitter);
+
+  /* Test on ADDR Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send the device's internal address to write to */
+  I2C_SendData(IIC, RegisterAddr);
+
+  /* Test on TXE FLag (data dent) */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while ((!I2C_GetFlagStatus(IIC,I2C_FLAG_TXE)) && (!I2C_GetFlagStatus(IIC,I2C_FLAG_BTF)))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send START condition a second time */
+  I2C_GenerateSTART(IIC, ENABLE);
+
+  /* Test on SB Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_GetFlagStatus(IIC,I2C_FLAG_SB))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send IICxpander address for read */
+  I2C_Send7bitAddress(IIC, DeviceAddr, I2C_Direction_Receiver);
+
+  /* Test on ADDR Flag */
+  IIC_TimeOut = TIMEOUT_MAX;
+  while (!I2C_CheckEvent(IIC, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Enable I2C DMA request */
+  I2C_DMACmd(IIC,ENABLE);
+
+  /* Enable DMA RX Channel */
+  DMA_Cmd(IIC_DMA_RX_CHANNEL, ENABLE);
+
+  /* Wait until DMA Transfer Complete */
+  IIC_TimeOut = 2 * TIMEOUT_MAX;
+  while (!DMA_GetFlagStatus(IIC_DMA_RX_TCFLAG))
+  {
+    if (IIC_TimeOut-- == 0) return(-1);
+  }
+
+  /* Send STOP Condition */
+  I2C_GenerateSTOP(IIC, ENABLE);
+
+  /* Disable DMA RX Channel */
+  DMA_Cmd(IIC_DMA_RX_CHANNEL, DISABLE);
+
+  /* Disable I2C DMA request */
+  I2C_DMACmd(IIC,DISABLE);
+
+  /* Clear DMA RX Transfer Complete Flag */
+  DMA_ClearFlag(IIC_DMA_RX_TCFLAG);
+
+  /* Reorganize received data */
+  tmp = IIC_BufferRX[0];
+  IIC_BufferRX[0] = IIC_BufferRX[1];
+  IIC_BufferRX[1] = tmp;
+
+  /* return a pointer to the IIC_Buffer */
+  return *(uint16_t *)IIC_BufferRX;
 }
