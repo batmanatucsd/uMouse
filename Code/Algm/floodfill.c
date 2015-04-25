@@ -222,7 +222,10 @@ void move()
 		}
 	}
 	lookAhead();
+
+	// update the stackptr
 	location = next;
+	stack[++stackptr] = location;
 }
 
 /*****************************************************************************/
@@ -243,7 +246,8 @@ void update(unsigned short row, unsigned short col)
 	unsigned char min = 255;
 	unsigned char next = (row << 4) | col;
 
-	// If there is no NORTH wall for this cell
+	// If there is no NORTH wall for this cell, and the north cell is closer
+	// to the center than current min, make it the new 'min'
 	if (!(tile & NORTH_WALL))
 	{
 		if ((maze[row - 1][col] & DIST) < min)
@@ -253,7 +257,8 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-	// If there is no EAST wall for this cell
+	// If there is no EAST wall for this cell, and east cell is closer
+	// to the center than current min, make it the new 'min'
 	if (!(tile & EAST_WALL))
 	{
 		if ((maze[row][col + 1] & DIST) < min)
@@ -263,7 +268,8 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-	// If there is no SOUTH wall for this cell
+	// If there is no SOUTH wall for this cell, and south cell is closer
+	// to the center than current min, make it the new 'min'
 	if (!(tile & SOUTH_WALL))
 	{
 		if ((maze[row + 1][col] & DIST) < min)
@@ -273,7 +279,8 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-	// If there is no WEST wall for this cell
+	// If there is no WEST wall for this cell, and west cell is closer
+	// to the center than current min, make it the new 'min'
 	if (!(tile & WEST_WALL))
 	{
 		if ((maze[row][col - 1] & DIST) < min)
@@ -283,8 +290,7 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-
-	// Continue if distances are correct
+	// If cell with minimum value is 1 away from current cell, continue
 	if (stackptr == 0 && min + 1 == (tile & DIST))
 	{
 		current = next;
@@ -292,7 +298,7 @@ void update(unsigned short row, unsigned short col)
 	}
 	else if (min + 1 != (tile & DIST))
 	{
-
+		printf("UPDATE: PUSHING OPEN NEIGHBORS ONTO STAQ\n");
 		// Update distance
 		maze[row][col] &= 0xff00;
 		maze[row][col] |= min + 1;
@@ -314,6 +320,9 @@ void update(unsigned short row, unsigned short col)
 		{
 			stack[stackptr++] = (row << 4) | (col - 1);
 		}
+	}
+	else if (min == 0) {
+		printf("****************YO WE UP IN THIS BETCH\n");
 	}
 	current = next;
 }
@@ -406,21 +415,27 @@ int main() {
 	    fgets(name, sizeof(name), stdin);
 		lookAhead();
 		print();
+		printf("***STACK PTR IS: %d\n", stackptr);
 
 		while (stackptr > 1)
 		{
 			--stackptr;
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+			stack[stackptr] = location;
+			stackptr++;
 
-		    // DEBUG
+		    // DEBUG -----------------------------------------------------------
 			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
 			printf("Current stack: ");
 			for (int i = 0; i < stackptr; i++)
 				printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
 			printf("\n");
-			// DEBUG
+			// DEBUG -----------------------------------------------------------
+
+			stackptr--; 	//will probably need this later lols
 		}
 		move();
+
 	}
 
 }
