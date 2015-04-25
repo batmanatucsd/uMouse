@@ -90,7 +90,7 @@ void lookAhead()
 	}
 
 	// Fill in maze info for cells around EAST CELL
-	if (direction == 1 && !(maze[row][col] & EAST_WALL))
+	else if (direction == 1 && !(maze[row][col] & EAST_WALL))
 	{
 		maze[row][col + 1] |= testmaze[row][col + 1];
 
@@ -224,7 +224,13 @@ void move()
 	lookAhead();
 
 	// update the stackptr
-	location = next;
+	if (next != 0x77 && next != 0x78 &&
+		next != 0x87 && next != 0x88)
+		location = next;
+
+	else
+		update(row, col);
+	
 	stack[++stackptr] = location;
 }
 
@@ -296,9 +302,9 @@ void update(unsigned short row, unsigned short col)
 		current = next;
 		stack[stackptr++] = next;
 	}
+
 	else if (min + 1 != (tile & DIST))
 	{
-		printf("UPDATE: PUSHING OPEN NEIGHBORS ONTO STAQ\n");
 		// Update distance
 		maze[row][col] &= 0xff00;
 		maze[row][col] |= min + 1;
@@ -321,9 +327,7 @@ void update(unsigned short row, unsigned short col)
 			stack[stackptr++] = (row << 4) | (col - 1);
 		}
 	}
-	else if (min == 0) {
-		printf("****************YO WE UP IN THIS BETCH\n");
-	}
+
 	current = next;
 }
 
@@ -413,6 +417,7 @@ int main() {
 	{
 	  	printf("Press RETURN to contine");
 	    fgets(name, sizeof(name), stdin);
+
 		lookAhead();
 		print();
 		printf("***STACK PTR IS: %d\n", stackptr);
@@ -437,5 +442,6 @@ int main() {
 		move();
 
 	}
+	printf("location is: %d, %d", (location & ROW) >> 4, (location & COL));
 
 }
