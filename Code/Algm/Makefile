@@ -9,5 +9,5 @@ floodfill: floodfill.o
 floodfill.o: floodfill.c testmaze.h
 
 clean:
-	rm -f *.o floodfill
+	rm -f *.o *.gch a.out floodfill
 
