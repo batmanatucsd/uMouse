@@ -173,9 +173,23 @@ void move()
 {
 	unsigned char row = (location & ROW) >> 4;
 	unsigned char col = location & COL;
+	if (direction == 0 && !(maze[row][col] & NORTH_WALL)) --row;
+	if (direction == 1 && !(maze[row][col] & EAST_WALL)) ++col;
+	if (direction == 2 && !(maze[row][col] & SOUTH_WALL)) ++row;
+	if (direction == 3 && !(maze[row][col] & WEST_WALL)) --col;
+	location = (row << 4) | col;
+}
+
+/*****************************************************************************/
+// turn():
+//		Turn to the cell closest to the center
+/*****************************************************************************/
+void turn()
+{
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
 
 	unsigned char min = 255;
-	unsigned char next = (row << 4) | col;
 	unsigned short tile = maze[row][col];
 
 	// If there is no NORTH wall for this cell
@@ -184,7 +198,6 @@ void move()
 		if ((maze[row - 1][col] & DIST) < min)
 		{
 			min = maze[row - 1][col] & DIST;
-			next = ((row - 1) << 4) | col;
 			direction = 0;
 		}
 	}
@@ -195,7 +208,6 @@ void move()
 		if ((maze[row][col + 1] & DIST) < min)
 		{
 			min = maze[row][col + 1] & DIST;
-			next = (row << 4) | (col + 1);
 			direction = 1;
 		}
 	}
@@ -206,7 +218,6 @@ void move()
 		if ((maze[row + 1][col] & DIST) < min)
 		{
 			min = maze[row + 1][col] & DIST;
-			next = ((row + 1) << 4) | col;
 			direction = 2;
 		}
 	}
@@ -217,21 +228,9 @@ void move()
 		if ((maze[row][col - 1] & DIST) < min)
 		{
 			min = maze[row][col - 1] & DIST;
-			next = (row << 4) | (col - 1);
 			direction = 3;
 		}
 	}
-	lookAhead();
-
-	// update the stackptr
-	if (next != 0x77 && next != 0x78 &&
-		next != 0x87 && next != 0x88)
-		location = next;
-
-	else
-		update(row, col);
-	
-	stack[++stackptr] = location;
 }
 
 /*****************************************************************************/
@@ -242,11 +241,6 @@ void move()
 void update(unsigned short row, unsigned short col)
 {
 	unsigned short tile = maze[row][col];
-
-	// Update wall map
-	printf("\nTEST LOCATION:%u,%u\n", (location & ROW) >> 4, location & COL);
-	printf("\nTEST TILE:%u\n\n", tile & DIST);
-	printf("Direction:%u\n", direction);
 
 	// Minimum open neighbor
 	unsigned char min = 255;
@@ -300,7 +294,7 @@ void update(unsigned short row, unsigned short col)
 	if (stackptr == 0 && min + 1 == (tile & DIST))
 	{
 		current = next;
-		stack[stackptr++] = next;
+		stack[++stackptr] = next;
 	}
 
 	else if (min + 1 != (tile & DIST))
@@ -312,19 +306,19 @@ void update(unsigned short row, unsigned short col)
 		// Push open neighbors onto stack
 		if (row - 1 >= 0 && !(maze[row][col] & NORTH_WALL))
 		{
-			stack[stackptr++] = ((row - 1) << 4) | col;
+			stack[++stackptr] = ((row - 1) << 4) | col;
 		}
 		if (col + 1 <= 15 && !(maze[row][col] & EAST_WALL))
 		{
-			stack[stackptr++] = (row << 4) | (col + 1);
+			stack[++stackptr] = (row << 4) | (col + 1);
 		}
 		if (row + 1 <= 15 && !(maze[row][col] & SOUTH_WALL))
 		{
-			stack[stackptr++] = ((row + 1) << 4) | col;
+			stack[++stackptr] = ((row + 1) << 4) | col;
 		}
 		if (col - 1 >= 0 && !(maze[row][col] & WEST_WALL))
 		{
-			stack[stackptr++] = (row << 4) | (col - 1);
+			stack[++stackptr] = (row << 4) | (col - 1);
 		}
 	}
 
@@ -416,32 +410,29 @@ int main() {
 		location != 0x87 && location != 0x88)
 	{
 	  	printf("Press RETURN to contine");
-	    fgets(name, sizeof(name), stdin);
+	    	fgets(name, sizeof(name), stdin);
 
 		lookAhead();
-		print();
-		printf("***STACK PTR IS: %d\n", stackptr);
+		update((location & ROW) >> 4, location & COL);
 
 		while (stackptr > 1)
 		{
 			--stackptr;
+			printf("***STACK PTR IS: %d\n", stackptr);
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-			stack[stackptr] = location;
-			stackptr++;
 
-		    // DEBUG -----------------------------------------------------------
+		   	// DEBUG -----------------------------------------------------------
 			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
 			printf("Current stack: ");
 			for (int i = 0; i < stackptr; i++)
 				printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
 			printf("\n");
 			// DEBUG -----------------------------------------------------------
-
-			stackptr--; 	//will probably need this later lols
 		}
+
 		move();
-
+		turn();
+		print();
+		printf("location is: %d, %d\n", (location & ROW) >> 4, (location & COL));
 	}
-	printf("location is: %d, %d", (location & ROW) >> 4, (location & COL));
-
 }
