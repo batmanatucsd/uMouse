@@ -39,7 +39,7 @@ int main(void)
       case GO:
         
         // Do PID
-        pid();
+       // pid();
         /*GPIO_SetBits(GPIOC, GREEN);*/
         /*GPIO_ResetBits(GPIOB, RED);*/
         /*GPIO_ResetBits(GPIOC, YELLOW);*/
@@ -47,9 +47,16 @@ int main(void)
 
       case TEST:
         /*leftTurn();*/
-        rightTurn();
-        Delay_us(1000000);
-        /*stopFrontWall(); */
+         
+        Delay_us(1000000); 	
+        Delay_us(1000000); 	
+        fullTurn();
+        Delay_us(1000000); 	
+    
+        Delay_us(1000000); 	
+
+        Delay_us(1000000); 	
+ //       stopFrontWall();
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);

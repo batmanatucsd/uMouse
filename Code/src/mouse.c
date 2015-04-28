@@ -1,4 +1,5 @@
 #include "mouse.h"
+#include "math.h"
 
 /*****************************************************************************/
 // General Functions
@@ -137,11 +138,11 @@ void rightTurn(void)
   // set motor directions and speed
   /*leftForward();*/
   /*rightBackward();*/
+  
   change_LeftMotorSpeed(250);
   change_RightMotorSpeed(-250);
 
   while(L_ENC->CNT < 2125); // wait for encoder counts
-
   // stop motors
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
@@ -173,6 +174,32 @@ void leftTurn(void)
   R_ENC->CNT = 0; 
 }
 
+void fullTurn(void)
+{
+
+  // reset encoder counts
+  L_ENC->CNT = 0; 
+  R_ENC->CNT = 0; 
+
+  // set motor directions and speed
+  /*leftForward();*/
+  /*rightBackward();*/
+  
+  change_LeftMotorSpeed(250);
+  change_RightMotorSpeed(-250);
+
+  while(L_ENC->CNT < 4785); // wait for encoder counts
+  // stop motors
+  change_LeftMotorSpeed(0);
+  change_RightMotorSpeed(0);
+
+  // reset encoder counts
+  L_ENC->CNT = 0; 
+  R_ENC->CNT = 0; 
+
+} 
+
+
 
 /*****************************************************************************/
 // Stop
@@ -180,9 +207,29 @@ void leftTurn(void)
 
 void stopFrontWall(void)
 {
-  //ADC_Read();
-  change_LeftMotorSpeed(330  - sensor_buffers[L_IR]);
-  change_RightMotorSpeed(330 - sensor_buffers[R_IR]);
+  ADC_Read();
+/*
+  change_LeftMotorSpeed(430-sensor_buffers[L_IR]);
+  change_RightMotorSpeed(400-sensor_buffers[R_IR]);
+*/
+
+   //slowing down linearly
+  if(sensor_buffers[L_IR] > 110 || sensor_buffers[R_IR] > 110)
+  { 
+    change_LeftMotorSpeed(430  - (.1661*sensor_buffers[L_IR]+358.57));
+    change_RightMotorSpeed(400 - (.1845*sensor_buffers[R_IR]+326.2));
+  }
+  else
+  {
+    change_LeftMotorSpeed(LEFT_MAX_SPEED);
+    change_RightMotorSpeed(RIGHT_MAX_SPEED);
+  }
+/*
+    uint16_t x1 = log(sensor_buffers[L_IR]);
+    uint16_t x2 = log(sensor_buffers[R_IR]);
+    change_LeftMotorSpeed(430  - (42.21*(x1) + 178.45));
+    change_RightMotorSpeed(400 - (45.222*(x2) + 130.66));
+*/
 }
 
 
