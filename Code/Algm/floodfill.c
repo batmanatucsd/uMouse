@@ -393,14 +393,12 @@ int main() {
 	  	printf("Press RETURN to contine");
 	    	fgets(name, sizeof(name), stdin);
 		lookAhead();
+		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
 			--stackptr;
 			printf("***STACK PTR IS: %d\n", stackptr);
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-
-		   	// DEBUG -----------------------------------------------------------
-			update((location & ROW) >> 4, location & COL);
 
 		   	// DEBUG -----------------------------------------------------------
 			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
@@ -413,4 +411,5 @@ int main() {
 		move();
 		turn();
 	}
+	print();
 }
