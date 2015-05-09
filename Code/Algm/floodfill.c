@@ -173,10 +173,11 @@ void move()
 	unsigned char row = (location & ROW) >> 4;
 	unsigned char col = location & COL;
 	if (direction == 0 && !(maze[row][col] & NORTH_WALL)) --row;
-	if (direction == 1 && !(maze[row][col] & EAST_WALL)) ++col;
-	if (direction == 2 && !(maze[row][col] & SOUTH_WALL)) ++row;
-	if (direction == 3 && !(maze[row][col] & WEST_WALL)) --col;
+	else if (direction == 1 && !(maze[row][col] & EAST_WALL)) ++col;
+	else if (direction == 2 && !(maze[row][col] & SOUTH_WALL)) ++row;
+	else if (direction == 3 && !(maze[row][col] & WEST_WALL)) --col;
 	location = (row << 4) | col;
+	lookAhead();
 }
 
 /*****************************************************************************/
@@ -375,6 +376,15 @@ void print() {
 	printf("+\n");
 }
 
+void debug()
+{
+	print();
+	printf("location is: %d, %d\n", (location & ROW) >> 4, (location & COL));
+	printf("direction is: %d\n", direction);
+	unsigned short tile = maze[(location & ROW) >> 4][location & COL];
+	printf("north: %d, east: %d, south: %d, west: %d\n", tile & NORTH_WALL, tile & EAST_WALL, tile & SOUTH_WALL, tile & WEST_WALL);
+}
+
 int main() {
 
 	// Initialize maze and mouse location
@@ -389,11 +399,8 @@ int main() {
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
-		printf("location is: %d, %d\n", (location & ROW) >> 4, (location & COL));
-		print();
 	  	printf("Press RETURN to contine");
 	    	fgets(name, sizeof(name), stdin);
-		lookAhead();
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
@@ -409,8 +416,9 @@ int main() {
 			printf("\n");
 			// DEBUG -----------------------------------------------------------
 		}
-		move();
 		turn();
+		move();
+		debug();
 	}
 	print();
 }
