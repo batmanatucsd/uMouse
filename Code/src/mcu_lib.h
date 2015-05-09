@@ -4,11 +4,13 @@
 #include "stm32f10x.h"
 #include "iic.h"
 #include "mpu6050.h"
+//#include "mouse.h"
 
 #ifdef  SERIAL_DEBUG
 #include "usart.h"
 #include <stdio.h>
 #endif // SERIAL_DEBUG
+
 
 /*****************************************************************************/
 // For ADC
@@ -38,11 +40,13 @@
 /*****************************************************************************/
 // For PWM
 /*****************************************************************************/
+#define L_PWM         TIM3
+#define R_PWM         TIM5
 #define PWIDTH_0      0
-#define PWIDTH_25     187.5
-#define PWIDTH_50     375
-#define PWIDTH_75     562.5
-#define PWIDTH_MAX    750
+#define PWIDTH_25     375
+#define PWIDTH_50     750 
+#define PWIDTH_75     1125
+#define PWIDTH_MAX    1500
 
 /*****************************************************************************/
 // For Indications
@@ -53,15 +57,11 @@
 #define RED      GPIO_Pin_0 //GPIOB
 
 /*****************************************************************************/
-// For Delays
+// For Encoders
 /*****************************************************************************/
-#define FAC_US   SystemCoreClock/8
-#define FAC_MS   FAC_US*1000
+#define L_ENC   TIM8
+#define R_ENC   TIM4
 
-/*****************************************************************************/
-// Global Variables
-/*****************************************************************************/
-__IO uint16_t sensor_readings[4];
 
 /*****************************************************************************/
 // Functions Prototypes
@@ -72,10 +72,12 @@ void DMA_Configuration(void);
 void ADC_Configuration(void);
 void PWM_Configuration(void);
 void NVIC_Configuration(void);
+void ENCODER_Configuration(void);
 
 void ADC_Read();
 
 void Delay_Init(void);
+void Decrement_WaitTime(void);
 void Delay_us(uint32_t);
 void Delay_ms(uint16_t);
 
