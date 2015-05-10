@@ -1,4 +1,5 @@
 #include "mouse.h"
+#include "pid.h"
 
 /*****************************************************************************/
 // Global Variables
@@ -48,7 +49,7 @@ int main(void)
       case TEST:
         /*leftTurn();*/
         rightTurn();
-        Delay_us(1000000);
+        Delay_us(2000000);
         /*stopFrontWall(); */
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);

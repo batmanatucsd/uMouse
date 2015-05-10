@@ -23,38 +23,38 @@ void pid()
   /////////////////////
   // BOTH WALLS
   /////////////////////
-	if ((sensor_buffers[LF_IR] >= LEFT_THRESHOLD &&  sensor_buffers[RF_IR] >= RIGHT_THRESHOLD))
-  { 
-    difference = map_LF() - map_RF(); 
+  if ((sensor_buffers[LF_IR] >= LEFT_THRESHOLD &&  sensor_buffers[RF_IR] >= RIGHT_THRESHOLD))
+  {
+    difference = map_RF() - map_LF();
     if(difference > 20 || difference < -22)
       currentError = difference;
 
       GPIO_SetBits(GPIOC, GREEN); // GREEN
       GPIO_ResetBits(GPIOB, RED);
       GPIO_ResetBits(GPIOC, YELLOW);
-	}
+  }
   /////////////////////
   // ONLY RIGHT WALL
-  ///////////////////// 
+  /////////////////////
   else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD)
-  {  
-		currentError =  TARGET - map_RF();
+  { 
+    currentError =  TARGET - map_RF();
 
       GPIO_ResetBits(GPIOC, GREEN);
       GPIO_SetBits(GPIOB, RED); // RED
       GPIO_ResetBits(GPIOC, YELLOW);
-	}
+  }
   /////////////////////
   // ONLY LEFT WALL
-  ///////////////////// 
+  /////////////////////
   else if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)
-  { 
-		currentError = map_LF() - TARGET; 
+  {
+    currentError = map_LF() - TARGET;
 
       GPIO_ResetBits(GPIOC, GREEN);
       GPIO_ResetBits(GPIOB, RED);
       GPIO_SetBits(GPIOC, YELLOW); // YELLOW
-	}
+  }
   /////////////////////
   // NO WALLS
   ///////////////////// 
@@ -65,28 +65,29 @@ void pid()
 	/*}*/
 
   /*printf("%u       %u\r\n", currentError, pastError);*/
-	float total = KP * currentError + KD * (currentError - pastError);
 
+  // calculate the total adjustment
+  float total = KP * currentError + KD * (currentError - pastError);
 
-  leftSpeed += total; 
+  // Change the motor speed
+  leftSpeed += total;
   rightSpeed -= (total);
   
-  if(rightSpeed > RIGHT_MAX_SPEED)
-    rightSpeed = RIGHT_MAX_SPEED;
-  else if(rightSpeed < 0)
+  // Limit the minimum speed
+  // note: mabye we don't need this. try one without this checking
+  if(rightSpeed < 0)
     rightSpeed = 120;
 
-  if(leftSpeed > LEFT_MAX_SPEED)
-    leftSpeed = LEFT_MAX_SPEED;
-  else if(leftSpeed < 0)
+  if(leftSpeed < 0)
     leftSpeed = 120;
 
   /*printf("%d         %f          %f\r\n", total, leftSpeed, rightSpeed);*/
   /*printf("sensor reading: %u         %u        %u        %u\r\n",*/
           /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
+
+  /*printf("%f             %f\r\n", map_LF(), map_RF());*/
   change_RightMotorSpeed(rightSpeed);
   change_LeftMotorSpeed(leftSpeed);
-
 	pastError = currentError;
   /*Delay_us(15);*/
 }
@@ -98,13 +99,13 @@ void pid()
 /*****************************************************************************/
 float map_RF() {
   if(sensor_buffers[RF_IR] > IN_MAX) 
-    sensor_buffers[RF_IR];
+    sensor_buffers[RF_IR] = IN_MAX;
   return distance_RF[sensor_buffers[RF_IR]*RATIO];
 }
 
 float map_LF() {
   if(sensor_buffers[LF_IR] > IN_MAX) 
-    sensor_buffers[LF_IR];
+    sensor_buffers[LF_IR] = IN_MAX;
   return distance_LF[sensor_buffers[LF_IR]*RATIO];
 }
 
