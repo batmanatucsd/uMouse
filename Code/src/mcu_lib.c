@@ -296,7 +296,7 @@ void ADC_Read() /*{{{*/
   GPIO_SetBits(EMITTER, LF_EMITTER);
   GPIO_SetBits(EMITTER, L_EMITTER);
 
-  Delay_us(75);
+  Delay_us(100);
   ADC_SoftwareStartConvCmd(ADC1, ENABLE);
   /* Start the conversion */
   /*ADC_SoftwareStartConvCmd(ADC3, ENABLE);*/

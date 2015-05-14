@@ -1,5 +1,4 @@
 #include "mouse.h"
-#include "pid.h"
 
 /*****************************************************************************/
 // Global Variables
@@ -41,6 +40,7 @@ int main(void)
         
         // Do PID
         pid();
+        Delay_us(100);
         /*GPIO_SetBits(GPIOC, GREEN);*/
         /*GPIO_ResetBits(GPIOB, RED);*/
         /*GPIO_ResetBits(GPIOC, YELLOW);*/
@@ -48,8 +48,10 @@ int main(void)
 
       case TEST:
         /*leftTurn();*/
-        rightTurn();
-        Delay_us(2000000);
+        /*rightTurn();*/
+        /*Delay_us(1000000);*/
+        change_LeftMotorSpeed(120);
+        change_RightMotorSpeed(120);
         /*stopFrontWall(); */
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
@@ -57,7 +59,6 @@ int main(void)
         break;
 
       case STOP:
-        ADC_Read();
 
         turnMotorOff();
         GPIO_SetBits(GPIOB, RED);

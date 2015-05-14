@@ -126,7 +126,6 @@ void rightBackward(void)/*{{{*/
 /*****************************************************************************/
 // Turns
 /*****************************************************************************/
-
 void rightTurn(void)
 {
   
@@ -146,10 +145,13 @@ void rightTurn(void)
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
 
+  // TODO: put arguments
+  pid_turn();
   // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
 }
+
 void leftTurn(void)
 {
   // reset encoder counts
@@ -159,8 +161,8 @@ void leftTurn(void)
   // set motor directions and speed
   /*leftBackward();*/
   /*rightForward();*/
-  change_RightMotorSpeed(-250);
-  change_LeftMotorSpeed(250);
+  change_RightMotorSpeed(250);
+  change_LeftMotorSpeed(-250);
 
   while(R_ENC->CNT < 2100); // wait for encoder counts
 
@@ -168,16 +170,16 @@ void leftTurn(void)
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
 
+  // TODO: put arguments
+  pid_turn();
   // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
 }
 
-
 /*****************************************************************************/
 // Stop
 /*****************************************************************************/
-
 void stopFrontWall(void)
 {
   //ADC_Read();

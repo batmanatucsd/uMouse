@@ -2,6 +2,7 @@
 #define _MOUSE_H
 
 #include "mcu_lib.h"
+#include "pid.h"
 
 #define ON 1
 #define OFF 0
@@ -11,8 +12,8 @@
 #define RF_IR 1
 #define R_IR 0
 
-#define LEFT_MAX_SPEED 200
-#define RIGHT_MAX_SPEED 200
+#define LEFT_MAX_SPEED 255
+#define RIGHT_MAX_SPEED 255
 
 // TODO: change to appropriate states
 typedef enum {

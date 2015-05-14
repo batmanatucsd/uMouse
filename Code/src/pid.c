@@ -3,7 +3,7 @@
 /*****************************************************************************/
 // PID Globals
 /*****************************************************************************/
-static int32_t pastError = 0, currentError = 0;
+static float pastError = 0, currentError = 0, sumError = 0;
 static float leftEncoder=0, rightEncoder=0, 
              leftSpeed=0, rightSpeed=0;
 
@@ -20,14 +20,26 @@ void pid()
 {
   ADC_Read();
 	
+  float total;
+
+  /*printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);*/
   /////////////////////
   // BOTH WALLS
   /////////////////////
-  if ((sensor_buffers[LF_IR] >= LEFT_THRESHOLD &&  sensor_buffers[RF_IR] >= RIGHT_THRESHOLD))
+  if ((sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD))
   {
-    difference = map_RF() - map_LF();
-    if(difference > 20 || difference < -22)
+    difference = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
+    if(difference > 22 || difference < -22)
       currentError = difference;
+
+    /*total = KP * currentError + KD * (currentError - pastError) + KI * sumError;*/
+    // FOR LINEARIZATION
+    /*float difference = map_RF() - map_LF() + 0.15;*/
+    /*if(difference < 0.78 || difference > -0.78)*/
+      /*currentError = difference;*/
+
+    /*if(currentError < -0.5)*/
+      /*currentError += currentError/2;*/
 
       GPIO_SetBits(GPIOC, GREEN); // GREEN
       GPIO_ResetBits(GPIOB, RED);
@@ -38,8 +50,12 @@ void pid()
   /////////////////////
   else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD)
   { 
-    currentError =  TARGET - map_RF();
+		difference =  NOLEFTWALL_THRESHOLD - sensor_buffers[RF_IR];
+    if(difference > 22 || difference < -22)
+      currentError = difference;
+    /*currentError = map_RF() - R_TARGET;*/
 
+    /*total = NOL_KP * currentError + NOL_KD * (currentError - pastError) + KI * sumError;*/
       GPIO_ResetBits(GPIOC, GREEN);
       GPIO_SetBits(GPIOB, RED); // RED
       GPIO_ResetBits(GPIOC, YELLOW);
@@ -49,7 +65,12 @@ void pid()
   /////////////////////
   else if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)
   {
-    currentError = map_LF() - TARGET;
+		difference = sensor_buffers[LF_IR] - NORIGHTWALL_THRESHOLD;
+    if(difference > 22 || difference < -22)
+      currentError = difference;
+    /*printf("%u\r\n", sensor_buffers[LF_IR]);*/
+    /*total = NOR_KP * currentError + NOR_KD * (currentError - pastError) + KI * sumError;*/
+    /*currentError = L_TARGET - map_LF();*/
 
       GPIO_ResetBits(GPIOC, GREEN);
       GPIO_ResetBits(GPIOB, RED);
@@ -59,22 +80,42 @@ void pid()
   // NO WALLS
   ///////////////////// 
   // TODO: finish the one with no walls
-  /*else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)*/
-  /*{*/
-		/*currentError = (rightEncoder - leftEncoder) * ADJUST ; // * some constant*/
-	/*}*/
+  else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)
+  {
+    currentError = (rightEncoder - leftEncoder) * ADJUST ; // * some constant
+    /*total = KP * currentError + KD * (currentError - pastError) + KI * sumError;*/
+    /*currentError = (leftEncoder - rightEncoder) * ADJUST ; // * some constant*/
+    float newSpeed = (leftSpeed > rightSpeed) ? leftSpeed : rightSpeed;
+    change_RightMotorSpeed(newSpeed);
+    change_LeftMotorSpeed(newSpeed);
+    // No wall...
+      GPIO_SetBits(GPIOC, GREEN);
+      GPIO_SetBits(GPIOB, RED);
+      GPIO_SetBits(GPIOC, YELLOW); // YELLOW
+  }
 
-  /*printf("%u       %u\r\n", currentError, pastError);*/
+
+  /*printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);*/
 
   // calculate the total adjustment
-  float total = KP * currentError + KD * (currentError - pastError);
+  /*printf("%f       %f\r\n", map_LF(), map_RF());*/
 
+  total = KP * currentError + KD * (currentError - pastError) + KI * sumError;
   // Change the motor speed
   leftSpeed += total;
   rightSpeed -= (total);
   
+  /*printf("%f       %f\r\n", currentError, total);*/
+  /*printf("%f       %f\r\n", leftSpeed, rightSpeed);*/
+
+  // Limit the maximum speed
+  if(rightSpeed > RIGHT_MAX_SPEED)
+    rightSpeed = RIGHT_MAX_SPEED;
+
+  if(leftSpeed > LEFT_MAX_SPEED)
+    leftSpeed = LEFT_MAX_SPEED;
+
   // Limit the minimum speed
-  // note: mabye we don't need this. try one without this checking
   if(rightSpeed < 0)
     rightSpeed = 120;
 
@@ -89,7 +130,29 @@ void pid()
   change_RightMotorSpeed(rightSpeed);
   change_LeftMotorSpeed(leftSpeed);
 	pastError = currentError;
+  sumError += currentError;
   /*Delay_us(15);*/
+}
+
+void pid_turn(uint16_t target) 
+{
+  uint16_t err, last_err, errsum;
+  float speed;
+
+  while(// somecondition) {
+   
+    err = target - R_ENC_CNT; // might need to change the encoder
+    drr = err - last_err; 
+    
+    speed = kp*err + kd*drr + ki*errsum;
+    errsum += err;
+
+    change_RightMotorSpeed(speed);
+    change_LeftMotorSpeed(-speed);
+
+    // check for the condition
+
+  }
 }
 
 /*****************************************************************************/
@@ -98,15 +161,16 @@ void pid()
 // Map sensor readings
 /*****************************************************************************/
 float map_RF() {
-  if(sensor_buffers[RF_IR] > IN_MAX) 
-    sensor_buffers[RF_IR] = IN_MAX;
-  return distance_RF[sensor_buffers[RF_IR]*RATIO];
+  if(sensor_buffers[RF_IR] > IN_MAX)
+    return distance_RF[IN_MAX*RATIO];
+  else 
+    return distance_RF[sensor_buffers[RF_IR]*RATIO];
 }
 
 float map_LF() {
   if(sensor_buffers[LF_IR] > IN_MAX) 
-    sensor_buffers[LF_IR] = IN_MAX;
-  return distance_LF[sensor_buffers[LF_IR]*RATIO];
+    return distance_LF[IN_MAX*RATIO];
+  else
+    return distance_LF[sensor_buffers[LF_IR]*RATIO];
 }
-
 

@@ -2,7 +2,7 @@
 #define _MCU_LIB_H
 
 #include "stm32f10x.h"
-#include "iic.h"
+//#include "iic.h"
 #include "mpu6050.h"
 //#include "mouse.h"
 

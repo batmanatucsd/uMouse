@@ -9,10 +9,28 @@
 // 4 - right
 
 #include "mouse.h"
-#define RIGHT_THRESHOLD 210
-#define LEFT_THRESHOLD 170
+#define RIGHT_THRESHOLD 110
+#define LEFT_THRESHOLD 110
 
-#define TARGET 4.1 // the actual distance
+#define THRESHOLD 200
+#define NOLEFTWALL_THRESHOLD 600
+#define NORIGHTWALL_THRESHOLD 490
+
+#define KP 0.00295
+#define KD 0.260
+
+#define NOL_KP 0.00105
+#define NOL_KD 0.300
+
+#define NOR_KP 0.00285
+#define NOR_KD 0.270
+
+#define KI 0
+#define ADJUST 600
+
+// FOR LINEARIZATION
+//#define L_TARGET 4.8 // the actual distance
+//#define R_TARGET 4.8 // the actual distance
 // right target 4.66
 // left target 4.964
 
@@ -21,9 +39,10 @@
 //#define ADJUST 100
 
 // PID CONSTANTS
-#define KP 10
-#define KD 0
-#define ADJUST 1
+//#define KP 400
+//#define KD 22.5
+//#define KI 0.55
+//#define ADJUST 1
 
 #ifndef HIGH
 #define HIGH 1
@@ -99,7 +118,7 @@ static float distance_LF[256] = {
 	3.478,3.436,3.394,3.352,3.311,3.271,3.231,
 	3.192,3.153,3.114,3.076,3.039,3.002,2.965,
 	2.929,2.893,2.858,2.823,2.789,2.755,2.721,
-	2.688,2.655,2.623,2.591,2.559,2.528,2.497,
+  2.688,2.655,2.623,2.591,2.559,2.528,2.497,
 	2.467,2.437,2.407,2.378,2.349,2.320,2.292,
 	2.264,2.236,2.209,2.182,2.155,2.129,2.103,
 	2.077,2.052,2.027,2.002,1.978,1.954,1.930,
@@ -130,6 +149,7 @@ static float distance_LF[256] = {
 float map_RF();
 float map_LF();
 void pid();
+void pid_turn(uint16_t);
 
 #endif // PID_H
 
