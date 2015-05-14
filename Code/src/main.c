@@ -40,7 +40,7 @@ int main(void)
         
         // Do PID
         pid();
-        Delay_us(100);
+        /*Delay_us(100);*/
         /*GPIO_SetBits(GPIOC, GREEN);*/
         /*GPIO_ResetBits(GPIOB, RED);*/
         /*GPIO_ResetBits(GPIOC, YELLOW);*/
