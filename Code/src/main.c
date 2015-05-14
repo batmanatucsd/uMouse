@@ -36,41 +36,42 @@ int main(void)
   {
     printf("test");
 
-    printf("%d",MPU6050_TestConnection());
-    // // Listen to button push
-    // listen_for_button();
-    //
-    // switch(mouse_state) {
-    //   case GO:
-    //
-    //     // Do PID
-    //     pid();
-    //     /*GPIO_SetBits(GPIOC, GREEN);*/
-    //     /*GPIO_ResetBits(GPIOB, RED);*/
-    //     /*GPIO_ResetBits(GPIOC, YELLOW);*/
-    //     break;
-    //
-    //   case TEST:
-    //     /*leftTurn();*/
-    //     rightTurn();
-    //     Delay_us(1000000);
-    //     /*stopFrontWall(); */
-    //     GPIO_SetBits(GPIOC, YELLOW);
-    //     GPIO_SetBits(GPIOC, GREEN);
-    //     GPIO_ResetBits(GPIOB, RED);
-    //     break;
-    //
-    //   case STOP:
-    //     ADC_Read();
-    //
-    //     turnMotorOff();
-    //     GPIO_SetBits(GPIOB, RED);
-    //     GPIO_ResetBits(GPIOC, GREEN);
-    //     GPIO_SetBits(GPIOC, YELLOW);
-    //     break;
-    // }
+    // Listen to button push
+    listen_for_button();
+    
+    switch(mouse_state) {
+      case GO:
+        
+        // Do PID
+        pid();
+        Delay_us(100);
+        /*GPIO_SetBits(GPIOC, GREEN);*/
+        /*GPIO_ResetBits(GPIOB, RED);*/
+        /*GPIO_ResetBits(GPIOC, YELLOW);*/
+        break;
 
+      case TEST:
+        /*leftTurn();*/
+        /*rightTurn();*/
+        /*Delay_us(1000000);*/
+        change_LeftMotorSpeed(120);
+        change_RightMotorSpeed(120);
+        /*stopFrontWall(); */
+        GPIO_SetBits(GPIOC, YELLOW);
+        GPIO_SetBits(GPIOC, GREEN);
+        GPIO_ResetBits(GPIOB, RED);
+        break;
 
+      case STOP:
+
+        turnMotorOff();
+        GPIO_SetBits(GPIOB, RED);
+        GPIO_ResetBits(GPIOC, GREEN);
+        GPIO_SetBits(GPIOC, YELLOW);
+        break;
+    }
+    
+  
     /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
 
             /*sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);*/
