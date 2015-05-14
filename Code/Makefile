@@ -37,9 +37,12 @@ PERIPH =$(LIBDIR)/Libraries/STM32F10x_StdPeriph_Driver
 # define STARTUP file & Linker script for specific board
 ifeq ($(BOARD), MOUSE)
 STARTUP =$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_xl.s
+#LDSCRIPT=$(LIBDIR)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EVAL/stm32_flash.ld
 LDSCRIPT=$(SRCDIR)/stm32_flash.ld
 FEATURES=-DSTM32F10X_XL
-else ifeq ($(BOARD), DISCOVERY)
+endif
+
+ifeq ($(BOARD), DISCOVERY)
 STARTUP =$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_md_vl.s
 LDSCRIPT=$(LIBDIR)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EVAL/stm32_flash.ld
 FEATURES=-DSTM32F10X_MD_VL
@@ -91,8 +94,8 @@ endif
 
 
 LDFLAGS = $(OPT) $(GFLAGS) -T$(LDSCRIPT) -nostartfiles
-CFLAGS  = $(OPT) $(GFLAGS) -g -Wall
-ASFLAGS = $(GFLAGS) -g
+CFLAGS  = $(OPT) $(GFLAGS) -g3 -Wall
+ASFLAGS = $(GFLAGS) -g3
 
 INCFLAGS  = $(addprefix -I, $(INC))
 FEATURES += -DUSE_STDPERIPH_DRIVER -Wall
