@@ -145,8 +145,6 @@ void rightTurn(void)
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
 
-  // TODO: put arguments
-  pid_turn();
   // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
@@ -170,8 +168,6 @@ void leftTurn(void)
   change_LeftMotorSpeed(0);
   change_RightMotorSpeed(0);
 
-  // TODO: put arguments
-  pid_turn();
   // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 

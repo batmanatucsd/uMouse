@@ -22,15 +22,14 @@ void pid()
 	
   float total;
 
-  /*printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);*/
   /////////////////////
   // BOTH WALLS
   /////////////////////
   if ((sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD))
   {
-    difference = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
-    if(difference > 22 || difference < -22)
-      currentError = difference;
+    currentError = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
+    /*if(difference > 22 || difference < -22)*/
+      /*currentError = difference;*/
 
     /*total = KP * currentError + KD * (currentError - pastError) + KI * sumError;*/
     // FOR LINEARIZATION
@@ -50,9 +49,7 @@ void pid()
   /////////////////////
   else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD)
   { 
-		difference =  NOLEFTWALL_THRESHOLD - sensor_buffers[RF_IR];
-    if(difference > 22 || difference < -22)
-      currentError = difference;
+		currentError =  NOLEFTWALL_THRESHOLD - sensor_buffers[RF_IR];
     /*currentError = map_RF() - R_TARGET;*/
 
     /*total = NOL_KP * currentError + NOL_KD * (currentError - pastError) + KI * sumError;*/
@@ -65,9 +62,7 @@ void pid()
   /////////////////////
   else if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)
   {
-		difference = sensor_buffers[LF_IR] - NORIGHTWALL_THRESHOLD;
-    if(difference > 22 || difference < -22)
-      currentError = difference;
+		currentError = sensor_buffers[LF_IR] - NORIGHTWALL_THRESHOLD;
     /*printf("%u\r\n", sensor_buffers[LF_IR]);*/
     /*total = NOR_KP * currentError + NOR_KD * (currentError - pastError) + KI * sumError;*/
     /*currentError = L_TARGET - map_LF();*/
@@ -86,8 +81,8 @@ void pid()
     /*total = KP * currentError + KD * (currentError - pastError) + KI * sumError;*/
     /*currentError = (leftEncoder - rightEncoder) * ADJUST ; // * some constant*/
     float newSpeed = (leftSpeed > rightSpeed) ? leftSpeed : rightSpeed;
-    change_RightMotorSpeed(newSpeed);
-    change_LeftMotorSpeed(newSpeed);
+    /*change_RightMotorSpeed(newSpeed);*/
+    /*change_LeftMotorSpeed(newSpeed);*/
     // No wall...
       GPIO_SetBits(GPIOC, GREEN);
       GPIO_SetBits(GPIOB, RED);
@@ -95,12 +90,12 @@ void pid()
   }
 
 
-  /*printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);*/
 
   // calculate the total adjustment
   /*printf("%f       %f\r\n", map_LF(), map_RF());*/
 
   total = KP * currentError + KD * (currentError - pastError) + KI * sumError;
+
   // Change the motor speed
   leftSpeed += total;
   rightSpeed -= (total);
@@ -117,18 +112,21 @@ void pid()
 
   // Limit the minimum speed
   if(rightSpeed < 0)
-    rightSpeed = 120;
+    rightSpeed = 150;
 
   if(leftSpeed < 0)
-    leftSpeed = 120;
+    leftSpeed = 150;
+
+  printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);
+  Delay_us(50);
 
   /*printf("%d         %f          %f\r\n", total, leftSpeed, rightSpeed);*/
   /*printf("sensor reading: %u         %u        %u        %u\r\n",*/
           /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
 
   /*printf("%f             %f\r\n", map_LF(), map_RF());*/
-  change_RightMotorSpeed(rightSpeed);
-  change_LeftMotorSpeed(leftSpeed);
+  /*change_RightMotorSpeed(rightSpeed);*/
+  /*change_LeftMotorSpeed(leftSpeed);*/
 	pastError = currentError;
   sumError += currentError;
   /*Delay_us(15);*/
@@ -139,20 +137,20 @@ void pid_turn(uint16_t target)
   uint16_t err, last_err, errsum;
   float speed;
 
-  while(// somecondition) {
+  /*while(// somecondition) {*/
    
-    err = target - R_ENC_CNT; // might need to change the encoder
-    drr = err - last_err; 
+    /*err = target - R_ENC_CNT; // might need to change the encoder*/
+    /*drr = err - last_err; */
     
-    speed = kp*err + kd*drr + ki*errsum;
-    errsum += err;
+    /*speed = kp*err + kd*drr + ki*errsum;*/
+    /*errsum += err;*/
 
-    change_RightMotorSpeed(speed);
-    change_LeftMotorSpeed(-speed);
+    /*change_RightMotorSpeed(speed);*/
+    /*change_LeftMotorSpeed(-speed);*/
 
-    // check for the condition
+    /*// check for the condition*/
 
-  }
+  /*}*/
 }
 
 /*****************************************************************************/
