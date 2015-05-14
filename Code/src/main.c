@@ -31,7 +31,6 @@ int main(void)
 
   mouse_state = STOP;
 
-  /*turnMotorOn();*/
   while(1)
   {
     printf("test");
@@ -42,21 +41,25 @@ int main(void)
     switch(mouse_state) {
       case GO:
         
-        // Do PID
-        pid();
-        Delay_us(100);
-        /*GPIO_SetBits(GPIOC, GREEN);*/
-        /*GPIO_ResetBits(GPIOB, RED);*/
-        /*GPIO_ResetBits(GPIOC, YELLOW);*/
+        GPIO_SetBits(GPIOC, GREEN);
+        GPIO_ResetBits(GPIOB, RED);
+        GPIO_ResetBits(GPIOC, YELLOW);
         break;
 
       case TEST:
         /*leftTurn();*/
         /*rightTurn();*/
         /*Delay_us(1000000);*/
-        change_LeftMotorSpeed(120);
-        change_RightMotorSpeed(120);
-        /*stopFrontWall(); */
+         
+        Delay_us(1000000); 	
+        Delay_us(1000000); 	
+        fullTurn();
+        Delay_us(1000000); 	
+    
+        Delay_us(1000000); 	
+
+        Delay_us(1000000); 	
+ //       stopFrontWall();
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);

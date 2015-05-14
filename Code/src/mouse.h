@@ -62,6 +62,7 @@ void rightBackward(void);
 
 void leftTurn(void);
 void rightTurn(void);
+void fullTurn(void);
 void stopFrontWall(void);
 
 // TODO: Add functions for turns
