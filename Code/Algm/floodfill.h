@@ -14,6 +14,7 @@ unsigned short NORTH_WALL = 0x0800;
 unsigned short EAST_WALL = 0x0400;
 unsigned short SOUTH_WALL = 0x0200;
 unsigned short WEST_WALL = 0x0100;
+unsigned short WALLS = 0x0f00;
 unsigned short DIST = 0xff;
 unsigned char ROW = 0xf0;
 unsigned char COL = 0x0f;
