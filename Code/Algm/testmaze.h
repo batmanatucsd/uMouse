@@ -19,7 +19,7 @@ unsigned short testmaze[16][16];		//This represents the actual testMaze,
 //		Moves through columns from 0->15, left to right. 
 //		Then for each column, rows 0->15, top to bottom. 
 /****************************************************************************/
-void setupTest() 
+void setupTest(unsigned char start, unsigned char face) 
 {
 
 	//Initialize edge cells -------------------------------------------------
@@ -34,8 +34,8 @@ void setupTest()
 	}
 
 	//Initialize mouse, position in bottom left corner, facing up
-	location = 0xf0;					// testMaze[15,0]
-	direction = 0x0;					// 0x0 = up direction
+	location = start;					// testMaze[15,0]
+	direction = face;					// 0x0 = up direction
 
 	//Initialize the right wall for the bottom left corner, always
 	testmaze[15][0] |= EAST_WALL;

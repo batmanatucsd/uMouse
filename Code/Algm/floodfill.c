@@ -3,17 +3,18 @@
 #include "testmaze.h"
 
 /*****************************************************************************/
-// setup():
+// setup(unsigned char loc, unsigned char dist, unsigned char back):
 // 		Initialize 16x16 maze using 2D array, assumption that no walls exist
 /*****************************************************************************/
-void setup() 
+void setup(unsigned char loc, unsigned char dist, unsigned char back) 
 {
 	// Initialize maze
 	for (unsigned short row = 0; row < 16; row++)
 	{
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			maze[row][col] = init(row, col);
+			maze[row][col] &= 0xff00;
+			maze[row][col] |= back == 'b'? initBack(row, col) : init(row, col);
 		}
 	}
 	for (unsigned short i = 0; i < 16; i++)
@@ -25,8 +26,8 @@ void setup()
 	}
 
 	// Initialize mouse, position in bottom left corner, facing up
-	location = 0xf0;				// maze[15,0]
-	direction = 0x0;				// 0x0 = up direction
+	location = loc;				// maze[15,0]
+	direction = dist;				// 0x0 = up direction
 	maze[15][0] |= EAST_WALL;
 	maze[15][1] |= WEST_WALL;
 }
@@ -49,6 +50,12 @@ unsigned short init(unsigned short row, unsigned short col)
 	}
 
 	return 0x0e - col - row;
+}
+
+unsigned short initBack(unsigned short row, unsigned short col) 
+{	
+
+	return (col + (15-row));
 }
 
 /*****************************************************************************/
@@ -389,8 +396,8 @@ int main() {
 
 	// Initialize maze and mouse location
 	char name[99999];
-	setup();
-	setupTest();
+	setup(0xf0, 0, 'f');
+	setupTest(0xf0, 0);
 
 	printf("Maze in mouse memory: \n");
 	print();
@@ -398,6 +405,35 @@ int main() {
 	// While location is not in one of the endpoint cells
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
+	{
+	  	//printf("Press RETURN to contine");
+	    	//fgets(name, sizeof(name), stdin);
+		update((location & ROW) >> 4, location & COL);
+		while (stackptr > 0)
+		{
+			--stackptr;
+			//printf("***STACK PTR IS: %d\n", stackptr);
+			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+/*
+		   	// DEBUG -----------------------------------------------------------
+			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
+			printf("Current stack: ");
+			for (int i = 0; i < stackptr; i++)
+				printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
+			printf("\n");
+			// DEBUG -----------------------------------------------------------
+*/
+		}
+		turn();
+		move();
+		//debug();
+	}
+	print();
+	setup(0x87, 3, 'b');
+	print();	
+	fgets(name, sizeof(name), stdin);
+
+	while (location != 0xf0)
 	{
 	  	printf("Press RETURN to contine");
 	    	fgets(name, sizeof(name), stdin);
