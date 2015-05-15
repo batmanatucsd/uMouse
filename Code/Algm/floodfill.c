@@ -120,6 +120,16 @@ void lookAhead()
 		{
 			maze[row + 1][col + 1] |= NORTH_WALL;
 		}
+
+		// If cell has three walls, max dist
+		unsigned short tile = maze[row][col + 1];
+		// If cell has three walls, max dist
+		if ( (tile>>8 & WALLS) == 7 || (tile>>8 & WALLS) == 11 || 
+			(tile>>8 & WALLS) == 13 || (tile>>8 & WALLS) == 14 ) {
+			printf("***********************************************");
+			maze[row][col] |= 255;
+			return;
+		}
 	}
 
 	// Fill in maze info for cells around SOUTH CELL
@@ -229,7 +239,7 @@ void turn()
 		}
 	}
 
-	// If ther`e is no WEST wall for this cell
+	// If there is no WEST wall for this cell
 	if (!(tile & WEST_WALL))
 	{
 		if ((maze[row][col - 1] & DIST) < min)
@@ -252,6 +262,7 @@ void update(unsigned short row, unsigned short col)
 
 	// Minimum open neighbor
 	unsigned char min = 255;
+
 
 	// If there is no NORTH wall for this cell, and the north cell is closer
 	// to the center than current min, make it the new 'min'
@@ -293,6 +304,8 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
+
+
 	// If cell value is wrong, push open neighbors onto stack
 	if (min + 1 != (tile & DIST))
 	{
@@ -317,6 +330,14 @@ void update(unsigned short row, unsigned short col)
 		{
 			stack[stackptr++] = (row << 4) | (col - 1);
 		}
+	}
+
+	// If cell has three walls, max dist
+	if ( (tile>>8 & WALLS) == 7 || (tile>>8 & WALLS) == 11 || 
+		(tile>>8 & WALLS) == 13 || (tile>>8 & WALLS) == 14 ) {
+		printf("***********************************************");
+		maze[row][col] |= 255;
+		exit(1);
 	}
 }
 
@@ -406,15 +427,14 @@ int main() {
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
-	  	//printf("Press RETURN to contine");
-	    	//fgets(name, sizeof(name), stdin);
+	  	printf("Press RETURN to contine");
+	    fgets(name, sizeof(name), stdin);
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
 			--stackptr;
-			//printf("***STACK PTR IS: %d\n", stackptr);
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-/*
+
 		   	// DEBUG -----------------------------------------------------------
 			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
 			printf("Current stack: ");
@@ -422,11 +442,11 @@ int main() {
 				printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
 			printf("\n");
 			// DEBUG -----------------------------------------------------------
-*/
+
 		}
 		turn();
 		move();
-		//debug();
+		debug();
 	}
 	print();
 	setup(0x87, 3, 'b');
@@ -441,7 +461,6 @@ int main() {
 		while (stackptr > 0)
 		{
 			--stackptr;
-			printf("***STACK PTR IS: %d\n", stackptr);
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 
 		   	// DEBUG -----------------------------------------------------------
