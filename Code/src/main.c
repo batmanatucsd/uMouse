@@ -20,6 +20,8 @@ int main(void)
   ADC_Configuration();
   PWM_Configuration();
   ENCODER_Configuration();
+  MPU6050_I2C_Init();
+  //MPU6050_Initialize();
   /*IIC_Configuration();*/
   /*MPU_Configuration();*/
 
@@ -33,8 +35,7 @@ int main(void)
   /*turnMotorOn();*/
   while(1)
   {
-    // Listen to button push
-    listen_for_button();
+    printf("test");
 
     switch(mouse_state) {
       case GO:
@@ -112,6 +113,6 @@ int main(void)
     /*printf("%u            %u\r\n", TIM8->CNT, TIM4->CNT);*/
     /*if(TIM8->CNT > 7000)*/
         /*turnMotorOff();*/
-  
+
   }
 }

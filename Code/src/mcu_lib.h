@@ -3,7 +3,7 @@
 
 #include "stm32f10x.h"
 //#include "iic.h"
-#include "mpu6050.h"
+#include "MPU6050.h"
 //#include "mouse.h"
 
 #ifdef  SERIAL_DEBUG
@@ -44,7 +44,7 @@
 #define R_PWM         TIM5
 #define PWIDTH_0      0
 #define PWIDTH_25     375
-#define PWIDTH_50     750 
+#define PWIDTH_50     750
 #define PWIDTH_75     1125
 #define PWIDTH_MAX    1500
 
