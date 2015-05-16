@@ -220,7 +220,6 @@ void stopFrontWall(void)/*{{{*/
     change_LeftMotorSpeed(0);
     change_RightMotorSpeed(0);
     Delay_us(100);
-    fullTurn();
   }
 
 }/*}}}*/

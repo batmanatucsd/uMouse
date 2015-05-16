@@ -372,9 +372,9 @@ void PWM_Configuration(void) /*{{{*/
 }/*}}}*/
 
 /*****************************************************************************/
-// PWM_Configuration
+// ENCODER_Configuration
 //
-// @brief: Set configurations for PWM
+// @brief: Set configurations for Encoder readings
 //         TIM4 is for RIGHT motor
 //         TIM8 is for LEFT motor
 /*****************************************************************************/
