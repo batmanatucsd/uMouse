@@ -37,7 +37,6 @@ PERIPH =$(LIBDIR)/Libraries/STM32F10x_StdPeriph_Driver
 # define STARTUP file & Linker script for specific board
 ifeq ($(BOARD), MOUSE)
 STARTUP =$(DEVICE)/startup/gcc_ride7/startup_stm32f10x_xl.s
-#LDSCRIPT=$(LIBDIR)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM32100B-EVAL/stm32_flash.ld
 LDSCRIPT=$(SRCDIR)/stm32_flash.ld
 FEATURES=-DSTM32F10X_XL
 endif
@@ -93,7 +92,7 @@ OPT	+= -Os
 endif
 
 
-LDFLAGS = $(OPT) $(GFLAGS) -T$(LDSCRIPT) -nostartfiles
+LDFLAGS = -lm -nostartfiles $(OPT) $(GFLAGS)  -T$(LDSCRIPT)
 CFLAGS  = $(OPT) $(GFLAGS) -g3 -Wall
 ASFLAGS = $(GFLAGS) -g3
 
