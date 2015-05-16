@@ -20,7 +20,7 @@ void setup(unsigned char loc, unsigned char dist, unsigned char back)
 	{
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			maze[row][col] = init(row, col);
+			maze[row][col] = back == 'b'? initBack(row, col) : init(row, col);
 			// maze[row][col] &= 0xff00;
 			// maze[row][col] |= back == 'b'? initBack(row, col) : init(row, col);
 		}
@@ -310,8 +310,11 @@ void update(unsigned short row, unsigned short col)
 	if ( (tile & WALLS)>>8 == 7 || (tile & WALLS)>>8 == 11 ||
        (tile & WALLS)>>8 == 13 || (tile & WALLS)>>8 == 14 ) {
 
-		maze[row][col] &= 0xff00;
-		maze[row][col] |= 255;
+		if (row != 15 && col != 0) 
+		{
+			maze[row][col] &= 0xff00;
+			maze[row][col] |= 255;
+		}
 
 		// // Push open neighbors onto stack
 		// if (!(maze[row][col] & NORTH_WALL))
