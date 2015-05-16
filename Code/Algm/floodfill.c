@@ -56,6 +56,12 @@ unsigned short init(unsigned short row, unsigned short col)
     return 0x0e - col - row;
 }
 
+/*****************************************************************************/
+// initBack():
+//      Initialize cell distances when going from center->start cell.
+//      Distances should be 0 at start cell, increasing as it moves outward
+//          from start cell.
+/*****************************************************************************/
 void initBack() 
 {   
     int r = 0, c = 0;
@@ -65,7 +71,6 @@ void initBack()
             maze[r][c] = (15 - c) - r;
         }
     }
-
 }
 
 /*****************************************************************************/
@@ -118,7 +123,6 @@ void getWalls(unsigned short row, unsigned short col) {
         maze[row][col] |= WEST_WALL;
         maze[row][col-1] |= EAST_WALL;
     }
-
 }
 
 /*****************************************************************************/
@@ -226,7 +230,6 @@ void update(unsigned short row, unsigned short col)
 //      sign pointing in direction it faces
 /*****************************************************************************/
 void print() {
-
     for (unsigned short row = 0; row < 16; row++) {
         // North wall
         for (unsigned short col = 0; col < 16; col++) {
@@ -276,7 +279,6 @@ void print() {
 }
 
 int main() {
-
     // Initialize maze and mouse location
     char name[99999];
     setup(0xf0, 0, 'f');

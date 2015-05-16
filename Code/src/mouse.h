@@ -2,6 +2,7 @@
 #define _MOUSE_H
 
 #include "mcu_lib.h"
+#include "pid.h"
 
 #define ON 1
 #define OFF 0
@@ -11,8 +12,8 @@
 #define RF_IR 1
 #define R_IR 0
 
-#define LEFT_MAX_SPEED 200
-#define RIGHT_MAX_SPEED 200
+#define LEFT_MAX_SPEED 255
+#define RIGHT_MAX_SPEED 255
 
 // TODO: change to appropriate states
 typedef enum {
@@ -21,10 +22,18 @@ typedef enum {
   STOP // should be the last state
 } state;
 
+typedef enum {
+  PAUSE,
+  TURN90, 
+  TURN180, 
+  FORWARD
+} status;
+
 /*****************************************************************************/
 // Global Variables
 /*****************************************************************************/
 volatile state mouse_state; 
+static status mouse_status = PAUSE;
 __IO uint16_t sensor_buffers[4];
 
 /*****************************************************************************/
@@ -61,6 +70,7 @@ void rightBackward(void);
 
 void leftTurn(void);
 void rightTurn(void);
+void fullTurn(void);
 void stopFrontWall(void);
 
 // TODO: Add functions for turns

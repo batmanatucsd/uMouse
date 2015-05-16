@@ -277,7 +277,7 @@ void ADC_Configuration(void) /*{{{*/
 // @brief: Gets analog input
 // @param: channel : adc_channel to get the result from
 /*****************************************************************************/
-void ADC_Read() /*{{{*/
+void ADC_Read(uint16_t l, uint16_t lf, uint16_t rf, uint16_t r) /*{{{*/
 {
   /*ADC_RegularChannelConfig(ADC1, channel, rank, ADC_SampleTime_7Cycles5);*/
   // Start the conversion
@@ -296,7 +296,12 @@ void ADC_Read() /*{{{*/
   GPIO_SetBits(EMITTER, LF_EMITTER);
   GPIO_SetBits(EMITTER, L_EMITTER);
 
-  Delay_us(75);
+  /*GPIO_WriteBit(EMITTER, R_EMITTER, r);*/
+  /*GPIO_WriteBit(EMITTER, RF_EMITTER, rf);*/
+  /*GPIO_WriteBit(EMITTER, LF_EMITTER, lf);*/
+  /*GPIO_WriteBit(EMITTER, L_EMITTER, l);*/
+
+  Delay_us(80);
   ADC_SoftwareStartConvCmd(ADC1, ENABLE);
   /* Start the conversion */
   /*ADC_SoftwareStartConvCmd(ADC3, ENABLE);*/
@@ -367,9 +372,9 @@ void PWM_Configuration(void) /*{{{*/
 }/*}}}*/
 
 /*****************************************************************************/
-// PWM_Configuration
+// ENCODER_Configuration
 //
-// @brief: Set configurations for PWM
+// @brief: Set configurations for Encoder readings
 //         TIM4 is for RIGHT motor
 //         TIM8 is for LEFT motor
 /*****************************************************************************/
@@ -414,8 +419,8 @@ void ENCODER_Configuration(void) {/*{{{*/
   // //  TIM_ITConfig(ENCODER_TIM, TIM_IT_Update, ENABLE);
     
   // reset encoder counts
-  L_ENC->CNT = 0; // prevent counts to become negative when the moved backwards
-  R_ENC->CNT = 0;
+  L_ENC->CNT = 50; // prevent counts to become negative when the moved backwards
+  R_ENC->CNT = 50;
   TIM_Cmd(L_ENC, ENABLE);
   TIM_Cmd(R_ENC, ENABLE);
 }/*}}}*/

@@ -30,7 +30,6 @@ unsigned short stackptr = 0;
 // Functions
 /*****************************************************************************/
 void setup(unsigned char loc, unsigned char dist, unsigned char back);
-unsigned short init(unsigned short row, unsigned short col);
 void initBack();
 void lookAhead();
 void move();
