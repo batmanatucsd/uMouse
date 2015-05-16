@@ -11,6 +11,6 @@ int time_scale = 5000;
 float angle[3] = {0};
 
 void Angle_SetInitial();
-void MPU6050_UpdateAngle(float* angle);
+void MPU6050_UpdateAngle();
 
 #endif

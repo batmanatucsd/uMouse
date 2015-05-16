@@ -48,7 +48,7 @@ float simu_sqrt(float a)
   return (float) x;
 }
 
-void MPU6050_UpdateAngle(float* angle)
+void MPU6050_UpdateAngle()
 {
   Angle_ReadRaw();
 
