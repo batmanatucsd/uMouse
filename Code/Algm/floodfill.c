@@ -8,21 +8,17 @@
 /*****************************************************************************/
 void setup(unsigned char loc, unsigned char dist, unsigned char back) 
 {
-    // If going back to start cell, remember maze state and set start
-    // cell as destination with distance 0
-    // if (back == 'b') {
-    //     maze[15][0] = 0x0700;
-    //     initBack();
-    //     return;
-    // }
-
     // Initialize maze
-    for (unsigned short row = 0; row < 16; row++) {
-        for (unsigned short col = 0; col < 16; col++) {
-            maze[row][col] = init(row, col);
+    for (unsigned short row = 0; row < 16; row++)
+    {
+        for (unsigned short col = 0; col < 16; col++)
+        {
+            maze[row][col] &= 0xff00;
+            maze[row][col] |= back == 'b'? initBack(row, col) : init(row, col);
         }
     }
-    for (unsigned short i = 0; i < 16; i++) {
+    for (unsigned short i = 0; i < 16; i++)
+    {
         maze[0][i] |= NORTH_WALL;
         maze[i][0] |= WEST_WALL;
         maze[i][15] |= EAST_WALL;
@@ -30,7 +26,7 @@ void setup(unsigned char loc, unsigned char dist, unsigned char back)
     }
 
     // Initialize mouse, position in bottom left corner, facing up
-    location = loc;                 // maze[15,0]
+    location = loc;             // maze[15,0]
     direction = dist;               // 0x0 = up direction
     maze[15][0] |= EAST_WALL;
     maze[15][1] |= WEST_WALL;
@@ -56,39 +52,123 @@ unsigned short init(unsigned short row, unsigned short col)
     return 0x0e - col - row;
 }
 
-/*****************************************************************************/
-// floodValues():
-//      Initialize cell distances when going from center->start cell.
-//      Distances should be 0 at start cell, increasing as it moves outward
-//          from start cell.
-/*****************************************************************************/
-void floodValues() 
+unsigned short initBack(unsigned short row, unsigned short col) 
 {   
-    location = 0x0;
+
+    return (col + (15-row));
+}
+
+/*****************************************************************************/
+// lookAhead():
+//      Reads in the walls of the cell ahead of the mouse into memory
+/*****************************************************************************/
+void lookAhead()
+{
+    // Grab the row and column bits
     unsigned char row = (location & ROW) >> 4;
     unsigned char col = location & COL;
 
-    //set all cell distances to 255, except start cell
-    int r, c;
-    for (r = 0; r < 16; r++) {
-        for (c = 0; c < 16; c++) {
-            maze[r][c] = 255;
+    // Fill in maze info for cells around NORTH CELL
+    if (direction == 0 && !(maze[row][col] & NORTH_WALL))
+    {
+        maze[row - 1][col] |= testmaze[row - 1][col];
+
+        // if north cell has west wall, and column is at least second column,
+        // set east wall of cell left of north wall
+        if (maze[row - 1][col] & WEST_WALL && col - 1 >= 0)
+        {
+            maze[row - 1][col - 1] |= EAST_WALL;
+        }
+
+        // if north cell has north wall, and there are at least 3 cells ahead
+        // set south wall on cell above north wall 
+        if (maze[row - 1][col] & NORTH_WALL && row - 2 >= 0)
+        {
+            maze[row - 2][col] |= SOUTH_WALL;
+        }
+
+        // if north cell has east wall, and there are columns to right of north cell
+        // set west wall on cell to the right of the north cell
+        if (maze[row - 1][col] & EAST_WALL && col + 1 <= 15)
+        {
+            maze[row - 1][col + 1] |= WEST_WALL;
         }
     }
-    maze[15][0] = 0;
-    
-    //min=0
-    //push open neighbors  255 onto a stack
-    pushNeighbors(row, col);
 
-    while (stackptr > 0) {
-        printf("ayyyyyyy lmao");
+    // Fill in maze info for cells around EAST CELL
+    else if (direction == 1 && !(maze[row][col] & EAST_WALL))
+    {
+        maze[row][col + 1] |= testmaze[row][col + 1];
+
+        // if east cell has east wall, and column is at least second clumn,
+        // set the west wall of cell to right of east cell
+        if (maze[row][col + 1] & EAST_WALL && col + 2 <= 15) 
+        {
+            maze[row][col + 2] |= WEST_WALL;
+        }
+
+        // if east cell has north wall, and not topmost row
+        // set south wall of cell above east wall
+        if (maze[row][col + 1] & NORTH_WALL && row - 1 >= 0) 
+        {
+            maze[row - 1][col + 1] |= SOUTH_WALL;
+        }
+
+        // if east cell has south wall, and it is not bottom row,
+        // set north wall on cell below east cell
+        if (maze[row][col + 1] & SOUTH_WALL && row + 1 <= 15) 
+        {
+            maze[row + 1][col + 1] |= NORTH_WALL;
+        }
     }
-    //check walls (maze), check open neighbors
-    
-    //move into arbitrary open neighbor
-    //make cell you move into = min + 1
-    //find all open 255 neighbors
+
+    // Fill in maze info for cells around SOUTH CELL
+    else if (direction == 2 && !(maze[row][col] & SOUTH_WALL))
+    {
+        maze[row + 1][col] |= testmaze[row + 1][col];
+        
+        // if south cell has east wall, and column is at least second column,
+        // set the west wall of cell to the right of east cell
+        if (maze[row + 1][col] & EAST_WALL && col + 1 <= 15) 
+        {
+            maze[row + 1][col + 1] |= WEST_WALL;
+        }
+
+        // if south cell has west wall, and column is at least second column,
+        // set east wall of cell left of north wall
+        if (maze[row + 1][col] & WEST_WALL && col - 1 >= 0)
+        {
+            maze[row + 1][col - 1] |= EAST_WALL;
+        }
+        
+
+        // if south cell has south wall, and it is not bottom row,
+        // set north wall on cell below south cell
+        if (maze[row + 1][col] & SOUTH_WALL && row + 2 <= 15) 
+        {
+            maze[row + 2][col] |= NORTH_WALL;
+        }
+    }
+
+    // Fill in maze info for cells around WEST CELL
+    else if (direction == 3 && !(maze[row][col] & WEST_WALL))
+    {
+        maze[row][col - 1] |= testmaze[row][col - 1];
+        if (maze[row][col - 1] & WEST_WALL && col - 2 >= 0) 
+        {
+            maze[row][col - 2] |= EAST_WALL;
+        }
+
+        if (maze[row][col - 1] & NORTH_WALL && row - 1 >= 0) 
+        {
+            maze[row - 1][col - 1] |= SOUTH_WALL;
+        }
+
+        if (maze[row][col - 1] & SOUTH_WALL && row + 1 <= 15) 
+        {
+            maze[row + 1][col - 1] |= NORTH_WALL;
+        }
+    }
 }
 
 /*****************************************************************************/
@@ -104,43 +184,61 @@ void move()
     else if (direction == 2 && !(maze[row][col] & SOUTH_WALL)) ++row;
     else if (direction == 3 && !(maze[row][col] & WEST_WALL)) --col;
     location = (row << 4) | col;
+    lookAhead();
 }
 
 /*****************************************************************************/
-// getWalls(unsigned short row, unsigned short col):
-//
-//      Gets wall information for current cells
+// turn():
+//      Turn to the cell closest to the center
 /*****************************************************************************/
-void getWalls(unsigned short row, unsigned short col) {
-    printf("********************************************");
-    printf("*** getWalls() ***\n");
-    printf("ROW:%d, COL:%d\n\n", row, col);
+void turn()
+{
+    unsigned char row = (location & ROW) >> 4;
+    unsigned char col = location & COL;
 
-    if ((testmaze[row][col] & NORTH_WALL)) {
-        maze[row][col] |= NORTH_WALL;
-        maze[row-1][col] |= SOUTH_WALL;
+    unsigned char min = 255;
+    unsigned short tile = maze[row][col];
+
+    // If there is no NORTH wall for this cell
+    if (!(tile & NORTH_WALL))
+    {
+        if ((maze[row - 1][col] & DIST) < min)
+        {
+            min = maze[row - 1][col] & DIST;
+            direction = 0;
+        }
     }
 
-    // If there is no EAST wall for this cell, and east cell is closer
-    // to the center than current min, make it the new 'min'
-    if ((testmaze[row][col] & EAST_WALL)) {
-        maze[row][col] |= EAST_WALL;
-        maze[row][col+1] |= WEST_WALL;
+    // If there is no EAST wall for this cell
+    if (!(tile & EAST_WALL))
+    {
+        if ((maze[row][col + 1] & DIST) < min)
+        {
+            min = maze[row][col + 1] & DIST;
+            direction = 1;
+        }
     }
 
-    // If there is no SOUTH wall for this cell, and south cell is closer
-    // to the center than current min, make it the new 'min'
-    if ((testmaze[row][col] & SOUTH_WALL)) {
-        maze[row][col] |= SOUTH_WALL;
-        maze[row+1][col] |= NORTH_WALL; 
+    // If there is no SOUTH wall for this cell
+    if (!(tile & SOUTH_WALL))
+    {
+        if ((maze[row + 1][col] & DIST) < min)
+        {
+            min = maze[row + 1][col] & DIST;
+            direction = 2;
+        }
     }
 
-    // If there is no WEST wall for this cell, and west cell is closer
-    // to the center than current min, make it the new 'min'
-    if ((testmaze[row][col] & WEST_WALL)) {
-        maze[row][col] |= WEST_WALL;
-        maze[row][col-1] |= EAST_WALL;
+    // If ther`e is no WEST wall for this cell
+    if (!(tile & WEST_WALL))
+    {
+        if ((maze[row][col - 1] & DIST) < min)
+        {
+            min = maze[row][col - 1] & DIST;
+            direction = 3;
+        }
     }
+    lookAhead();
 }
 
 /*****************************************************************************/
@@ -150,10 +248,6 @@ void getWalls(unsigned short row, unsigned short col) {
 /*****************************************************************************/
 void update(unsigned short row, unsigned short col)
 {
-    printf("********************************************");
-    printf("*** update() ***\n");
-    printf("ROW:%d, COL:%d\n\n", row, col);
-
     unsigned short tile = maze[row][col];
 
     // Minimum open neighbor
@@ -161,101 +255,90 @@ void update(unsigned short row, unsigned short col)
 
     // If there is no NORTH wall for this cell, and the north cell is closer
     // to the center than current min, make it the new 'min'
-    if (!(tile & NORTH_WALL)) {
-        if ((maze[row - 1][col] & DIST) < min) {
+    if (!(tile & NORTH_WALL))
+    {
+        if ((maze[row - 1][col] & DIST) < min)
+        {
             min = maze[row - 1][col] & DIST;
-            direction = 0;
         }
     }
 
     // If there is no EAST wall for this cell, and east cell is closer
     // to the center than current min, make it the new 'min'
-    if (!(tile & EAST_WALL)) {
-        if ((maze[row][col + 1] & DIST) < min) {
+    if (!(tile & EAST_WALL))
+    {
+        if ((maze[row][col + 1] & DIST) < min)
+        {
             min = maze[row][col + 1] & DIST;
-            direction = 1;
         }
     }
 
     // If there is no SOUTH wall for this cell, and south cell is closer
     // to the center than current min, make it the new 'min'
-    if (!(tile & SOUTH_WALL)) {
-        if ((maze[row + 1][col] & DIST) < min) {
+    if (!(tile & SOUTH_WALL))
+    {
+        if ((maze[row + 1][col] & DIST) < min)
+        {
             min = maze[row + 1][col] & DIST;
-            direction = 2;
         }
     }
 
     // If there is no WEST wall for this cell, and west cell is closer
     // to the center than current min, make it the new 'min'
-    if (!(tile & WEST_WALL)) {
-        if ((maze[row][col - 1] & DIST) < min) {
+    if (!(tile & WEST_WALL))
+    {
+        if ((maze[row][col - 1] & DIST) < min)
+        {
             min = maze[row][col - 1] & DIST;
-            direction = 3;
         }
     }
 
-    // Set cells with 3 walls to DIST = 255
+  
     if ( (tile & WALLS)>>8 == 7 || (tile & WALLS)>>8 == 11 ||
        (tile & WALLS)>>8 == 13 || (tile & WALLS)>>8 == 14 ) {
-        if (row != 15 && col != 0) {
-            printf("WE NEED TO CHANGE THIS CELL TO 255!!!"); 
-            maze[row][col] &= 0xff00;
-            maze[row][col] |= 255;   
-        }
-
+    
+        maze[row][col] &= 0xff00;
+        maze[row][col] |= 255;
         // Push open neighbors onto stack
-        // if (!(maze[row][col] & NORTH_WALL)) {
-        //     stack[stackptr++] = ((row - 1) << 4) | col;
-        // }
-        // if (!(maze[row][col] & EAST_WALL)) {
-        //     stack[stackptr++] = (row << 4) | (col + 1);
-        // }
-        // if (!(maze[row][col] & SOUTH_WALL)) {
-        //     stack[stackptr++] = ((row + 1) << 4) | col;
-        // }
-        // if (!(maze[row][col] & WEST_WALL)) {
-        //     stack[stackptr++] = (row << 4) | (col - 1);
-        // }  
+        if (!(maze[row][col] & NORTH_WALL)){
+            stack[stackptr++] = ((row - 1) << 4) | col;
+        }
+        if (!(maze[row][col] & EAST_WALL)){
+            stack[stackptr++] = (row << 4) | (col + 1);
+        }
+        if (!(maze[row][col] & SOUTH_WALL)){
+            stack[stackptr++] = ((row + 1) << 4) | col;
+        }
+        if (!(maze[row][col] & WEST_WALL)){
+            stack[stackptr++] = (row << 4) | (col - 1);
+        }
     }
 
-
-    // If no adjacent cell distance < current cell, push neighbors on stack
-    if (min + 1 != (tile & DIST)) {
+    // If cell value is wrong, push open neighbors onto stack
+    else if (min + 1 != (tile & DIST))
+    {
         // Update distance
         maze[row][col] &= 0xff00;
         maze[row][col] |= min + 1;
 
-        // Push open neighbors onto stack
-        // if (!(maze[row][col] & NORTH_WALL)) {
-        //     stack[stackptr++] = ((row - 1) << 4) | col;
-        // }
-        // if (!(maze[row][col] & EAST_WALL)) {
-        //     stack[stackptr++] = (row << 4) | (col + 1);
-        // }
-        // if (!(maze[row][col] & SOUTH_WALL)) {
-        //     stack[stackptr++] = ((row + 1) << 4) | col;
-        // }
-        // if (!(maze[row][col] & WEST_WALL)) {
-        //     stack[stackptr++] = (row << 4) | (col - 1);
-        // }
-        pushNeighbors(row, col);
-    }
-}
 
-void pushNeighbors(unsigned short row, unsigned short col) {
-    // Push open neighbors onto stack
-    if (!(maze[row][col] & NORTH_WALL)) {
-        stack[stackptr++] = ((row - 1) << 4) | col;
-    }
-    if (!(maze[row][col] & EAST_WALL)) {
-        stack[stackptr++] = (row << 4) | (col + 1);
-    }
-    if (!(maze[row][col] & SOUTH_WALL)) {
-        stack[stackptr++] = ((row + 1) << 4) | col;
-    }
-    if (!(maze[row][col] & WEST_WALL)) {
-        stack[stackptr++] = (row << 4) | (col - 1);
+        // Push open neighbors onto stack
+        if (!(maze[row][col] & NORTH_WALL))
+        {
+            stack[stackptr++] = ((row - 1) << 4) | col;
+        }
+        if (!(maze[row][col] & EAST_WALL))
+        {
+            stack[stackptr++] = (row << 4) | (col + 1);
+        }
+        if (!(maze[row][col] & SOUTH_WALL))
+        {
+            stack[stackptr++] = ((row + 1) << 4) | col;
+        }
+        if (!(maze[row][col] & WEST_WALL))
+        {
+            stack[stackptr++] = (row << 4) | (col - 1);
+        }
     }
 }
 
@@ -265,22 +348,28 @@ void pushNeighbors(unsigned short row, unsigned short col) {
 //      sign pointing in direction it faces
 /*****************************************************************************/
 void print() {
-    for (unsigned short row = 0; row < 16; row++) {
+
+    for (unsigned short row = 0; row < 16; row++)
+    {
         // North wall
-        for (unsigned short col = 0; col < 16; col++) {
+        for (unsigned short col = 0; col < 16; col++)
+        {
             printf("+%s", maze[row][col] & NORTH_WALL?
                 "---": "   ");
         }
         printf("+\n");
 
-        for (unsigned short col = 0; col < 16; col++) {
+        for (unsigned short col = 0; col < 16; col++)
+        {
             printf("%s", maze[row][col] & WEST_WALL?
                 "|": " ");
 
             // Location direction
             if (row == (location & ROW) >> 4 &&
-                col == (location & COL)) {
-                switch (direction) {
+                col == (location & COL))
+            {
+                switch (direction)
+                {
                     case 0x0: printf("^");
                                 break;
                     case 0x1: printf(">");
@@ -290,10 +379,12 @@ void print() {
                     case 0x3: printf("<");
                 }
             }
-            else if (maze[row][col] & VISITED) {
+            else if (maze[row][col] & VISITED)
+            {
                 printf("*");
             }
-            else {
+            else
+            {
                 printf(" ");
             }
 
@@ -306,14 +397,21 @@ void print() {
     }
 
     // South wall
-    for (unsigned short col = 0; col < 16; col++) {
+    for (unsigned short col = 0; col < 16; col++)
+    {
         printf("+%s", maze[15][col] & SOUTH_WALL?
             "---": "   ");
     }
     printf("+\n");
 }
 
+void debug()
+{
+    print();
+}
+
 int main() {
+
     // Initialize maze and mouse location
     char name[99999];
     setup(0xf0, 0, 'f');
@@ -326,52 +424,45 @@ int main() {
     while (location != 0x77 && location != 0x78 &&
         location != 0x87 && location != 0x88)
     {
-        printf("Press RETURN to continue");
+        printf("Press RETURN to contine");
         fgets(name, sizeof(name), stdin);
-        
-        // get wall information of current & surrounding cells 
-        getWalls((location & ROW) >> 4, location & COL);
-
-        // get distance information of surrounding cells
         update((location & ROW) >> 4, location & COL);
-
-        // if cells on stack, update cell distances
         while (stackptr > 0)
         {
-            --stackptr; 
-
+            --stackptr;
+            //printf("***STACK PTR IS: %d\n", stackptr);
             update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-            /**
+
             // DEBUG -----------------------------------------------------------
             printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
             printf("Current stack: ");
             for (int i = 0; i < stackptr; i++)
                 printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
-            printf("\n");**/
+            printf("\n");
             // DEBUG -----------------------------------------------------------
         }
-
-        // move into open adjacent cell with min distance
+        turn();
         move();
-        print(); 
+        debug();
     }
     print();
-    printf("OOOOOO YAYY!!!!!!\n");
+    setup(0x87, 3, 'b');
+    print();    
+    fgets(name, sizeof(name), stdin);
 
-
-    // going center -> start cell
-    floodValues();
-    print();
-    while (stackptr > 0) {
-        printf("heh");
+    while (location != 0xf0)
+    {
+        printf("Press RETURN to contine");
+        fgets(name, sizeof(name), stdin);
+        update((location & ROW) >> 4, location & COL);
+        while (stackptr > 0)
+        {
+            --stackptr;
+            update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+        }
+        turn();
+        move();
+        debug();
     }
+    print();
 }
-
-
-
-
-
-
-
-
-
