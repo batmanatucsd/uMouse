@@ -10,11 +10,11 @@ void setup(unsigned char loc, unsigned char dist, unsigned char back)
 {
     // If going back to start cell, remember maze state and set start
     // cell as destination with distance 0
-    if (back == 'b') {
-        maze[15][0] = 0x0700;
-        initBack();
-        return;
-    }
+    // if (back == 'b') {
+    //     maze[15][0] = 0x0700;
+    //     initBack();
+    //     return;
+    // }
 
     // Initialize maze
     for (unsigned short row = 0; row < 16; row++) {
@@ -57,20 +57,38 @@ unsigned short init(unsigned short row, unsigned short col)
 }
 
 /*****************************************************************************/
-// initBack():
+// floodValues():
 //      Initialize cell distances when going from center->start cell.
 //      Distances should be 0 at start cell, increasing as it moves outward
 //          from start cell.
 /*****************************************************************************/
-void initBack() 
+void floodValues() 
 {   
-    int r = 0, c = 0;
+    location = 0x0;
+    unsigned char row = (location & ROW) >> 4;
+    unsigned char col = location & COL;
 
-    for (c = 0; c < 15; c++) {
-        for (r = 15; r >=0; r--) {
-            maze[r][c] = (15 - c) - r;
+    //set all cell distances to 255, except start cell
+    int r, c;
+    for (r = 0; r < 16; r++) {
+        for (c = 0; c < 16; c++) {
+            maze[r][c] = 255;
         }
     }
+    maze[15][0] = 0;
+    
+    //min=0
+    //push open neighbors  255 onto a stack
+    pushNeighbors(row, col);
+
+    while (stackptr > 0) {
+        printf("ayyyyyyy lmao");
+    }
+    //check walls (maze), check open neighbors
+    
+    //move into arbitrary open neighbor
+    //make cell you move into = min + 1
+    //find all open 255 neighbors
 }
 
 /*****************************************************************************/
@@ -209,18 +227,35 @@ void update(unsigned short row, unsigned short col)
         maze[row][col] |= min + 1;
 
         // Push open neighbors onto stack
-        if (!(maze[row][col] & NORTH_WALL)) {
-            stack[stackptr++] = ((row - 1) << 4) | col;
-        }
-        if (!(maze[row][col] & EAST_WALL)) {
-            stack[stackptr++] = (row << 4) | (col + 1);
-        }
-        if (!(maze[row][col] & SOUTH_WALL)) {
-            stack[stackptr++] = ((row + 1) << 4) | col;
-        }
-        if (!(maze[row][col] & WEST_WALL)) {
-            stack[stackptr++] = (row << 4) | (col - 1);
-        }
+        // if (!(maze[row][col] & NORTH_WALL)) {
+        //     stack[stackptr++] = ((row - 1) << 4) | col;
+        // }
+        // if (!(maze[row][col] & EAST_WALL)) {
+        //     stack[stackptr++] = (row << 4) | (col + 1);
+        // }
+        // if (!(maze[row][col] & SOUTH_WALL)) {
+        //     stack[stackptr++] = ((row + 1) << 4) | col;
+        // }
+        // if (!(maze[row][col] & WEST_WALL)) {
+        //     stack[stackptr++] = (row << 4) | (col - 1);
+        // }
+        pushNeighbors(row, col);
+    }
+}
+
+void pushNeighbors(unsigned short row, unsigned short col) {
+    // Push open neighbors onto stack
+    if (!(maze[row][col] & NORTH_WALL)) {
+        stack[stackptr++] = ((row - 1) << 4) | col;
+    }
+    if (!(maze[row][col] & EAST_WALL)) {
+        stack[stackptr++] = (row << 4) | (col + 1);
+    }
+    if (!(maze[row][col] & SOUTH_WALL)) {
+        stack[stackptr++] = ((row + 1) << 4) | col;
+    }
+    if (!(maze[row][col] & WEST_WALL)) {
+        stack[stackptr++] = (row << 4) | (col - 1);
     }
 }
 
@@ -325,7 +360,8 @@ int main() {
 
 
     // going center -> start cell
-    initBack();
+    floodValues();
+    print();
     while (stackptr > 0) {
         printf("heh");
     }
