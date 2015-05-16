@@ -325,6 +325,7 @@ int main() {
 
 
     // going center -> start cell
+    initBack();
     while (stackptr > 0) {
         printf("heh");
     }
