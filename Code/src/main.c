@@ -47,8 +47,8 @@ int main(void)
             if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120)
               stopFrontWall();
             else {  // Do PID when moving forward
-              change_LeftMotorSpeed(175);
-              change_RightMotorSpeed(175);
+              /*change_LeftMotorSpeed(175);*/
+              /*change_RightMotorSpeed(175);*/
               pid();
             }
 
