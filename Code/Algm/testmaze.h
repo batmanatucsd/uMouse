@@ -62,16 +62,12 @@ void setupTest(unsigned char start, unsigned char face)
         if (line[0] != '/' && !(isspace(line[0])) ) 
         {
 			//Convert the value in file into an int
-			printf("\nraw int value: %s", line);
 			value = atoi(line);
-			printf("\nint value: %d\n", value);
 
 			//int value should be = 0000 [RAWLINE] 0000 0000
 			value = value << 8;
-			printf("int value after shift: %d\n", value);
 
 			//Create testMaze by OR'ing the values inputted in txt file
-			printf("testMaze[%d][%d] |= %d\n\n", row, col, value);
 			testmaze [row][col] |= value;
 			row++;
 
@@ -91,12 +87,12 @@ void setupTest(unsigned char start, unsigned char face)
 			memset(line, 0, sizeof(line));
 		}
 
-		else
-			printf("raw line value: %s\n", line);
+		// else
+		// 	printf("raw line value: %s\n", line);
 	}
 
 	//Value printed should be the int representation of bitmask xxxV_NESW_DIST
-	printf("Testing testmaze access: %u\n",testmaze[0][0]);
+	// printf("Testing testmaze access: %u\n",testmaze[0][0]);
 
 }
 
