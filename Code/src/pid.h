@@ -9,14 +9,16 @@
 // 4 - right
 
 #include "mouse.h"
-#define RIGHT_THRESHOLD 110
-#define LEFT_THRESHOLD 110
+#define RIGHT_THRESHOLD 200
+#define LEFT_THRESHOLD 130
 
 #define THRESHOLD 200
-#define NOLEFTWALL_THRESHOLD 500
-#define NORIGHTWALL_THRESHOLD 470
+#define RIGHTWALL_TARGET 400
+#define LEFTWALL_TARGET 400
+//#define RIGHTWALL_TARGET 330
+//#define LEFTWALL_TARGET 230
 
-#define KP 0.00205
+#define KP 0.00225
 //#define KD 0.250
 #define KD 0.2
 
@@ -52,6 +54,10 @@
 #ifndef LOW
 #define LOW 0
 #endif
+
+typedef enum {
+  BOTH, RIGHT, LEFT, NOWALLS
+} PID_CASE;
 
 // FOR MAPPING SENSOR READINGS
 #define IN_MIN 0

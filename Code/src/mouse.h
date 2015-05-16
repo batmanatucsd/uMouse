@@ -22,10 +22,18 @@ typedef enum {
   STOP // should be the last state
 } state;
 
+typedef enum {
+  PAUSE,
+  TURN90, 
+  TURN180, 
+  FORWARD
+} status;
+
 /*****************************************************************************/
 // Global Variables
 /*****************************************************************************/
 volatile state mouse_state; 
+static status mouse_status = PAUSE;
 __IO uint16_t sensor_buffers[4];
 
 /*****************************************************************************/
@@ -62,6 +70,7 @@ void rightBackward(void);
 
 void leftTurn(void);
 void rightTurn(void);
+void fullTurn(void);
 void stopFrontWall(void);
 
 // TODO: Add functions for turns

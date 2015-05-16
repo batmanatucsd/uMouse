@@ -6,6 +6,7 @@
 static float pastError = 0, currentError = 0, sumError = 0;
 static float leftEncoder=0, rightEncoder=0, 
              leftSpeed=0, rightSpeed=0;
+static PID_CASE last_case = BOTH;
 
 __IO uint16_t sensor_buffers[4];
 __IO uint16_t sensor_readings[4];
@@ -16,18 +17,27 @@ float difference = 0 ;
 //
 // PID code
 /*****************************************************************************/
-void pid()
+void pid()/*{{{*/
 {
-  ADC_Read();
-	
+  ADC_Read(0, 1, 1, 0);
   float total;
+
+  // reset encoder counts after one cell
+  if(L_ENC->CNT > 8500 || R_ENC->CNT > 8500) {
+    L_ENC->CNT = 0;
+    R_ENC->CNT = 0;
+  }
 
   /////////////////////
   // BOTH WALLS
   /////////////////////
-  if ((sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD))
+  if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD)
   {
-    currentError = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
+    last_case = BOTH;
+    /*ADC_Read(0, 1, 1, 0);*/
+    /*Delay_us(5);*/
+    if(last_case == BOTH)
+      currentError = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
     /*if(difference > 22 || difference < -22)*/
       /*currentError = difference;*/
 
@@ -48,8 +58,12 @@ void pid()
   // ONLY RIGHT WALL
   /////////////////////
   else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD)
+  /*else if (sensor_buffers[RF_IR] >= RIGHT_THRESHOLD)*/
   { 
-		currentError =  NOLEFTWALL_THRESHOLD - sensor_buffers[RF_IR];
+    last_case = RIGHT;
+    /*ADC_Read(0, 1, 1, 0);*/
+    /*Delay_us(5);*/
+    currentError =  RIGHTWALL_TARGET - sensor_buffers[RF_IR];
     /*currentError = map_RF() - R_TARGET;*/
 
     /*total = NOL_KP * currentError + NOL_KD * (currentError - pastError) + KI * sumError;*/
@@ -61,8 +75,12 @@ void pid()
   // ONLY LEFT WALL
   /////////////////////
   else if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)
+  /*else if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD)*/
   {
-		currentError = sensor_buffers[LF_IR] - NORIGHTWALL_THRESHOLD;
+    last_case = LEFT;
+    /*ADC_Read(0, 1, 1, 0);*/
+    /*Delay_us(5);*/
+    currentError = sensor_buffers[LF_IR] - LEFTWALL_TARGET;
     /*printf("%u\r\n", sensor_buffers[LF_IR]);*/
     /*total = NOR_KP * currentError + NOR_KD * (currentError - pastError) + KI * sumError;*/
     /*currentError = L_TARGET - map_LF();*/
@@ -77,9 +95,10 @@ void pid()
   // TODO: finish the one with no walls
   else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD)
   {
+    last_case = NOWALLS;
     currentError = (rightEncoder - leftEncoder) * ADJUST ; // * some constant
     /*total = KP * currentError + KD * (currentError - pastError) + KI * sumError;*/
-    /*currentError = (leftEncoder - rightEncoder) * ADJUST ; // * some constant*/
+    /*currentError = (leftEncoder - rightEncoder) * ADJUST ; // depend on encoder counts */
     float newSpeed = (leftSpeed > rightSpeed) ? leftSpeed : rightSpeed;
     /*change_RightMotorSpeed(newSpeed);*/
     /*change_LeftMotorSpeed(newSpeed);*/
@@ -89,6 +108,7 @@ void pid()
       GPIO_SetBits(GPIOC, YELLOW); // YELLOW
   }
 
+  /*printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);*/
 
 
   // calculate the total adjustment
@@ -112,27 +132,25 @@ void pid()
 
   // Limit the minimum speed
   if(rightSpeed < 0)
-    rightSpeed = 150;
+    rightSpeed = 170;
 
   if(leftSpeed < 0)
-    leftSpeed = 150;
+    leftSpeed = 170;
 
-  printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);
-  Delay_us(50);
 
   /*printf("%d         %f          %f\r\n", total, leftSpeed, rightSpeed);*/
   /*printf("sensor reading: %u         %u        %u        %u\r\n",*/
           /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
 
   /*printf("%f             %f\r\n", map_LF(), map_RF());*/
-  /*change_RightMotorSpeed(rightSpeed);*/
-  /*change_LeftMotorSpeed(leftSpeed);*/
+  change_RightMotorSpeed(rightSpeed);
+  change_LeftMotorSpeed(leftSpeed);
 	pastError = currentError;
   sumError += currentError;
-  /*Delay_us(15);*/
-}
+  Delay_us(25);
+}/*}}}*/
 
-void pid_turn(uint16_t target) 
+void pid_turn(uint16_t target) /*{{{*/
 {
   uint16_t err, last_err, errsum;
   float speed;
@@ -151,7 +169,7 @@ void pid_turn(uint16_t target)
     /*// check for the condition*/
 
   /*}*/
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // map_readings
