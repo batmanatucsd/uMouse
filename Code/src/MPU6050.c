@@ -407,42 +407,42 @@ void MPU6050_I2C_ByteWrite(u8 slaveAddr, u8* pBuffer, u8 writeAddr)
  * @param  writeAddr : address of the register in which the data will be written
  * @return None
  */
- void MPU6050_I2C_BufferWrite(u8 slaveAddr, uint8_t* pBuffer, u8 readAddr, u16 NumByteToRead)
-{
-    // ENTR_CRT_SECTION();
-    while (I2C_GetFlagStatus(MPU6050_I2C, I2C_FLAG_BUSY));
-
-    /* Send START condition */
-    I2C_GenerateSTART(MPU6050_I2C, ENABLE);
-
-    /* Test on EV5 and clear it */
-    while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_MODE_SELECT));
-
-    /* Send MPU6050 address for write */
-    I2C_Send7bitAddress(MPU6050_I2C, slaveAddr, I2C_Direction_Transmitter);
-
-    //I2C_SendData(MPU6050_I2C, slaveAddr | 0);
-
-    /* Test on EV6 and clear it */
-    while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-
-    /* Send the MPU6050's internal address to write to */
-    I2C_SendData(MPU6050_I2C, writeAddr);
-
-    /* Test on EV8 and clear it */
-    while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-
-    /* Send the byte to be written */
-    I2C_SendData(MPU6050_I2C, *pBuffer);
-
-    /* Test on EV8 and clear it */
-    while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-
-    /* Send STOP condition */
-    I2C_GenerateSTOP(MPU6050_I2C, ENABLE);
-
-    // EXT_CRT_SECTION();
-}
+//  void MPU6050_I2C_BufferWrite(u8 slaveAddr, uint8_t* pBuffer, u8 readAddr, u16 NumByteToRead)
+// {
+//     // ENTR_CRT_SECTION();
+//     while (I2C_GetFlagStatus(MPU6050_I2C, I2C_FLAG_BUSY));
+//
+//     /* Send START condition */
+//     I2C_GenerateSTART(MPU6050_I2C, ENABLE);
+//
+//     /* Test on EV5 and clear it */
+//     while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_MODE_SELECT));
+//
+//     /* Send MPU6050 address for write */
+//     I2C_Send7bitAddress(MPU6050_I2C, slaveAddr, I2C_Direction_Transmitter);
+//
+//     //I2C_SendData(MPU6050_I2C, slaveAddr | 0);
+//
+//     /* Test on EV6 and clear it */
+//     while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+//
+//     /* Send the MPU6050's internal address to write to */
+//     I2C_SendData(MPU6050_I2C, writeAddr);
+//
+//     /* Test on EV8 and clear it */
+//     while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+//
+//     /* Send the byte to be written */
+//     I2C_SendData(MPU6050_I2C, *pBuffer);
+//
+//     /* Test on EV8 and clear it */
+//     while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+//
+//     /* Send STOP condition */
+//     I2C_GenerateSTOP(MPU6050_I2C, ENABLE);
+//
+//     // EXT_CRT_SECTION();
+// }
 
 /**
  * @brief  Reads a block of data from the MPU6050.
