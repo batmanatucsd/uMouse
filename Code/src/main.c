@@ -1,10 +1,12 @@
 #include "mouse.h"
+#include "angle.h"
 
 /*****************************************************************************/
 // Global Variables
 /*****************************************************************************/
 __IO uint16_t sensor_buffers[4];
 __IO uint16_t sensor_readings[4];
+extern float angle[3];
 
 /*****************************************************************************/
 // Main Function
@@ -21,9 +23,8 @@ int main(void)
   PWM_Configuration();
   ENCODER_Configuration();
   MPU6050_I2C_Init();
-  //MPU6050_Initialize();
-  /*IIC_Configuration();*/
-  /*MPU_Configuration();*/
+  MPU6050_Initialize();
+  Angle_Set();
 
   // Only for debug
   USART_Configuration();
