@@ -8,11 +8,21 @@ uint16_t testmaze[16][16];
 /*****************************************************************************/
 void setup(uint8_t loc, uint8_t dist, uint8_t step)/*{{{*/
 {
+<<<<<<< HEAD
+	uint16_t row, col,i;
+
+	// Initialize maze
+	for (row = 0; row < 16; row++)
+	{
+		for (col = 0; col < 16; col++)
+		{
+=======
   uint16_t i, row, col;
 
 	// Initialize maze
 	for (row = 0; row < 16; row++) {
 		for (col = 0; col < 16; col++) {
+>>>>>>> d8c63bb26d9bd3d686e8f8bee02724a034dcd19a
             maze[row][col] &= 0xff00;
             switch(step) {
                 case 1:
@@ -24,10 +34,16 @@ void setup(uint8_t loc, uint8_t dist, uint8_t step)/*{{{*/
                 case 3:
                     maze[row][col] |= initFlood(row, col);
                     break;
+<<<<<<< HEAD
+            }
+		}
+	}
+=======
             } // @end of switch
 		} // @end of inner for loop
 	} //@end of outter for loop
 
+>>>>>>> d8c63bb26d9bd3d686e8f8bee02724a034dcd19a
 	for (i = 0; i < 16; i++)
 	{
 		maze[0][i] |= NORTH_WALL;
