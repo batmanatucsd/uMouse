@@ -1,5 +1,8 @@
 #include "mouse.h"
 #include "angle.h"
+#include "anbt_dmp_driver.h"
+#include "anbt_dmp_fun.h"
+#include "anbt_dmp_mpu6050.h"
 
 /*****************************************************************************/
 // Global Variables
@@ -24,10 +27,12 @@ int main(void)
   ADC_Configuration();
   PWM_Configuration();
   ENCODER_Configuration();
-  MPU6050_I2C_Init();
-  MPU6050_Initialize();
-  Angle_Set();
-  Angle_OffsetCal();
+//  MPU6050_I2C_Init();
+ANBT_I2C_Configuration();
+  AnBT_DMP_MPU6050_Init();
+  //MPU6050_Initialize();
+//  Angle_Set();
+//  Angle_OffsetCal();
 
   // Only for debug
   USART_Configuration();
@@ -38,14 +43,14 @@ int main(void)
   /*turnMotorOn();*/
   while(1)
   {
-<<<<<<< HEAD
-    Delay_us(10000);
+    //Delay_us(10000);
 
-    Angle_Handler();
-
+    //Angle_Handler();
+    MPU6050_Pose();            //取数据和解算欧拉角
+	  printf("%ld",(int)(10*Yaw));//上位机协议输出
     printf("test");
 
-    printf("%ld %ld\r\n", (int16_t)angle[2], raw_data[5] - offset[5]);
+    //printf("%ld %ld\r\n", (int16_t)angle[2], raw_data[5] - offset[5]);
 
     // listen_for_button();
     //
@@ -104,8 +109,8 @@ int main(void)
     //     GPIO_SetBits(GPIOC, YELLOW);
     //     break;
     // }
-=======
->>>>>>> 107a141bd4e8dd1b9798ba50d15093f2c40d1dc1
+//=======
+//>>>>>>> 107a141bd4e8dd1b9798ba50d15093f2c40d1dc1
 
     listen_for_button();
 
@@ -181,7 +186,7 @@ int main(void)
 
         break;
     }
-    
+
     /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
     /*printf("                                                  %u              %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
 

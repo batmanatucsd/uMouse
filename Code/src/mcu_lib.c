@@ -385,7 +385,7 @@ void ENCODER_Configuration(void) {/*{{{*/
   TIM_DeInit(L_ENC);
   TIM_DeInit(R_ENC);
 
-  TIM_TimeBaseStructure.TIM_Prescaler = 0;  // No prescaling 
+  TIM_TimeBaseStructure.TIM_Prescaler = 0;  // No prescaling
   TIM_TimeBaseStructure.TIM_Period = 65535; // max resolution value
   TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
@@ -393,13 +393,13 @@ void ENCODER_Configuration(void) {/*{{{*/
   TIM_TimeBaseInit(L_ENC, &TIM_TimeBaseStructure);
   TIM_TimeBaseInit(R_ENC, &TIM_TimeBaseStructure);
 
-  TIM_EncoderInterfaceConfig(L_ENC, TIM_EncoderMode_TI12, 
+  TIM_EncoderInterfaceConfig(L_ENC, TIM_EncoderMode_TI12,
                          TIM_ICPolarity_Falling, TIM_ICPolarity_Falling);
   TIM_ICStructInit(&TIM_ICInitStructure);
   TIM_ICInitStructure.TIM_ICFilter = 6;//ICx_FILTER;
   TIM_ICInit(L_ENC, &TIM_ICInitStructure);
 
-  TIM_EncoderInterfaceConfig(R_ENC, TIM_EncoderMode_TI12, 
+  TIM_EncoderInterfaceConfig(R_ENC, TIM_EncoderMode_TI12,
                          TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
   TIM_ICStructInit(&TIM_ICInitStructure);
   TIM_ICInitStructure.TIM_ICFilter = 6;//ICx_FILTER;
@@ -413,11 +413,11 @@ void ENCODER_Configuration(void) {/*{{{*/
   // //  NVIC_Init(&NVIC_InitStructure);
   // //  NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQChannel;
   // //  NVIC_Init(&NVIC_InitStructure);
-  // //  
+  // //
   // //  // Clear all pending interrupts
   // //  TIM_ClearFlag(ENCODER_TIM, TIM_FLAG_Update);
   // //  TIM_ITConfig(ENCODER_TIM, TIM_IT_Update, ENABLE);
-    
+
   // reset encoder counts
   L_ENC->CNT = 50; // prevent counts to become negative when the moved backwards
   R_ENC->CNT = 50;
@@ -442,7 +442,7 @@ void NVIC_Configuration(void)/*{{{*/
   /*NVIC_Init(&NVIC_InitStructure);*/
 
   /* Enable DMA1 channel IRQ Channel */
-  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Channel4_5_IRQn;
+  //NVIC_InitStructure.NVIC_IRQChannel = DMA2_Channel4_5_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -456,8 +456,8 @@ void NVIC_Configuration(void)/*{{{*/
 // @param: SYSCLK : System Clock
 /*****************************************************************************/
 void Delay_Init() //SYSCLK1000000??72MHz?72  /*{{{*/
-{  
-    SysTick->CTRL&=0xFFFFFFFB;  
+{
+    SysTick->CTRL&=0xFFFFFFFB;
     /*FAC_US=SYSCLK/8;  */
     /*FAC_MS=(u16t)(FAC_US*1000);       */
 }  /*}}}*/
@@ -469,7 +469,7 @@ void Delay_Init() //SYSCLK1000000??72MHz?72  /*{{{*/
 // @param: nus : microseconds
 /*****************************************************************************/
 void Delay_us(uint32_t wait_for)  /*{{{*/
-{  
+{
 
   /*Set up system clock*/
   if(SysTick_Config(SystemCoreClock / 100000)){
@@ -499,7 +499,7 @@ void Delay_us(uint32_t wait_for)  /*{{{*/
 
 void Decrement_WaitTime(void) {
   --wait_time;
-} 
+}
 
 /*****************************************************************************/
 // Delay_ms
@@ -508,8 +508,8 @@ void Decrement_WaitTime(void) {
 // @param: nms : milliseconds to delay
 /*****************************************************************************/
 void Delay_ms(uint16_t wait_for)  /*{{{*/
-{  
-  SysTick->LOAD  = ((SystemCoreClock/1000) & SysTick_LOAD_RELOAD_Msk) - 1; 
+{
+  SysTick->LOAD  = ((SystemCoreClock/1000) & SysTick_LOAD_RELOAD_Msk) - 1;
   wait_time = wait_for;
   waiting = 1;
   while(wait_time > 0);
@@ -527,4 +527,3 @@ void Delay_ms(uint16_t wait_for)  /*{{{*/
     /*SysTick->CTRL=0x00;  */
     /*SysTick->VAL=0x00;     */
 }  /*}}}*/
-
