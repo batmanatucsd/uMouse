@@ -217,7 +217,9 @@ void move(uint8_t flood)
     if (flood != 'f')
     {
         maze[row][col] |= VISITED;
+        //TODO
         forward();
+        //TODO
     }
 }
 
@@ -276,8 +278,10 @@ void moveFast() {
 		}
 	}
 	location = (row << 4) | col;
+    //TODO
     actualTurn(tmp, direction);
     forward();
+    //TODO
 }
 
 /*****************************************************************************/
@@ -288,7 +292,9 @@ void turn()
 {
 	uint8_t row = (location & ROW) >> 4;
 	uint8_t col = location & COL;
+    //TODO
     uint8_t tmp = direction;
+    //TODO
 
 	uint8_t min = 255;
 	uint16_t tile = maze[row][col];
@@ -333,9 +339,12 @@ void turn()
 		}
 	}
 	lookAhead();
+    //TODO
     actualTurn(tmp, direction);
+    //TODO
 }
 
+//TODO
 /*****************************************************************************/
 // turn():
 //		Turn to the cell closest to the center
@@ -346,6 +355,7 @@ void actualTurn(uint8_t prev, uint8_t next)
     else if ((prev == 1 && next == 0) || (prev == 2 && next == 1) || (prev == 3 && next == 2) || (prev == 0 && next == 3)) leftTurn();
     else fullTurn();
 }
+//TODO
 
 /*****************************************************************************/
 // update(uint16_t row, uint16_t col):
