@@ -1,23 +1,21 @@
 #include "floodfill.h"
-#include "mouse.h"
-//#include "testmaze.h"
 
 uint16_t testmaze[16][16];
+
 /*****************************************************************************/
 // setup(uint8_t loc, uint8_t dist, uint8_t back):
 // 		Initialize 16x16 maze using 2D array, assumption that no walls exist
 /*****************************************************************************/
-void setup(uint8_t loc, uint8_t dist, uint8_t step)
+void setup(uint8_t loc, uint8_t dist, uint8_t step)/*{{{*/
 {
 
+  uint6_t i, row, col;
+
 	// Initialize maze
-	for (uint16_t row = 0; row < 16; row++)
-	{
-		for (uint16_t col = 0; col < 16; col++)
-		{
+	for (row = 0; row < 16; row++) {
+		for (col = 0; col < 16; col++) {
             maze[row][col] &= 0xff00;
-            switch(step)
-            {
+            switch(step) {
                 case 1:
                     maze[row][col] |= init(row, col);
                     break;
@@ -27,10 +25,11 @@ void setup(uint8_t loc, uint8_t dist, uint8_t step)
                 case 3:
                     maze[row][col] |= initFlood(row, col);
                     break;
-            }
-		}
-	}
-	for (uint16_t i = 0; i < 16; i++)
+            } // @end of switch
+		} // @end of inner for loop
+	} //@end of outter for loop
+
+	for (i = 0; i < 16; i++)
 	{
 		maze[0][i] |= NORTH_WALL;
 		maze[i][0] |= WEST_WALL;
@@ -43,14 +42,14 @@ void setup(uint8_t loc, uint8_t dist, uint8_t step)
 	direction = dist;				// 0x0 = up direction
 	maze[15][0] |= EAST_WALL;
 	maze[15][1] |= WEST_WALL;
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // init(uint16_t row, uint16_t col):
 // 		Pre-fill cell with values that determine its distance from the center.
 // 		Initially assumes a wall-less maze.
 /*****************************************************************************/
-uint16_t init(uint16_t row, uint16_t col)
+uint16_t init(uint16_t row, uint16_t col)/*{{{*/
 {
 	// 2nd and 4th quadrant
 	if(row > 0x07) {
@@ -63,27 +62,27 @@ uint16_t init(uint16_t row, uint16_t col)
 	}
 
 	return 0x0e - col - row;
-}
+}/*}}}*/
 
-uint16_t initBack(uint16_t row, uint16_t col)
+uint16_t initBack(uint16_t row, uint16_t col)/*{{{*/
 {
 
 	return (col + (0x0f - row));
-}
+}/*}}}*/
 
-uint16_t initFlood(uint16_t row, uint16_t col)
+uint16_t initFlood(uint16_t row, uint16_t col)/*{{{*/
 {
 	return ((row == 7 && col == 7) ||
             (row == 7 && col == 8) ||
             (row == 8 && col == 7) ||
             (row == 8 && col == 8)) ? 0: 255;
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // lookAhead():
 // 		Reads in the walls of the cell ahead of the mouse into memory
 /*****************************************************************************/
-void lookAhead()
+void lookAhead(void)/*{{{*/
 {
 	// Grab the row and column bits
 	uint8_t row = (location & ROW) >> 4;
@@ -199,13 +198,13 @@ void lookAhead()
 			maze[row + 1][col - 1] |= NORTH_WALL;
 		}
 	}
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // move(uint8_t flood):
 //		Move to the cell closest to the center
 /*****************************************************************************/
-void move(uint8_t flood)
+void move(uint8_t flood)/*{{{*/
 {
 	uint8_t row = (location & ROW) >> 4;
 	uint8_t col = location & COL;
@@ -222,9 +221,9 @@ void move(uint8_t flood)
         forward();
         //TODO
     }
-}
+}/*}}}*/
 
-void moveFast() {
+void moveFast(void) {/*{{{*/
 	uint8_t row = (location & ROW) >> 4;
 	uint8_t col = location & COL;
 	uint8_t priority = 1;
@@ -283,13 +282,13 @@ void moveFast() {
     actualTurn(tmp, direction);
     forward();
     //TODO
-}
+}/*}}}*/
 
 /*****************************************************************************/
 // turn():
 //		Turn to the cell closest to the center
 /*****************************************************************************/
-void turn()
+void turn(void)/*{{{*/
 {
 	uint8_t row = (location & ROW) >> 4;
 	uint8_t col = location & COL;
@@ -343,19 +342,19 @@ void turn()
     //TODO
     actualTurn(tmp, direction);
     //TODO
-}
+}/*}}}*/
 
 //TODO
 /*****************************************************************************/
 // turn():
 //		Turn to the cell closest to the center
 /*****************************************************************************/
-void actualTurn(uint8_t prev, uint8_t next)
+void actualTurn(uint8_t prev, uint8_t next)/*{{{*/
 {
     if ((prev == 0 && next == 1) || (prev == 1 && next == 2) || (prev == 2 && next == 3) || (prev == 3 && next == 0)) rightTurn();
     else if ((prev == 1 && next == 0) || (prev == 2 && next == 1) || (prev == 3 && next == 2) || (prev == 0 && next == 3)) leftTurn();
     else fullTurn();
-}
+}/*}}}*/
 //TODO
 
 /*****************************************************************************/
@@ -363,7 +362,7 @@ void actualTurn(uint8_t prev, uint8_t next)
 //
 // 		Changes current cell distance and check neighbors if necessary
 /*****************************************************************************/
-void update(uint16_t row, uint16_t col)
+void update(uint16_t row, uint16_t col)/*{{{*/
 {
 	uint16_t tile = maze[row][col];
 
@@ -437,14 +436,14 @@ void update(uint16_t row, uint16_t col)
 			stack[stackptr++] = (row << 4) | (col - 1);
 		}
 	}
-}
+}/*}}}*/
 
-void print()
+void print()/*{{{*/
 {
 
-}
+}/*}}}*/
 
-int flood_main() {
+int flood_main(void) {/*{{{*/
 
 	// Initialize maze and mouse location
 	uint8_t tmpLoc, tmpDir;
@@ -513,4 +512,4 @@ int flood_main() {
 	{
 		moveFast();
 	}
-}
+}/*}}}*/
