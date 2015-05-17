@@ -7,6 +7,8 @@
 __IO uint16_t sensor_buffers[4];
 __IO uint16_t sensor_readings[4];
 extern float angle[3];
+extern int16_t raw_data[6];
+extern int16_t offset[6];
 
 /*****************************************************************************/
 // Main Function
@@ -25,6 +27,7 @@ int main(void)
   MPU6050_I2C_Init();
   MPU6050_Initialize();
   Angle_Set();
+  Angle_OffsetCal();
 
   // Only for debug
   USART_Configuration();
@@ -36,11 +39,13 @@ int main(void)
   /*turnMotorOn();*/
   while(1)
   {
-    Delay_ms(100);
+    Delay_us(10000);
+
+    Angle_Handler();
 
     printf("test");
 
-    printf("%ld \r\n", (int16_t)angle[2]);
+    printf("%ld %ld\r\n", (int16_t)angle[2], raw_data[5] - offset[5]);
 
     // listen_for_button();
     //
