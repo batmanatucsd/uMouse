@@ -12,7 +12,7 @@ void setup(unsigned char loc, unsigned char dist, unsigned char back)
 	// cell as destination with distance 0
 	if (back == 'b') {
 		maze[15][0] = 0x0700;
-		return;
+		//return;
 	}
 
 	// Initialize maze
@@ -20,9 +20,17 @@ void setup(unsigned char loc, unsigned char dist, unsigned char back)
 	{
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			maze[row][col] = back == 'b'? initBack(row, col) : init(row, col);
-			// maze[row][col] &= 0xff00;
-			// maze[row][col] |= back == 'b'? initBack(row, col) : init(row, col);
+			//maze[row][col] = back == 'b'? initBack(row, col) : init(row, col);
+		  // maze[row][col] &= 0xff00;
+			//maze[row][col] |= back == 'b'? initBack(row, col) : init(row, col);
+      
+      
+		  maze[row][col] &= 0xff00;
+			if (maze[row][col] |= back == 'b')
+        initBack(row, col);
+      else if (maze[row][col] |= back != 'b' && flood==1)
+          init(row, col);
+
 		}
 	}
 	for (unsigned short i = 0; i < 16; i++)
