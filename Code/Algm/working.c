@@ -1,17 +1,18 @@
+#include <stdio.h>
 #include "floodfill.h"
 #include "testmaze.h"
 
 /*****************************************************************************/
-// setup(uint8_t loc, uint8_t dist, uint8_t back):
+// setup(unsigned char loc, unsigned char dist, unsigned char back):
 // 		Initialize 16x16 maze using 2D array, assumption that no walls exist
 /*****************************************************************************/
-void setup(uint8_t loc, uint8_t dist, uint8_t step) 
+void setup(unsigned char loc, unsigned char dist, unsigned char step) 
 {
 
 	// Initialize maze
-	for (uint16_t row = 0; row < 16; row++)
+	for (unsigned short row = 0; row < 16; row++)
 	{
-		for (uint16_t col = 0; col < 16; col++)
+		for (unsigned short col = 0; col < 16; col++)
 		{
             maze[row][col] &= 0xff00;
             switch(step)
@@ -28,7 +29,7 @@ void setup(uint8_t loc, uint8_t dist, uint8_t step)
             }
 		}
 	}
-	for (uint16_t i = 0; i < 16; i++)
+	for (unsigned short i = 0; i < 16; i++)
 	{
 		maze[0][i] |= NORTH_WALL;
 		maze[i][0] |= WEST_WALL;
@@ -44,11 +45,11 @@ void setup(uint8_t loc, uint8_t dist, uint8_t step)
 }
 
 /*****************************************************************************/
-// init(uint16_t row, uint16_t col):
+// init(unsigned short row, unsigned short col):
 // 		Pre-fill cell with values that determine its distance from the center.
 // 		Initially assumes a wall-less maze.
 /*****************************************************************************/
-uint16_t init(uint16_t row, uint16_t col) 
+unsigned short init(unsigned short row, unsigned short col) 
 {	
 	// 2nd and 4th quadrant
 	if(row > 0x07) {
@@ -63,13 +64,13 @@ uint16_t init(uint16_t row, uint16_t col)
 	return 0x0e - col - row;
 }
 
-uint16_t initBack(uint16_t row, uint16_t col) 
+unsigned short initBack(unsigned short row, unsigned short col) 
 {	
 
 	return (col + (0x0f - row));
 }
 
-uint16_t initFlood(uint16_t row, uint16_t col) 
+unsigned short initFlood(unsigned short row, unsigned short col) 
 {	
 	return ((row == 7 && col == 7) ||
             (row == 7 && col == 8) ||
@@ -84,8 +85,8 @@ uint16_t initFlood(uint16_t row, uint16_t col)
 void lookAhead()
 {
 	// Grab the row and column bits
-	uint8_t row = (location & ROW) >> 4;
-	uint8_t col = location & COL;
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
 
 	// Fill in maze info for cells around NORTH CELL
 	if (direction == 0 && !(maze[row][col] & NORTH_WALL))
@@ -191,13 +192,13 @@ void lookAhead()
 }
 
 /*****************************************************************************/
-// move(uint8_t flood):
+// move(unsigned char flood):
 //		Move to the cell closest to the center
 /*****************************************************************************/
-void move(uint8_t flood)
+void move(unsigned char flood)
 {
-	uint8_t row = (location & ROW) >> 4;
-	uint8_t col = location & COL;
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
 	if (direction == 0 && !(maze[row][col] & NORTH_WALL)) --row;
 	else if (direction == 1 && !(maze[row][col] & EAST_WALL)) ++col;
 	else if (direction == 2 && !(maze[row][col] & SOUTH_WALL)) ++row;
@@ -212,9 +213,9 @@ void move(uint8_t flood)
 }
 
 void moveFast() {
-	uint8_t row = (location & ROW) >> 4;
-	uint8_t col = location & COL;
-	uint8_t priority = 1;
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
+	unsigned char priority = 1;
 
 	if ((maze[row-1][col] & VISITED) && (maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1)
 	{
@@ -273,11 +274,11 @@ void moveFast() {
 /*****************************************************************************/
 void turn()
 {
-	uint8_t row = (location & ROW) >> 4;
-	uint8_t col = location & COL;
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
 
-	uint8_t min = 255;
-	uint16_t tile = maze[row][col];
+	unsigned char min = 255;
+	unsigned short tile = maze[row][col];
 
 	// If there is no NORTH wall for this cell
 	if (!(tile & NORTH_WALL))
@@ -322,18 +323,18 @@ void turn()
 }
 
 /*****************************************************************************/
-// update(uint16_t row, uint16_t col):
+// update(unsigned short row, unsigned short col):
 //
 // 		Changes current cell distance and check neighbors if necessary
 /*****************************************************************************/
-void update(uint16_t row, uint16_t col)
+void update(unsigned short row, unsigned short col)
 {
-	uint16_t tile = maze[row][col];
+	unsigned short tile = maze[row][col];
 
     if ((tile & DIST) == 0) return;
 
 	// Minimum open neighbor
-	uint8_t min = 255;
+	unsigned char min = 255;
 
 	// If there is no NORTH wall for this cell, and the north cell is closer
 	// to the center than current min, make it the new 'min'
@@ -403,23 +404,23 @@ void update(uint16_t row, uint16_t col)
 }
 
 /*****************************************************************************/
-// print(uint16_t m):
+// print(unsigned short m):
 // 		Print out the cell, with the mouse location designated with a carrot
 // 		sign pointing in direction it faces
 /*****************************************************************************/
 void print() {
 
-	for (uint16_t row = 0; row < 16; row++)
+	for (unsigned short row = 0; row < 16; row++)
 	{
 		// North wall
-		for (uint16_t col = 0; col < 16; col++)
+		for (unsigned short col = 0; col < 16; col++)
 		{
 			printf("+%s", maze[row][col] & NORTH_WALL?
 				"---": "   ");
 		}
 		printf("+\n");
 
-		for (uint16_t col = 0; col < 16; col++)
+		for (unsigned short col = 0; col < 16; col++)
 		{
 			printf("%s", maze[row][col] & WEST_WALL?
 				"|": " ");
@@ -457,7 +458,7 @@ void print() {
 	}
 
 	// South wall
-	for (uint16_t col = 0; col < 16; col++)
+	for (unsigned short col = 0; col < 16; col++)
 	{
 		printf("+%s", maze[15][col] & SOUTH_WALL?
 			"---": "   ");
@@ -470,7 +471,7 @@ void debug()
 	print();
 /*	printf("location is: %d, %d\n", (location & ROW) >> 4, (location & COL));
 	printf("direction is: %d\n", direction);
-	uint16_t tile = maze[(location & ROW) >> 4][location & COL];
+	unsigned short tile = maze[(location & ROW) >> 4][location & COL];
 	printf("north: %d, east: %d, south: %d, west: %d\n", tile & NORTH_WALL, tile & EAST_WALL, tile & SOUTH_WALL, tile & WEST_WALL);
 */}
 
@@ -478,7 +479,7 @@ int main() {
 
 	// Initialize maze and mouse location
 	char name[99999];
-    uint8_t tmpLoc, tmpDir;
+    unsigned char tmpLoc, tmpDir;
 	setup(0xf0, 0, 1);
 	setupTest(0xf0, 0);
 
