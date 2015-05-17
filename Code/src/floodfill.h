@@ -1,8 +1,7 @@
 #ifndef _FLOODFILL_H_
 #define _FLOODFILL_H_
 
-#include "stm32f10x.h"
-
+#include "mouse.h"
 
 /*****************************************************************************/
 // Globals

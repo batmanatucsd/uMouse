@@ -3,11 +3,6 @@
 /*****************************************************************************/
 // General Functions
 /*****************************************************************************/
-void delay(volatile int i)/*{{{*/
-{
-  while(i--);
-}/*}}}*/
-
 void listen_for_button(void)/*{{{*/
 {
   if(GPIO_ReadInputDataBit(GPIOB, BUTTON) != Bit_RESET) {
@@ -27,67 +22,11 @@ void listen_for_button(void)/*{{{*/
 /*****************************************************************************/
 // Motor Controls
 /*****************************************************************************/
-void forward(void)/*{{{*/
-{
-  GPIO_SetBits(MOTOR, STBY);
-
-  // LEFT Motor CCW
-  GPIO_SetBits(MOTOR, LEFTIN1);
-  GPIO_ResetBits(MOTOR, LEFTIN2);
-
-  // RIGHT MOtor CW
-  GPIO_ResetBits(MOTOR, RIGHTIN1);
-  GPIO_SetBits(MOTOR, RIGHTIN2);
-}/*}}}*/
-
-void backward(void)/*{{{*/
-{
-  GPIO_SetBits(MOTOR, STBY);
-
-  // LEFT Motor CCW
-  GPIO_SetBits(MOTOR, LEFTIN2);
-  GPIO_ResetBits(MOTOR, LEFTIN1);
-
-  // RIGHT MOtor CW
-  GPIO_ResetBits(MOTOR, RIGHTIN2);
-  GPIO_SetBits(MOTOR, RIGHTIN1);
-}/*}}}*/
-
 void turnMotorOff(void)/*{{{*/
 {
   // TODO: should we change the way we turn off the motors?
   // perhaps turn the inputs off or the pwm (might save battery time)
   GPIO_WriteBit(MOTOR, STBY, 0);
-}/*}}}*/
-
-void change_LeftMotorSpeed(float speed)/*{{{*/
-{
-  if(speed > 0)
-    leftForward();
-  else {
-    leftBackward();
-    speed *= -1;
-  }
-  
-  if(speed > LEFT_MAX_SPEED)
-    speed = LEFT_MAX_SPEED;
-  
-  L_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM3
-}/*}}}*/
-
-void change_RightMotorSpeed(float speed)/*{{{*/
-{
-  if(speed > 0)
-    rightForward();
-  else {
-    rightBackward();
-    speed *= -1;
-  }
-
-  if(speed > RIGHT_MAX_SPEED)
-    speed = RIGHT_MAX_SPEED;
-
-  R_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM5
 }/*}}}*/
 
 void leftForward(void)/*{{{*/
@@ -122,6 +61,52 @@ void rightBackward(void)/*{{{*/
   GPIO_SetBits(MOTOR, RIGHTIN1);
 }/*}}}*/
 
+void forward(void)/*{{{*/
+{
+  // move forward one cell
+  // using pid and all
+}/*}}}*/
+
+void backward(void)/*{{{*/
+{
+  GPIO_SetBits(MOTOR, STBY);
+
+  // LEFT Motor CCW
+  leftBackward();
+
+  // RIGHT MOtor CW
+  rightBackward();
+}/*}}}*/
+
+void change_LeftMotorSpeed(float speed)/*{{{*/
+{
+  if(speed > 0)
+    leftForward();
+  else {
+    leftBackward();
+    speed *= -1;
+  }
+  
+  if(speed > LEFT_MAX_SPEED)
+    speed = LEFT_MAX_SPEED;
+  
+  L_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM3
+}/*}}}*/
+
+void change_RightMotorSpeed(float speed)/*{{{*/
+{
+  if(speed > 0)
+    rightForward();
+  else {
+    rightBackward();
+    speed *= -1;
+  }
+
+  if(speed > RIGHT_MAX_SPEED)
+    speed = RIGHT_MAX_SPEED;
+
+  R_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM5
+}/*}}}*/
 
 /*****************************************************************************/
 // Turns

@@ -92,8 +92,8 @@ OPT	+= -Os
 endif
 
 
-LDFLAGS = -lm -nostartfiles $(OPT) $(GFLAGS)  -T$(LDSCRIPT)
-CFLAGS  = $(OPT) $(GFLAGS) -g3 -Wall
+LDFLAGS =	-lm -nostartfiles $(OPT) $(GFLAGS)  -T$(LDSCRIPT)
+CFLAGS  = $(OPT) $(GFLAGS) -g3 -Wall -std=c11
 ASFLAGS = $(GFLAGS) -g3
 
 INCFLAGS  = $(addprefix -I, $(INC))

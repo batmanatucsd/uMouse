@@ -3,6 +3,7 @@
 
 #include "mcu_lib.h"
 #include "pid.h"
+#include "floodfill.h"
 
 #define ON 1
 #define OFF 0
@@ -11,9 +12,6 @@
 #define LF_IR 2
 #define RF_IR 1
 #define R_IR 0
-
-//#define LEFT_MAX_SPEED 255
-//#define RIGHT_MAX_SPEED 255
 
 #define LEFT_MAX_SPEED 250
 #define RIGHT_MAX_SPEED 250
@@ -42,7 +40,6 @@ __IO uint16_t sensor_buffers[4];
 /*****************************************************************************/
 // General Functions
 /*****************************************************************************/
-void delay(volatile int);
 void listen_for_button(void);
 
 /*****************************************************************************/
@@ -70,7 +67,6 @@ void rightBackward(void);
 /*****************************************************************************/
 // Turns
 /*****************************************************************************/
-
 void leftTurn(void);
 void rightTurn(void);
 void fullTurn(void);
