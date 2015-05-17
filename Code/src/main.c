@@ -24,81 +24,35 @@ int main(void)
   //DMA_Configuration();
   NVIC_Configuration();
 
-
-
   //ADC_Configuration();
   PWM_Configuration();
   ENCODER_Configuration();
-<<<<<<< HEAD
-//  MPU6050_I2C_Init();
-//  MPU6050_Initialize();
-//  Angle_Set();
-=======
->>>>>>> d8c63bb26d9bd3d686e8f8bee02724a034dcd19a
 
-//  MPU6050_I2C_Init();
-
-// Only for debug
-USART_Configuration();
-ANBT_I2C_Configuration();
+  // Only for debug
+  USART_Configuration();
+  ANBT_I2C_Configuration();
   AnBT_DMP_MPU6050_Init();
-  //MPU6050_Initialize();
-//  Angle_Set();
-//  Angle_OffsetCal();
-
-
-
 
   mouse_state = STOP;
   mouse_status = FORWARD;
 
   while(1)
   {
-<<<<<<< HEAD
+
 
     listen_for_button();
 
-=======
+
     printf("test");
 
     // Listen to button push
     listen_for_button();
-    
->>>>>>> 9d75405ce786383eda56455c30c45d4158e3a99b
-    switch(mouse_state) {
-      case GO:
 
-        switch(mouse_status) {
-          case FORWARD:
-           /*ADC_Read(1, 0, 0, 1);*/
-            /*if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120)*/
-              /*stopFrontWall();*/
-            /*else {  // Do PID when moving forward*/
-          //    change_LeftMotorSpeed(175);
-            //  change_RightMotorSpeed(175);
-            //  pid();
-            /*}*/
-/*
-            Delay_us(100);
-            break;
 
-          case TURN90:
-            Delay_us(1000000);
-            Delay_us(1000000);
-            rightTurn();
-            break;
-
-          case TURN180:
-            fullTurn();
-            Delay_us(100);
-            mouse_status = FORWARD;
-            break;
-        
-<<<<<<< HEAD
-*/
 
 /*****************************************CELL BY CELL MOVEMENT****************************/
 
+<<<<<<< HEAD
 	  if(sensor_buffers[L_IR] < 150){
 
 		  L_ENC->CNT=0;
@@ -129,6 +83,46 @@ ANBT_I2C_Configuration();
 		  Delay_us(1000000);
 		  L_ENC->CNT=0;
 		  R_ENC->CNT=0;
+=======
+
+
+
+
+	L_ENC->CNT=0;
+	R_ENC->CNT=0;
+
+	while(L_ENC->CNT < 6005 && R_ENC->CNT < 6005){
+		change_LeftMotorSpeed(80);
+		change_RightMotorSpeed(80);
+		pid();
+
+		if(L_ENC->CNT >3000 && L_ENC->CNT<4000){
+			change_LeftMotorSpeed(60);
+			change_RightMotorSpeed(60);
+			pid();
+		}
+
+		if(L_ENC->CNT>=4000 && L_ENC->CNT<5000){
+			change_LeftMotorSpeed(40);
+			change_RightMotorSpeed(40);
+			pid();
+		}
+
+	}
+		change_LeftMotorSpeed(0);
+		change_RightMotorSpeed(0);
+
+	if(sensor_buffers[L_IR]>150){
+		//calibration
+		while(){
+
+		}
+	}
+
+	Delay_us(1000000);
+	L_ENC->CNT=0;
+	R_ENC->CNT=0;
+>>>>>>> 1dea8a995ac24a7e4b1911439b4fbc76caf7db86
 
 	  }
 	  else{
@@ -136,19 +130,19 @@ ANBT_I2C_Configuration();
 	  }
 
 /******************************LEFT 90 TURN******************************************/
-/*	ADC_Read(1,0,0,1);	
+/*	ADC_Read(1,0,0,1);
 
 	if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120){
 		stopFrontWall();
-		
+
 		if(sensor_buffers[L_IR]>400){
-			
+
 			change_LeftMotorSpeed(0);
-			change_RightMotorSpeed(0);	
-	
+			change_RightMotorSpeed(0);
+
 			Delay_us(1000);
 			leftTurn();
-			Delay_us(10000);			
+			Delay_us(10000);
 
 		}
 	}
@@ -156,7 +150,7 @@ ANBT_I2C_Configuration();
 		change_LeftMotorSpeed(150);
 		change_RightMotorSpeed(150);
 		pid();
-	
+
 	}
 */
 
@@ -168,7 +162,7 @@ ANBT_I2C_Configuration();
 	change_RightMotorSpeed(150);
 	pid();
 	rightTurn();
-*/	
+*/
 
       break;
   }
@@ -178,19 +172,19 @@ ANBT_I2C_Configuration();
 
 /******************************straight, stop, right, etc *****************/
 /*
-	ADC_Read(1,0,0,1);	
+	ADC_Read(1,0,0,1);
 
 	if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120){
 		stopFrontWall();
-		
+
 		if(sensor_buffers[L_IR]>400){
-			
+
 			change_LeftMotorSpeed(0);
-			change_RightMotorSpeed(0);	
-	
+			change_RightMotorSpeed(0);
+
 			Delay_us(1000);
 			rightTurn();
-			Delay_us(10000);			
+			Delay_us(10000);
 
 		}
 	}
@@ -208,7 +202,7 @@ ANBT_I2C_Configuration();
 		stopFrontWall();
 
 		if(sensor_buffers[L_IR]>590){
-    	
+
 			Delay_us(1000);
 			fullTurn();
 			Delay_us(10000);
@@ -222,10 +216,10 @@ ANBT_I2C_Configuration();
 
 */
 
-       
-		
 
-=======
+
+
+//=======
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);
         GPIO_ResetBits(GPIOC, YELLOW);
@@ -235,17 +229,17 @@ ANBT_I2C_Configuration();
         /*leftTurn();*/
         /*rightTurn();*/
         /*Delay_us(1000000);*/
-         
-        Delay_us(1000000); 	
-        Delay_us(1000000); 	
-        fullTurn();
-        Delay_us(1000000); 	
-    
-        Delay_us(1000000); 	
 
-        Delay_us(1000000); 	
+        Delay_us(1000000);
+        Delay_us(1000000);
+        fullTurn();
+        Delay_us(1000000);
+
+        Delay_us(1000000);
+
+        Delay_us(1000000);
  //       stopFrontWall();
->>>>>>> 9d75405ce786383eda56455c30c45d4158e3a99b
+//>>>>>>> 9d75405ce786383eda56455c30c45d4158e3a99b
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);
@@ -276,15 +270,6 @@ ANBT_I2C_Configuration();
 
         break;
     }
-<<<<<<< HEAD
-=======
-    
-  
-    /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
->>>>>>> 9d75405ce786383eda56455c30c45d4158e3a99b
-
-
->>>>>>> origin/mpu-test
     /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
     /*printf("                                                  %u              %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
 ADC_Read(1,1,1,1);
