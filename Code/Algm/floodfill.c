@@ -58,6 +58,8 @@ unsigned short initBack(unsigned short row, unsigned short col)
     return (col + (15-row));
 }
 
+
+
 /*****************************************************************************/
 // lookAhead():
 //      Reads in the walls of the cell ahead of the mouse into memory
@@ -405,6 +407,61 @@ void print() {
     printf("+\n");
 }
 
+/*****************************************************************************/
+// flood():
+//      Reads in the walls of the cell ahead of the mouse into memory
+/*****************************************************************************/
+void flood() {
+    //set location to start cell
+    location = (15 << 4) | 0;
+    unsigned char row = (location & ROW) >> 4;
+    unsigned char col = location & COL;
+
+    int r, c;
+    for (r = 0; r < 16; r++) {
+        for (c = 0; c < 16; c++) {
+            if( (r==7 && c==7) || (r==7 && c==8) || 
+                (r==8 && c==7) || (r==8 && c==8) ) {
+                maze[r][c] &= 0x00;
+                continue;
+            }
+            maze[r][c] |= 0xff;
+            printf("****************************\n");
+        }
+    }
+    
+    location = 0x00;
+    // do {
+
+    // } while (stackptr < 0); 
+    char name[2];
+    while (location != 0x77 && location != 0x78 &&
+        location != 0x87 && location != 0x88)
+    {
+        printf("Press RETURN to contine");
+        fgets(name, sizeof(name), stdin);
+        update((location & ROW) >> 4, location & COL);
+        while (stackptr > 0)
+        {
+            --stackptr;
+            //printf("***STACK PTR IS: %d\n", stackptr);
+            update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+
+            // DEBUG -----------------------------------------------------------
+            printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
+            printf("Current stack: ");
+            for (int i = 0; i < stackptr; i++)
+                printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
+            printf("\n");
+            // DEBUG -----------------------------------------------------------
+        }
+        turn();
+        move();
+        print();
+    }
+
+}
+
 void debug()
 {
     print();
@@ -424,8 +481,8 @@ int main() {
     while (location != 0x77 && location != 0x78 &&
         location != 0x87 && location != 0x88)
     {
-        printf("Press RETURN to contine");
-        fgets(name, sizeof(name), stdin);
+        //printf("Press RETURN to contine");
+        //fgets(name, sizeof(name), stdin);
         update((location & ROW) >> 4, location & COL);
         while (stackptr > 0)
         {
@@ -452,8 +509,8 @@ int main() {
 
     while (location != 0xf0)
     {
-        printf("Press RETURN to contine");
-        fgets(name, sizeof(name), stdin);
+        //printf("Press RETURN to contine");
+        //fgets(name, sizeof(name), stdin);
         update((location & ROW) >> 4, location & COL);
         while (stackptr > 0)
         {
@@ -464,5 +521,9 @@ int main() {
         move();
         debug();
     }
+    print();
+
+    printf("Starting FLOODING PHASE ----------------\n");
+    flood();
     print();
 }
