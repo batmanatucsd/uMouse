@@ -1,4 +1,5 @@
 #include "mouse.h"
+#include "angle.h"
 
 /*****************************************************************************/
 // Global Variables
@@ -23,10 +24,7 @@ int main(void)
   ENCODER_Configuration();
   MPU6050_I2C_Init();
   MPU6050_Initialize();
-  Angle_SetInitial();
-
-  /*IIC_Configuration();*/
-  /*MPU_Configuration();*/
+  //Angle_SetInitial();
 
   // Only for debug
   USART_Configuration();
@@ -38,8 +36,7 @@ int main(void)
   /*turnMotorOn();*/
   while(1)
   {
-
-    MPU6050_UpdateAngle();
+    Delay_ms(1000);
 
     printf("%ld \r\n", (int16_t)angle[2]);
 
