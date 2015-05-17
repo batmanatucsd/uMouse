@@ -1,10 +1,9 @@
 #include "angle.h"
 #include <math.h>
 
-float accel_scale_fact = 8192;
-float gyro_scale_fact = 65.5;
+float accel_scale_fact = (float)4*g*0.0305;
+float gyro_scale_fact = (float)500*0.0305;
 int time_scale = 5000;
-
 
 int offset[6] = {0};
 float scaled[6];
@@ -93,4 +92,31 @@ void Angle_Update();
 
   TIM6 -> CNT = 0;
   TIM_ITConfig(TIM6, TIM_IT_Update, ENABLE);
+}
+
+void MPU6050_OffsetCal()
+{
+  int16_t raw_data[6];
+  MPU6050_GetRawAccelGyro(raw_data);
+
+  int i;
+
+  offset[0]=raw_data[0];
+  offset[1]=raw_data[1];
+  offset[2]=raw_data[2];
+  offset[3]=raw_data[3];
+  offset[4]=raw_data[4];
+  offset[5]=raw_data[5];
+
+  for (i=1;i<=1000;i++){
+    MPU6050_ReadData();
+    offset[0]=(offset[0]+raw_data[0])/2;
+    offset[1]=(offset[1]+raw_data[1])/2;
+    offset[2]=(offset[2]+raw_data[2])/2;
+    offset[3]=(offset[3]+raw_data[3])/2;
+    offset[4]=(offset[4]+raw_data[4])/2;
+    offset[5]=(offset[5]+raw_data[5])/2;
+  }
+
+  offset[2]=offset[2]-(float)g*1000/accel_scale_fact;
 }

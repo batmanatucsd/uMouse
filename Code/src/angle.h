@@ -5,7 +5,8 @@
 #include "MPU6050.h"
 #define Filter_gain 0.95
 #define rad2degree 57.3
-#define dt 20;
+#define dt 20
+#define g 9.81
 
 void Angle_Set();
 void Angle_Update();
