@@ -92,8 +92,6 @@ int main(void)
         GPIO_SetBits(GPIOC, YELLOW);
 
         Delay_us(100);
-      printf("  sensor reading: %u         %u        %u        %u\r\n",
-            sensor_buffers[3], sensor_buffers[2], sensor_buffers[1], sensor_buffers[0]);
         /*Free our mouse*/
         /*if(sensor_buffers[R_IR] >= 450) {*/
           /*Delay_us(10000);*/
@@ -113,8 +111,10 @@ int main(void)
     
     /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
     /*printf("                                                  %u              %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
-    /*printf("                                                    %u      %u      %u\r\n", OFFSET, LEFTWALL_TARGET, RIGHTWALL_TARGET);*/
+    printf("  sensor reading: %u         %u        %u        %u\r\n",
+          sensor_buffers[3], sensor_buffers[2], sensor_buffers[1], sensor_buffers[0]);
 
+    /*printf("                                                    %u      %u      %u\r\n", OFFSET, LEFTWALL_TARGET, RIGHTWALL_TARGET);*/
             /*sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);*/
             /*ADC1->JDR1, ADC1->JDR2, ADC1->JDR3, ADC1->JDR4);*/
             /*ADC1->JOFR1, ADC1->JOFR2, ADC1->JOFR3, ADC1->JOFR4);*/
