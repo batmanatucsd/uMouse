@@ -438,120 +438,35 @@ void update(uint16_t row, uint16_t col)
 	}
 }
 
-/*****************************************************************************/
-// print(uint16_t m):
-// 		Print out the cell, with the mouse location designated with a carrot
-// 		sign pointing in direction it faces
-/*****************************************************************************/
-void print() {
-
-	for (uint16_t row = 0; row < 16; row++)
-	{
-		// North wall
-		for (uint16_t col = 0; col < 16; col++)
-		{
-			printf("+%s", maze[row][col] & NORTH_WALL?
-				"---": "   ");
-		}
-		printf("+\n");
-
-		for (uint16_t col = 0; col < 16; col++)
-		{
-			printf("%s", maze[row][col] & WEST_WALL?
-				"|": " ");
-
-			// Location direction
-			if (row == (location & ROW) >> 4 &&
-				col == (location & COL))
-			{
-				switch (direction)
-				{
-					case 0x0: printf("^");
-								break;
-					case 0x1: printf(">");
-								break;
-					case 0x2: printf("v");
-								break;
-					case 0x3: printf("<");
-				}
-			}
-			else if (maze[row][col] & VISITED)
-			{
-				printf("*");
-			}
-			else
-			{
-				printf(" ");
-			}
-
-			// Print 2 digits
-			printf("%2d", (maze[row][col] & DIST) % 100);
-		}
-
-		printf("%s\n", maze[row][15] & EAST_WALL?
-			"|": " ");
-	}
-
-	// South wall
-	for (uint16_t col = 0; col < 16; col++)
-	{
-		printf("+%s", maze[15][col] & SOUTH_WALL?
-			"---": "   ");
-	}
-	printf("+\n");
-}
-
-void debug()
-{
-	print();
-/*	printf("location is: %d, %d\n", (location & ROW) >> 4, (location & COL));
-	printf("direction is: %d\n", direction);
-	uint16_t tile = maze[(location & ROW) >> 4][location & COL];
-	printf("north: %d, east: %d, south: %d, west: %d\n", tile & NORTH_WALL, tile & EAST_WALL, tile & SOUTH_WALL, tile & WEST_WALL);
-*/}
-
 int main() {
 
 	// Initialize maze and mouse location
-	char name[99999];
-    uint8_t tmpLoc, tmpDir;
+	uint8_t tmpLoc, tmpDir;
 	setup(0xf0, 0, 1);
 	setupTest(0xf0, 0);
 
-	printf("Maze in mouse memory: \n");
-	print();
 
 	// While location is not in one of the endpoint cells
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
-
-	  	printf("Press RETURN to contine");
-	    fgets(name, sizeof(name), stdin);
-
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
 			--stackptr;
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 		}
-        tmpLoc = location;
-        tmpDir = direction;
+        	tmpLoc = location;
+        	tmpDir = direction;
 		turn();
 		move('m');
-		debug();
 	}
-	print();
 
 	/* Going from center->back */
 	setup(location, direction, 2);
 
 	while (location != 0xf0)
 	{
-
-	  	printf("Press RETURN to contine");
-	    fgets(name, sizeof(name), stdin);
-
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
@@ -560,7 +475,6 @@ int main() {
 		}
 		turn();
 		move('m');
-		debug();
 	}
 	print();
 
@@ -573,9 +487,6 @@ int main() {
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
-	  	printf("Press RETURN to contine");
-	    fgets(name, sizeof(name), stdin);
-
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
@@ -584,7 +495,6 @@ int main() {
 		}
 		turn();
 		move('f');
-		debug();
 	}
 	print();
 
@@ -595,10 +505,6 @@ int main() {
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
-	  	printf("Press RETURN to contine");
-	    fgets(name, sizeof(name), stdin);
 		moveFast();
-		print();
 	}
-	print();
 }

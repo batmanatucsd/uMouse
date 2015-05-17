@@ -41,4 +41,3 @@ void actualTurn(uint8_t prev, uint8_t next);
 void move(uint8_t flood);
 void moveFast();
 void update(uint16_t row, uint16_t col);
-void print();
