@@ -1,4 +1,8 @@
-#include <stdint.h>
+#ifndef _FLOODFILL_H_
+#define _FLOODFILL_H_
+
+#include "stm32f10x.h"
+
 
 /*****************************************************************************/
 // Globals
@@ -41,3 +45,5 @@ void actualTurn(uint8_t prev, uint8_t next);
 void move(uint8_t flood);
 void moveFast();
 void update(uint16_t row, uint16_t col);
+
+#endif

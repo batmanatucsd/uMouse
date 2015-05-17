@@ -1,12 +1,13 @@
 #include "floodfill.h"
 #include "mouse.h"
-#include "testmaze.h"
+//#include "testmaze.h"
 
+uint16_t testmaze[16][16];
 /*****************************************************************************/
 // setup(uint8_t loc, uint8_t dist, uint8_t back):
 // 		Initialize 16x16 maze using 2D array, assumption that no walls exist
 /*****************************************************************************/
-void setup(uint8_t loc, uint8_t dist, uint8_t step) 
+void setup(uint8_t loc, uint8_t dist, uint8_t step)
 {
 
 	// Initialize maze
@@ -49,13 +50,13 @@ void setup(uint8_t loc, uint8_t dist, uint8_t step)
 // 		Pre-fill cell with values that determine its distance from the center.
 // 		Initially assumes a wall-less maze.
 /*****************************************************************************/
-uint16_t init(uint16_t row, uint16_t col) 
-{	
+uint16_t init(uint16_t row, uint16_t col)
+{
 	// 2nd and 4th quadrant
 	if(row > 0x07) {
 		row = 0x07 - (row - 0x08);
 	}
-	
+
 	// 3rd and 4th quadrant
 	if(col > 0x07) {
 		col = 0x07 - (col - 0x08);
@@ -64,14 +65,14 @@ uint16_t init(uint16_t row, uint16_t col)
 	return 0x0e - col - row;
 }
 
-uint16_t initBack(uint16_t row, uint16_t col) 
-{	
+uint16_t initBack(uint16_t row, uint16_t col)
+{
 
 	return (col + (0x0f - row));
 }
 
-uint16_t initFlood(uint16_t row, uint16_t col) 
-{	
+uint16_t initFlood(uint16_t row, uint16_t col)
+{
 	return ((row == 7 && col == 7) ||
             (row == 7 && col == 8) ||
             (row == 8 && col == 7) ||
@@ -103,7 +104,7 @@ void lookAhead()
 		}
 
 		// if north cell has north wall, and there are at least 3 cells ahead
-		// set south wall on cell above north wall 
+		// set south wall on cell above north wall
 		if (maze[row - 1][col] & NORTH_WALL && row - 2 >= 0)
 		{
 			maze[row - 2][col] |= SOUTH_WALL;
@@ -126,21 +127,21 @@ void lookAhead()
 
 		// if east cell has east wall, and column is at least second clumn,
 		// set the west wall of cell to right of east cell
-		if (maze[row][col + 1] & EAST_WALL && col + 2 <= 15) 
+		if (maze[row][col + 1] & EAST_WALL && col + 2 <= 15)
 		{
 			maze[row][col + 2] |= WEST_WALL;
 		}
 
 		// if east cell has north wall, and not topmost row
 		// set south wall of cell above east wall
-		if (maze[row][col + 1] & NORTH_WALL && row - 1 >= 0) 
+		if (maze[row][col + 1] & NORTH_WALL && row - 1 >= 0)
 		{
 			maze[row - 1][col + 1] |= SOUTH_WALL;
 		}
 
 		// if east cell has south wall, and it is not bottom row,
 		// set north wall on cell below east cell
-		if (maze[row][col + 1] & SOUTH_WALL && row + 1 <= 15) 
+		if (maze[row][col + 1] & SOUTH_WALL && row + 1 <= 15)
 		{
 			maze[row + 1][col + 1] |= NORTH_WALL;
 		}
@@ -152,10 +153,10 @@ void lookAhead()
         // TODO: change to sensor readings
 		maze[row + 1][col] |= testmaze[row + 1][col];
         // TODO
-		
+
 		// if south cell has east wall, and column is at least second column,
 		// set the west wall of cell to the right of east cell
-		if (maze[row + 1][col] & EAST_WALL && col + 1 <= 15) 
+		if (maze[row + 1][col] & EAST_WALL && col + 1 <= 15)
 		{
 			maze[row + 1][col + 1] |= WEST_WALL;
 		}
@@ -166,11 +167,11 @@ void lookAhead()
 		{
 			maze[row + 1][col - 1] |= EAST_WALL;
 		}
-		
+
 
 		// if south cell has south wall, and it is not bottom row,
 		// set north wall on cell below south cell
-		if (maze[row + 1][col] & SOUTH_WALL && row + 2 <= 15) 
+		if (maze[row + 1][col] & SOUTH_WALL && row + 2 <= 15)
 		{
 			maze[row + 2][col] |= NORTH_WALL;
 		}
@@ -183,17 +184,17 @@ void lookAhead()
 		maze[row][col - 1] |= testmaze[row][col - 1];
         // TODO
 
-		if (maze[row][col - 1] & WEST_WALL && col - 2 >= 0) 
+		if (maze[row][col - 1] & WEST_WALL && col - 2 >= 0)
 		{
 			maze[row][col - 2] |= EAST_WALL;
 		}
 
-		if (maze[row][col - 1] & NORTH_WALL && row - 1 >= 0) 
+		if (maze[row][col - 1] & NORTH_WALL && row - 1 >= 0)
 		{
 			maze[row - 1][col - 1] |= SOUTH_WALL;
 		}
 
-		if (maze[row][col - 1] & SOUTH_WALL && row + 1 <= 15) 
+		if (maze[row][col - 1] & SOUTH_WALL && row + 1 <= 15)
 		{
 			maze[row + 1][col - 1] |= NORTH_WALL;
 		}
@@ -438,12 +439,17 @@ void update(uint16_t row, uint16_t col)
 	}
 }
 
-int main() {
+void print()
+{
+
+}
+
+int flood_main() {
 
 	// Initialize maze and mouse location
 	uint8_t tmpLoc, tmpDir;
 	setup(0xf0, 0, 1);
-	setupTest(0xf0, 0);
+	//setupTest(0xf0, 0);
 
 
 	// While location is not in one of the endpoint cells
@@ -482,7 +488,7 @@ int main() {
     setup(tmpLoc, tmpDir, 3);
     location = tmpLoc;
     direction = tmpDir;
-    
+
     // While location is not in one of the endpoint cells
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
