@@ -192,10 +192,10 @@ void lookAhead()
 }
 
 /*****************************************************************************/
-// move():
+// move(unsigned char flood):
 //		Move to the cell closest to the center
 /*****************************************************************************/
-void move()
+void move(unsigned char flood)
 {
 	unsigned char row = (location & ROW) >> 4;
 	unsigned char col = location & COL;
@@ -205,6 +205,67 @@ void move()
 	else if (direction == 3 && !(maze[row][col] & WEST_WALL)) --col;
 	location = (row << 4) | col;
 	lookAhead();
+    if (flood != 'f')
+    {
+        maze[row][col] |= VISITED;
+        // Actual move
+    }
+}
+
+void moveFast() {
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
+	unsigned char priority = 1;
+
+	if ((maze[row-1][col] & VISITED) && (maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1)
+	{
+		direction = 0;
+		--row;
+		priority = 0;
+	}
+	else if ((maze[row][col+1] & VISITED) && (maze[row][col+1] & DIST) == (maze[row][col] & DIST) - 1)
+	{
+		direction = 1;
+		++col;
+		priority = 0;
+	}
+	else if ((maze[row+1][col] & VISITED) && (maze[row+1][col] & DIST) == (maze[row][col] & DIST) - 1)
+	{
+		direction = 2;
+		++row;
+		priority = 0;
+	}
+	else if ((maze[row][col-1] & VISITED) && (maze[row][col-1] & DIST) == (maze[row][col] & DIST) - 1)
+	{
+		direction = 3;
+		--col;
+		priority = 0;
+	}
+
+	if (priority)
+	{
+		if ((maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1)
+		{
+			direction = 0;
+			--row;
+		}
+		else if ((maze[row][col+1] & DIST) == (maze[row][col] & DIST) - 1)
+		{
+			direction = 1;
+			++col;
+		}
+		else if ((maze[row+1][col] & DIST) == (maze[row][col] & DIST) - 1)
+		{
+			direction = 2;
+			++row;
+		}
+		else if ((maze[row][col-1] & DIST) == (maze[row][col] & DIST) - 1)
+		{
+			direction = 3;
+			--col;
+		}
+	}
+	location = (row << 4) | col;
 }
 
 void moveFast() {
@@ -281,6 +342,8 @@ void turn()
 void update(unsigned short row, unsigned short col)
 {
 	unsigned short tile = maze[row][col];
+
+    if ((tile & DIST) == 0) return;
 
 	// Minimum open neighbor
 	unsigned char min = 255;
@@ -418,16 +481,17 @@ void print() {
 void debug()
 {
 	print();
-/*	printf("location is: %d, %d\n", (location & ROW) >> 4, (location & COL));
+	printf("location is: %d, %d\n", (location & ROW) >> 4, (location & COL));
 	printf("direction is: %d\n", direction);
 	unsigned short tile = maze[(location & ROW) >> 4][location & COL];
-	printf("north: %d, east: %d, south: %d, west: %d\n", tile & NORTH_WALL, tile & EAST_WALL, tile & SOUTH_WALL, tile & WEST_WALL); */
+	printf("north: %d, east: %d, south: %d, west: %d\n", tile & NORTH_WALL, tile & EAST_WALL, tile & SOUTH_WALL, tile & WEST_WALL);
 }
 
 int main() {
 
 	// Initialize maze and mouse location
 	char name[99999];
+    unsigned char tmpLoc, tmpDir;
 	setup(0xf0, 0, 1);
 	setupTest(0xf0, 0);
 
@@ -448,17 +512,16 @@ int main() {
 			--stackptr;
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 		}
+        tmpLoc = location;
+        tmpDir = direction;
 		turn();
-		move();
+		move('m');
 		//debug();
 	}
 	print();
 
 	/* Going from center->back */
-    unsigned short tmpLoc = location;
-    unsigned char tmpDir = direction;
 	setup(location, direction, 2);
-	print();	
 
 	while (location != 0xf0)
 	{
@@ -473,7 +536,7 @@ int main() {
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 		}
 		turn();
-		move();
+		move('m');
 		//debug();
 	}
 	print();
@@ -482,15 +545,13 @@ int main() {
     setup(tmpLoc, tmpDir, 3);
     location = tmpLoc;
     direction = tmpDir;
-    print();
     
     // While location is not in one of the endpoint cells
-	while (location != 0xf0)
+	while (location != 0x77 && location != 0x78 &&
+		location != 0x87 && location != 0x88)
 	{
-
 	  	printf("Press RETURN to contine");
 	    fgets(name, sizeof(name), stdin);
-        print();
 
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
@@ -499,8 +560,22 @@ int main() {
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 		}
 		turn();
-		move();
-		//debug();
+		move('f');
+		debug();
+	}
+	print();
+
+    location = 0xf0;
+    direction = 0;
+
+	// While location is not in one of the endpoint cells
+	while (location != 0x77 && location != 0x78 &&
+		location != 0x87 && location != 0x88)
+	{
+	  	printf("Press RETURN to contine");
+	    fgets(name, sizeof(name), stdin);
+		moveFast();
+		print();
 	}
 	print();
 }
