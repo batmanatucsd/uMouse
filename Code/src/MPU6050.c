@@ -49,6 +49,10 @@ void MPU6050_Initialize()
     MPU6050_SetFullScaleGyroRange(MPU6050_GYRO_FS_500);
     MPU6050_SetFullScaleAccelRange(MPU6050_ACCEL_FS_4);
     MPU6050_SetSleepModeStatus(DISABLE);
+
+    //set output to 1khz then divide it by 5
+    MPU6050_I2C_ByteWrite(MPU6050_DEFAULT_ADDRESS, &MPU6050_DLPF_BW_188, MPU6050_RA_CONFIG);
+    MPU6050_WriteBits(MPU6050_DEFAULT_ADDRESS, MPU6050_RA_SMPLRT_DIV, 7, 8, 5 - 1);
 }
 
 /** Verify the I2C connection.
@@ -366,9 +370,9 @@ void MPU6050_I2C_ByteWrite(u8 slaveAddr, u8* pBuffer, u8 writeAddr)
     while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_MODE_SELECT));
 
     /* Send MPU6050 address for write */
-    //I2C_Send7bitAddress(MPU6050_I2C, slaveAddr, I2C_Direction_Transmitter);
+    I2C_Send7bitAddress(MPU6050_I2C, slaveAddr, I2C_Direction_Transmitter);
 
-    I2C_SendData(MPU6050_I2C, slaveAddr | 0);
+    //I2C_SendData(MPU6050_I2C, slaveAddr | 0);
 
     /* Test on EV6 and clear it */
     while (!I2C_CheckEvent(MPU6050_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));

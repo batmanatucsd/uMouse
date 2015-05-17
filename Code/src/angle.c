@@ -12,6 +12,30 @@ float angle[3] = {0};
 
 uint16_t last_count;
 
+//update angle in milli degree / second
+void Angle_simple()
+{
+  uint16_t current_count = TIM6 -> CNT;
+  uint16_t count_diff = current_count - last_count;
+
+  int16_t raw_data[6];
+  MPU6050_GetRawAccelGyro(raw_data);
+
+  if(count_diff > dt * 5)
+  {
+    scaled[5] = (float)(raw_data[5]-offset[5])*gyro_scale_fact/time_scale;
+    angle[5] += scaled[5]*count_diff;
+  }
+
+
+  last_count = current_count;
+  if (last_count > 0xAAAA)
+  {
+    TIM6 -> CNT = (TIM6 -> CNT) - last_count;
+    last_count = 0;
+  }
+}
+
 void Angle_Set()
 {
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
@@ -24,28 +48,44 @@ void Angle_Set()
 
   TIM_TimeBaseStructure.TIM_Prescaler = 14400 -1;  //5kHz
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseStructure.TIM_Period = 100;    //20ms
+  TIM_TimeBaseStructure.TIM_Period = 0xFFFF;    //20ms
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 
   TIM_TimeBaseInit(TIM6, &TIM_TimeBaseStructure);
 
-  TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
-
-  NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-
-  TIM_ITConfig(TIM6, TIM_IT_Update, ENABLE);
+  // TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
+  //
+  // NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn;
+  // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  // NVIC_Init(&NVIC_InitStructure);
+  //
+  // TIM_ITConfig(TIM6, TIM_IT_Update, ENABLE);
 
   TIM_Cmd(TIM6, ENABLE);
 }
 
-void TIM6_IRQHandler()
+// void TIM6_IRQHandler()
+// {
+//   Angle_Update();
+// }
+
+void Angle_Handler()
 {
-  Angle_Update();
+  uint16_t current_count = TIM6 -> CNT;
+  if(current_count - last_count > dt * 5)
+  {
+    Angle_Update();
+  }
+
+  last_count = current_count;
+  if (last_count > 0xAAAA)
+  {
+    TIM6 -> CNT = (TIM6 -> CNT) - last_count;
+    last_count = TIM6 -> CNT;
+  }
 }
 
 void Angle_ReadRaw()
@@ -75,7 +115,7 @@ float simu_sqrt(float a)
 
 void Angle_Update();
 {
-  TIM_ITConfig(TIM6, TIM_IT_Update, DISABLE);
+  //TIM_ITConfig(TIM6, TIM_IT_Update, DISABLE);
   Angle_ReadRaw();
 
   tangle[3] = (scaled[3]*((float)dt/time_scale)+angle[0]);
@@ -90,8 +130,8 @@ void Angle_Update();
   angle[1] = Filter_gain*tangle[4]+(1-Filter_gain)*tangle[1];
   angle[2] = Filter_gain*tangle[5]+(1-Filter_gain)*tangle[2];
 
-  TIM6 -> CNT = 0;
-  TIM_ITConfig(TIM6, TIM_IT_Update, ENABLE);
+  //TIM6 -> CNT = 0;
+  //TIM_ITConfig(TIM6, TIM_IT_Update, ENABLE);
 }
 
 void MPU6050_OffsetCal()
