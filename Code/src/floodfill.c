@@ -9,11 +9,12 @@ uint16_t testmaze[16][16];
 /*****************************************************************************/
 void setup(uint8_t loc, uint8_t dist, uint8_t step)
 {
+	uint16_t row, col,i;
 
 	// Initialize maze
-	for (uint16_t row = 0; row < 16; row++)
+	for (row = 0; row < 16; row++)
 	{
-		for (uint16_t col = 0; col < 16; col++)
+		for (col = 0; col < 16; col++)
 		{
             maze[row][col] &= 0xff00;
             switch(step)
@@ -30,7 +31,7 @@ void setup(uint8_t loc, uint8_t dist, uint8_t step)
             }
 		}
 	}
-	for (uint16_t i = 0; i < 16; i++)
+	for (i = 0; i < 16; i++)
 	{
 		maze[0][i] |= NORTH_WALL;
 		maze[i][0] |= WEST_WALL;

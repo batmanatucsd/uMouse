@@ -22,9 +22,9 @@ int main(void)
   ADC_Configuration();
   PWM_Configuration();
   ENCODER_Configuration();
-  MPU6050_I2C_Init();
-  MPU6050_Initialize();
-  Angle_Set();
+//  MPU6050_I2C_Init();
+//  MPU6050_Initialize();
+//  Angle_Set();
 
   // Only for debug
   USART_Configuration();
@@ -43,15 +43,15 @@ int main(void)
 
         switch(mouse_status) {
           case FORWARD:
-            /*ADC_Read(1, 0, 0, 1);*/
+           /*ADC_Read(1, 0, 0, 1);*/
             /*if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120)*/
               /*stopFrontWall();*/
             /*else {  // Do PID when moving forward*/
-              change_LeftMotorSpeed(175);
-              change_RightMotorSpeed(175);
-              pid();
+          //    change_LeftMotorSpeed(175);
+            //  change_RightMotorSpeed(175);
+            //  pid();
             /*}*/
-
+/*
             Delay_us(100);
             break;
 
@@ -66,19 +66,141 @@ int main(void)
             Delay_us(100);
             mouse_status = FORWARD;
             break;
-        }
+        
+*/
 
-        break;
+/*****************************************CELL BY CELL MOVEMENT****************************/
+
+	
+
+	
+	
+	L_ENC->CNT=0;
+	R_ENC->CNT=0;
+
+	while(L_ENC->CNT < 6005 && R_ENC->CNT < 6005){
+		change_LeftMotorSpeed(80);
+		change_RightMotorSpeed(80);
+		pid();
+		
+		if(L_ENC->CNT >3000 && L_ENC->CNT<4000){
+			change_LeftMotorSpeed(60);
+			change_RightMotorSpeed(60);
+			pid();
+		}
+
+		if(L_ENC->CNT>=4000 && L_ENC->CNT<5000){
+			change_LeftMotorSpeed(40);
+			change_RightMotorSpeed(40);
+			pid();
+		}
+	
+	}
+		change_LeftMotorSpeed(0);
+		change_RightMotorSpeed(0);
+
+	if(sensor_buffers[L_IR]>150){
+		//calibration
+		while(){
+			
+		}
+	}
+	
+	Delay_us(1000000);
+	L_ENC->CNT=0;
+	R_ENC->CNT=0;
+
+
+/******************************LEFT 90 TURN******************************************/
+/*	ADC_Read(1,0,0,1);	
+
+	if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120){
+		stopFrontWall();
+		
+		if(sensor_buffers[L_IR]>400){
+			
+			change_LeftMotorSpeed(0);
+			change_RightMotorSpeed(0);	
+	
+			Delay_us(1000);
+			leftTurn();
+			Delay_us(10000);			
+
+		}
+	}
+	else{
+		change_LeftMotorSpeed(150);
+		change_RightMotorSpeed(150);
+		pid();
+	
+	}
+*/
+
+
+/*******************************TEST SMOOTH RIGHT***********************************/
+/*	ADC_Read(1,1,1,1);
+
+	change_LeftMotorSpeed(150);
+	change_RightMotorSpeed(150);
+	pid();
+	rightTurn();
+*/	
+
+      break;
+  }
 
       case TEST:
-        /*rightTurn();*/
-        Delay_us(1000000);
-        Delay_us(1000000);
-        /*leftTurn();*/
-        fullTurn();
-        /*change_LeftMotorSpeed(120);*/
-        /*change_RightMotorSpeed(120);*/
-        /*stopFrontWall(); */
+
+
+/******************************straight, stop, right, etc *****************/
+/*
+	ADC_Read(1,0,0,1);	
+
+	if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120){
+		stopFrontWall();
+		
+		if(sensor_buffers[L_IR]>400){
+			
+			change_LeftMotorSpeed(0);
+			change_RightMotorSpeed(0);	
+	
+			Delay_us(1000);
+			rightTurn();
+			Delay_us(10000);			
+
+		}
+	}
+	else{
+		change_LeftMotorSpeed(150);
+		change_RightMotorSpeed(150);
+		pid();
+	}
+
+*/
+/*******************************straight, stop, 180, go ********************/
+/*
+	ADC_Read(1,0,0,1);
+	if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120){
+		stopFrontWall();
+
+		if(sensor_buffers[L_IR]>590){
+    	
+			Delay_us(1000);
+			fullTurn();
+			Delay_us(10000);
+		}
+	}
+	else{
+		change_LeftMotorSpeed(150);
+		change_RightMotorSpeed(150);
+		pid();
+	}
+
+*/
+
+       
+		
+
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);
@@ -95,12 +217,10 @@ int main(void)
         printf("  sensor reading: %u         %u        %u        %u\r\n",
               sensor_buffers[3], sensor_buffers[2], sensor_buffers[1], sensor_buffers[0]);
         /*Free our mouse*/
-        /*if(sensor_buffers[R_IR] >= 450) {*/
-          /*Delay_us(10000);*/
-          /*mouse_state = GO;*/
-        /*}*/
-
-        /*Calibrate*/
+        if(sensor_buffers[R_IR] >= 450) {
+          Delay_us(10000);
+          mouse_state = GO;
+        }
         /*if(sensor_buffers[L_IR] >= 450) {*/
           /*Delay_us(10000);*/
           /*calibrate();*/
@@ -113,9 +233,9 @@ int main(void)
     
     /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
     /*printf("                                                  %u              %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
-
-    /*printf("                                                    %u      %u      %u\r\n", OFFSET, LEFTWALL_TARGET, RIGHTWALL_TARGET);*/
-            /*sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);*/
+ADC_Read(1,1,1,1);
+    printf("                                                    %u      %u      %u\r\n",/* OFFSET, LEFTWALL_TARGET, RIGHTWALL_TARGET);*/
+            sensor_readings[0], sensor_readings[1], sensor_readings[2], sensor_readings[3]);
             /*ADC1->JDR1, ADC1->JDR2, ADC1->JDR3, ADC1->JDR4);*/
             /*ADC1->JOFR1, ADC1->JOFR2, ADC1->JOFR3, ADC1->JOFR4);*/
     /*printf("%u            %u\r\n", TIM8->CNT, TIM4->CNT);*/

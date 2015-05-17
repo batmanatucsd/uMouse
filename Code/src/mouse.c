@@ -128,26 +128,38 @@ void rightBackward(void)/*{{{*/
 /*****************************************************************************/
 void rightTurn(void)/*{{{*/
 {
-  
+  /**********************************90 TURN*********************************/
   // reset encoder counts
-  L_ENC->CNT = 0; 
-  R_ENC->CNT = 0; 
+//  L_ENC->CNT = 0; 
+//  R_ENC->CNT = 0; 
 
-  // set motor directions and speed
-  /*leftForward();*/
-  /*rightBackward();*/
-  change_LeftMotorSpeed(250);
-  change_RightMotorSpeed(-250);
+//  change_LeftMotorSpeed(250);
+//  change_RightMotorSpeed(-250);
 
-  while(L_ENC->CNT < 2125); // wait for encoder counts
+//  while(L_ENC->CNT < 2450); // wait for encoder counts
 
   // stop motors
-  change_LeftMotorSpeed(0);
-  change_RightMotorSpeed(0);
+//  change_LeftMotorSpeed(0);
+//  change_RightMotorSpeed(0);
 
   // reset encoder counts
-  L_ENC->CNT = 0; 
-  R_ENC->CNT = 0; 
+//  L_ENC->CNT = 0; 
+//  R_ENC->CNT = 0;
+
+/********************************SMOOTH RIGHT TURN*************************/
+/*  ADC_Read(1,1,1,1);
+  while(sensor_buffers[R_IR]<140){
+	
+	//turn left wheel more AND faster
+	while(L_ENC->CNT<5000){
+		if(sensor_buffers[R_IR]>140)
+			break;
+		change_LeftMotorSpeed(255);
+	}
+  }
+
+*/
+ 
 }/*}}}*/
 
 void leftTurn(void)/*{{{*/
@@ -162,7 +174,7 @@ void leftTurn(void)/*{{{*/
   change_RightMotorSpeed(250);
   change_LeftMotorSpeed(-250);
 
-  while(R_ENC->CNT < 2100); // wait for encoder counts
+  while(R_ENC->CNT < 2450); // wait for encoder counts
 
   // stop motors
   change_LeftMotorSpeed(0);
@@ -184,7 +196,7 @@ void fullTurn(void)/*{{{*/
   change_LeftMotorSpeed(-250);
 
   /*while(R_ENC->CNT < 4250); // wait for encoder counts*/
-  while(R_ENC->CNT < 4350); // wait for encoder counts
+  while(R_ENC->CNT < 5250); // wait for encoder counts
 
   // stop motors
   change_LeftMotorSpeed(0);
@@ -199,25 +211,21 @@ void fullTurn(void)/*{{{*/
 /*****************************************************************************/
 // Stop
 /*****************************************************************************/
-void stopFrontWall(void)/*{{{*/
-{
+void stopFrontWall(void){
   ADC_Read(1, 0, 0, 1);
 
-  if(sensor_buffers[L_IR] >= 250 && sensor_buffers[R_IR] >= 250) { 
+  if(sensor_buffers[L_IR] >= 120 && sensor_buffers[L_IR] < 350) { 
     // Stop the bot when it is too close
-    change_LeftMotorSpeed(0);
-    change_RightMotorSpeed(0);
-    Delay_us(100);
-
-  } else if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120) {
-    // Gradually slow down
     change_LeftMotorSpeed(430 - (0.1661*sensor_buffers[L_IR] + 358.57));
     change_RightMotorSpeed(400 - (0.1854*sensor_buffers[R_IR] + 326.2));
-    Delay_us(50);
   } 
-  
+  else{
+    // Gradually slow down 
+    change_LeftMotorSpeed(500-sensor_buffers[L_IR]);
+    change_RightMotorSpeed(400-sensor_buffers[R_IR]);
 
-}/*}}}*/
+  } 
+}
 
 
 
