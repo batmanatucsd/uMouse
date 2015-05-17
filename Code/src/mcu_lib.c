@@ -442,7 +442,7 @@ void NVIC_Configuration(void)/*{{{*/
   /*NVIC_Init(&NVIC_InitStructure);*/
 
   /* Enable DMA1 channel IRQ Channel */
-  //NVIC_InitStructure.NVIC_IRQChannel = DMA2_Channel4_5_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Channel4_5_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
