@@ -10,5 +10,7 @@
 
 void Angle_Set();
 void Angle_Update();
+void Angle_Simple();
+void MPU6050_OffsetCal();
 
 #endif

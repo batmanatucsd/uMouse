@@ -13,7 +13,7 @@ float angle[3] = {0};
 uint16_t last_count;
 
 //update angle in milli degree / second
-void Angle_simple()
+void Angle_Simple()
 {
   uint16_t current_count = TIM6 -> CNT;
   uint16_t count_diff = current_count - last_count;
@@ -24,7 +24,7 @@ void Angle_simple()
   if(count_diff > dt * 5)
   {
     scaled[5] = (float)(raw_data[5]-offset[5])*gyro_scale_fact/time_scale;
-    angle[5] += scaled[5]*count_diff;
+    angle[2] += scaled[5]*count_diff;
   }
 
 
@@ -39,7 +39,6 @@ void Angle_simple()
 void Angle_Set()
 {
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-  NVIC_InitTypeDef NVIC_InitStructure;
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
 
@@ -55,6 +54,8 @@ void Angle_Set()
   TIM_TimeBaseInit(TIM6, &TIM_TimeBaseStructure);
 
   // TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
+  //
+  // NVIC_InitTypeDef NVIC_InitStructure;
   //
   // NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn;
   // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
@@ -113,7 +114,7 @@ float simu_sqrt(float a)
   return (float) x;
 }
 
-void Angle_Update();
+void Angle_Update()
 {
   //TIM_ITConfig(TIM6, TIM_IT_Update, DISABLE);
   Angle_ReadRaw();
@@ -136,10 +137,9 @@ void Angle_Update();
 
 void MPU6050_OffsetCal()
 {
+  int i;
   int16_t raw_data[6];
   MPU6050_GetRawAccelGyro(raw_data);
-
-  int i;
 
   offset[0]=raw_data[0];
   offset[1]=raw_data[1];
@@ -148,8 +148,8 @@ void MPU6050_OffsetCal()
   offset[4]=raw_data[4];
   offset[5]=raw_data[5];
 
-  for (i=1;i<=1000;i++){
-    MPU6050_ReadData();
+  for (i=1;i<=200;i++){
+    MPU6050_GetRawAccelGyro(raw_data);
     offset[0]=(offset[0]+raw_data[0])/2;
     offset[1]=(offset[1]+raw_data[1])/2;
     offset[2]=(offset[2]+raw_data[2])/2;
