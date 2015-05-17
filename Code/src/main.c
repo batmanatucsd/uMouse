@@ -21,21 +21,25 @@ int main(void)
   // MCU Configurations
   RCC_Configuration();
   GPIO_Configuration();
-  DMA_Configuration();
+  //DMA_Configuration();
   NVIC_Configuration();
 
-  ADC_Configuration();
+
+
+  //ADC_Configuration();
   PWM_Configuration();
   ENCODER_Configuration();
 //  MPU6050_I2C_Init();
+
+// Only for debug
+USART_Configuration();
 ANBT_I2C_Configuration();
   AnBT_DMP_MPU6050_Init();
   //MPU6050_Initialize();
 //  Angle_Set();
 //  Angle_OffsetCal();
 
-  // Only for debug
-  USART_Configuration();
+
 
   mouse_state = STOP;
   mouse_status = FORWARD;
@@ -46,8 +50,8 @@ ANBT_I2C_Configuration();
     //Delay_us(10000);
 
     //Angle_Handler();
-    MPU6050_Pose();            //取数据和解算欧拉角
-	  printf("%ld",(int)(10*Yaw));//上位机协议输出
+    MPU6050_Pose();
+    printf("%ld \r\n",(int)(10*Yaw));
     printf("test");
 
     //printf("%ld %ld\r\n", (int16_t)angle[2], raw_data[5] - offset[5]);
@@ -112,80 +116,80 @@ ANBT_I2C_Configuration();
 //=======
 //>>>>>>> 107a141bd4e8dd1b9798ba50d15093f2c40d1dc1
 
-    listen_for_button();
-
-    switch(mouse_state) {
-      case GO:
-
-        switch(mouse_status) {
-          case FORWARD:
-            /*ADC_Read(1, 0, 0, 1);*/
-            /*if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120)*/
-              /*stopFrontWall();*/
-            /*else {  // Do PID when moving forward*/
-              change_LeftMotorSpeed(175);
-              change_RightMotorSpeed(175);
-              pid();
-            /*}*/
-
-            Delay_us(100);
-            break;
-
-          case TURN90:
-            Delay_us(1000000);
-            Delay_us(1000000);
-            rightTurn();
-            break;
-
-          case TURN180:
-            fullTurn();
-            Delay_us(100);
-            mouse_status = FORWARD;
-            break;
-        }
-
-        break;
-
-      case TEST:
-        /*rightTurn();*/
-        Delay_us(1000000);
-        Delay_us(1000000);
-        /*leftTurn();*/
-        fullTurn();
-        /*change_LeftMotorSpeed(120);*/
-        /*change_RightMotorSpeed(120);*/
-        /*stopFrontWall(); */
-        GPIO_SetBits(GPIOC, YELLOW);
-        GPIO_SetBits(GPIOC, GREEN);
-        GPIO_ResetBits(GPIOB, RED);
-        break;
-
-      case STOP:
-
-        ADC_Read(1, 1, 1, 1);
-        turnMotorOff();
-        GPIO_SetBits(GPIOB, RED);
-        GPIO_ResetBits(GPIOC, GREEN);
-        GPIO_SetBits(GPIOC, YELLOW);
-
-        printf("  sensor reading: %u         %u        %u        %u\r\n",
-              sensor_buffers[3], sensor_buffers[2], sensor_buffers[1], sensor_buffers[0]);
-        /*Free our mouse*/
-        /*if(sensor_buffers[R_IR] >= 450) {*/
-          /*Delay_us(10000);*/
-          /*mouse_state = GO;*/
-        /*}*/
-
-        /*Calibrate*/
-        /*if(sensor_buffers[L_IR] >= 450) {*/
-          /*Delay_us(10000);*/
-          /*calibrate();*/
-          /*GPIO_SetBits(GPIOC, GREEN);*/
-          /*Delay_us(10000);*/
-        /*}*/
-
-        break;
-    }
+    // listen_for_button();
+    //
+    // switch(mouse_state) {
+    //   case GO:
+    //
+    //     switch(mouse_status) {
+    //       case FORWARD:
+    //         /*ADC_Read(1, 0, 0, 1);*/
+    //         /*if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120)*/
+    //           /*stopFrontWall();*/
+    //         /*else {  // Do PID when moving forward*/
+    //           change_LeftMotorSpeed(175);
+    //           change_RightMotorSpeed(175);
+    //           pid();
+    //         /*}*/
+    //
+    //         Delay_us(100);
+    //         break;
+    //
+    //       case TURN90:
+    //         Delay_us(1000000);
+    //         Delay_us(1000000);
+    //         rightTurn();
+    //         break;
+    //
+    //       case TURN180:
+    //         fullTurn();
+    //         Delay_us(100);
+    //         mouse_status = FORWARD;
+    //         break;
+    //     }
+    //
+    //     break;
+    //
+    //   case TEST:
+    //     /*rightTurn();*/
+    //     Delay_us(1000000);
+    //     Delay_us(1000000);
+    //     /*leftTurn();*/
+    //     fullTurn();
+    //     /*change_LeftMotorSpeed(120);*/
+    //     /*change_RightMotorSpeed(120);*/
+    //     /*stopFrontWall(); */
+    //     GPIO_SetBits(GPIOC, YELLOW);
+    //     GPIO_SetBits(GPIOC, GREEN);
+    //     GPIO_ResetBits(GPIOB, RED);
+    //     break;
+    //
+    //   case STOP:
+    //
+    //     ADC_Read(1, 1, 1, 1);
+    //     turnMotorOff();
+    //     GPIO_SetBits(GPIOB, RED);
+    //     GPIO_ResetBits(GPIOC, GREEN);
+    //     GPIO_SetBits(GPIOC, YELLOW);
+    //
+    //     printf("  sensor reading: %u         %u        %u        %u\r\n",
+    //           sensor_buffers[3], sensor_buffers[2], sensor_buffers[1], sensor_buffers[0]);
+    //     /*Free our mouse*/
+    //     /*if(sensor_buffers[R_IR] >= 450) {*/
+    //       /*Delay_us(10000);*/
+    //       /*mouse_state = GO;*/
+    //     /*}*/
+    //
+    //     /*Calibrate*/
+    //     /*if(sensor_buffers[L_IR] >= 450) {*/
+    //       /*Delay_us(10000);*/
+    //       /*calibrate();*/
+    //       /*GPIO_SetBits(GPIOC, GREEN);*/
+    //       /*Delay_us(10000);*/
+    //     /*}*/
+    //
+    //     break;
+    // }
 
     /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
     /*printf("                                                  %u              %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
