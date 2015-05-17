@@ -52,12 +52,19 @@ ANBT_I2C_Configuration();
   mouse_state = STOP;
   mouse_status = FORWARD;
 
-  /*turnMotorOn();*/
   while(1)
   {
+<<<<<<< HEAD
 
     listen_for_button();
 
+=======
+    printf("test");
+
+    // Listen to button push
+    listen_for_button();
+    
+>>>>>>> 9d75405ce786383eda56455c30c45d4158e3a99b
     switch(mouse_state) {
       case GO:
 
@@ -87,6 +94,7 @@ ANBT_I2C_Configuration();
             mouse_status = FORWARD;
             break;
         
+<<<<<<< HEAD
 */
 
 /*****************************************CELL BY CELL MOVEMENT****************************/
@@ -221,6 +229,27 @@ ANBT_I2C_Configuration();
        
 		
 
+=======
+        GPIO_SetBits(GPIOC, GREEN);
+        GPIO_ResetBits(GPIOB, RED);
+        GPIO_ResetBits(GPIOC, YELLOW);
+        break;
+
+      case TEST:
+        /*leftTurn();*/
+        /*rightTurn();*/
+        /*Delay_us(1000000);*/
+         
+        Delay_us(1000000); 	
+        Delay_us(1000000); 	
+        fullTurn();
+        Delay_us(1000000); 	
+    
+        Delay_us(1000000); 	
+
+        Delay_us(1000000); 	
+ //       stopFrontWall();
+>>>>>>> 9d75405ce786383eda56455c30c45d4158e3a99b
         GPIO_SetBits(GPIOC, YELLOW);
         GPIO_SetBits(GPIOC, GREEN);
         GPIO_ResetBits(GPIOB, RED);
@@ -251,6 +280,12 @@ ANBT_I2C_Configuration();
 
         break;
     }
+<<<<<<< HEAD
+=======
+    
+  
+    /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
+>>>>>>> 9d75405ce786383eda56455c30c45d4158e3a99b
 
 
 >>>>>>> origin/mpu-test
