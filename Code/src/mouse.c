@@ -11,7 +11,7 @@ void delay(volatile int i)/*{{{*/
 void listen_for_button(void)/*{{{*/
 {
   if(GPIO_ReadInputDataBit(GPIOB, BUTTON) != Bit_RESET) {
-    state  next_state;
+    state next_state;
 
     if(mouse_state == STOP) // if the mouse_state is the last state
       next_state = GO;      // change it to the first state

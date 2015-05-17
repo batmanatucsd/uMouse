@@ -13,11 +13,11 @@ __IO uint16_t sensor_readings[4];
 float difference = 0 ;
 
 /*****************************************************************************/
-// pid
+// pid(void)
 //
-// PID code
+// @brief: Calculate pid
 /*****************************************************************************/
-void pid()/*{{{*/
+void pid(void)/*{{{*/
 {
   ADC_Read(0, 1, 1, 0);
   float total;
@@ -31,18 +31,17 @@ void pid()/*{{{*/
   // Calculate errors depending on different cases
   if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD) {
     // *********** BOTH WALLS *********** //
-    last_case = BOTH;
     if(last_case == BOTH)
-      currentError = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
+      currentError = sensor_buffers[LF_IR] - sensor_buffers[RF_IR] - OFFSET;
 
     // Set indicating LED's
     GPIO_SetBits(GPIOC, GREEN); // GREEN
     GPIO_ResetBits(GPIOB, RED);
     GPIO_ResetBits(GPIOC, YELLOW);
+    last_case = BOTH;
 
   } else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] >= RIGHT_THRESHOLD) { 
     // *********** ONLY RIGHT WALL *********** //
-    last_case = RIGHT;
     currentError =  RIGHTWALL_TARGET - sensor_buffers[RF_IR];
 
     // Set indicating LED's
@@ -50,9 +49,10 @@ void pid()/*{{{*/
     GPIO_SetBits(GPIOB, RED); // RED
     GPIO_ResetBits(GPIOC, YELLOW);
 
+    last_case = RIGHT;
+
   } else if (sensor_buffers[LF_IR] >= LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD) {
     // *********** ONLY LEFT WALL *********** //
-    last_case = LEFT;
     currentError = sensor_buffers[LF_IR] - LEFTWALL_TARGET;
 
     // Set indicating LED's
@@ -60,10 +60,11 @@ void pid()/*{{{*/
     GPIO_ResetBits(GPIOB, RED);
     GPIO_SetBits(GPIOC, YELLOW); // YELLOW
 
+    last_case = LEFT;
+
   } else if (sensor_buffers[LF_IR] < LEFT_THRESHOLD && sensor_buffers[RF_IR] < RIGHT_THRESHOLD) {
     // *********** NO WALL *********** //
     // TODO: finish the one with no walls
-    last_case = NOWALLS;
     currentError = (rightEncoder - leftEncoder) * ADJUST ; // * some constant
 
     float newSpeed = (leftSpeed > rightSpeed) ? leftSpeed : rightSpeed;
@@ -74,9 +75,11 @@ void pid()/*{{{*/
     GPIO_SetBits(GPIOC, GREEN);
     GPIO_SetBits(GPIOB, RED);
     GPIO_SetBits(GPIOC, YELLOW); // YELLOW
+    last_case = NOWALLS;
   }
 
-  /*printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);*/
+  printf("%u       %u\r\n", sensor_buffers[LF_IR], sensor_buffers[RF_IR]);
+  /*printf("      %u      %u      %u\r\n", OFFSET, LEFTWALL_TARGET, RIGHTWALL_TARGET);*/
 
   // calculate the total adjustment
   total = KP * currentError + KD * (currentError - pastError) + KI * sumError;
@@ -110,3 +113,15 @@ void pid()/*{{{*/
   Delay_us(50);
 }/*}}}*/
 
+/*****************************************************************************/
+// calibrate(void)
+//
+// @brief: Calibrates the sensors
+/*****************************************************************************/
+void calibrate(void) /*{{{*/
+{
+  ADC_Read(1, 1, 1, 1); 
+  OFFSET = sensor_buffers[LF_IR] - sensor_buffers[RF_IR];
+  RIGHTWALL_TARGET = sensor_buffers[RF_IR];
+  LEFTWALL_TARGET = sensor_buffers[LF_IR];
+}/*}}}*/

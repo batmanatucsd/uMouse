@@ -12,11 +12,8 @@
 #define RIGHT_THRESHOLD 200
 #define LEFT_THRESHOLD 130
 
-#define THRESHOLD 200
-#define RIGHTWALL_TARGET 450
-#define LEFTWALL_TARGET 450
 
-#define KP 0.00225
+#define KP 0.01000
 #define KD 0.2
 #define KI 0
 #define ADJUST 600
@@ -34,9 +31,17 @@ typedef enum {
 } PID_CASE;
 
 /*****************************************************************************/
+// Calibrated values
+/*****************************************************************************/
+static uint16_t RIGHTWALL_TARGET = 300;
+static uint16_t LEFTWALL_TARGET = 300;
+static uint16_t OFFSET = 0; 
+
+/*****************************************************************************/
 // Functions
 /*****************************************************************************/
-void pid();
+void pid(void);
+void calibrate(void);
 
 #endif // PID_H
 
