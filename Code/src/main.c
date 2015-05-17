@@ -24,7 +24,7 @@ int main(void)
   ENCODER_Configuration();
   MPU6050_I2C_Init();
   MPU6050_Initialize();
-  //Angle_SetInitial();
+  Angle_Set();
 
   // Only for debug
   USART_Configuration();
@@ -36,7 +36,9 @@ int main(void)
   /*turnMotorOn();*/
   while(1)
   {
-    Delay_ms(1000);
+    Delay_ms(100);
+
+    printf("test");
 
     printf("%ld \r\n", (int16_t)angle[2]);
 
