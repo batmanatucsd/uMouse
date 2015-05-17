@@ -219,7 +219,7 @@ void move(uint8_t flood)/*{{{*/
     if (flood != 'f') {
         maze[row][col] |= VISITED;
         //TODO
-        // forward();
+        forward();
         //TODO
     }
 }/*}}}*/
@@ -278,8 +278,8 @@ void moveFast(void) {/*{{{*/
     location = (row << 4) | col;
 
     //TODO
-    // actualTurn(tmp, direction);
-    // forward();
+    actualTurn(tmp, direction);
+    forward();
     //TODO
 }/*}}}*/
 
@@ -327,9 +327,9 @@ void turn(void)/*{{{*/
             direction = 3;
         }
     }
-    lookAhead();
+ 
     //TODO
-    // actualTurn(tmp, direction);
+    actualTurn(tmp, direction);
     //TODO
 }/*}}}*/
 
@@ -338,12 +338,12 @@ void turn(void)/*{{{*/
 // actualTurn():
 //      Turn to the cell closest to the center
 /*****************************************************************************/
-// void actualTurn(uint8_t prev, uint8_t next)/*{{{*/
-// {
-//     if ((prev == 0 && next == 1) || (prev == 1 && next == 2) || (prev == 2 && next == 3) || (prev == 3 && next == 0)) rightTurn();
-//     else if ((prev == 1 && next == 0) || (prev == 2 && next == 1) || (prev == 3 && next == 2) || (prev == 0 && next == 3)) leftTurn();
-//     else fullTurn();
-// }/*}}}*/
+void actualTurn(uint8_t prev, uint8_t next)/*{{{*/
+{
+    if ((prev == 0 && next == 1) || (prev == 1 && next == 2) || (prev == 2 && next == 3) || (prev == 3 && next == 0)) rightTurn();
+    else if ((prev == 1 && next == 0) || (prev == 2 && next == 1) || (prev == 3 && next == 2) || (prev == 0 && next == 3)) leftTurn();
+    else fullTurn();
+}/*}}}*/
 //TODO
 
 /*****************************************************************************/
