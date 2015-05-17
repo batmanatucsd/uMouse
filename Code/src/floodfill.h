@@ -36,6 +36,8 @@ uint16_t init(uint16_t row, uint16_t col);
 uint16_t initBack(uint16_t row, uint16_t col);
 uint16_t initFlood(uint16_t row, uint16_t col);
 void lookAhead();
+void turn();
+void actualTurn(uint8_t prev, uint8_t next);
 void move(uint8_t flood);
 void moveFast();
 void update(uint16_t row, uint16_t col);

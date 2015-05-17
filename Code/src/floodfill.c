@@ -1,4 +1,5 @@
 #include "floodfill.h"
+#include "mouse.h"
 #include "testmaze.h"
 
 /*****************************************************************************/
@@ -216,7 +217,7 @@ void move(uint8_t flood)
     if (flood != 'f')
     {
         maze[row][col] |= VISITED;
-        // TODO: Actual move
+        forward();
     }
 }
 
@@ -224,6 +225,7 @@ void moveFast() {
 	uint8_t row = (location & ROW) >> 4;
 	uint8_t col = location & COL;
 	uint8_t priority = 1;
+    uint8_t tmp = direction;
 
 	if ((maze[row-1][col] & VISITED) && (maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1)
 	{
@@ -274,7 +276,8 @@ void moveFast() {
 		}
 	}
 	location = (row << 4) | col;
-    // TODO: actual turns and moves
+    actualTurn(tmp, direction);
+    forward();
 }
 
 /*****************************************************************************/
@@ -285,6 +288,7 @@ void turn()
 {
 	uint8_t row = (location & ROW) >> 4;
 	uint8_t col = location & COL;
+    uint8_t tmp = direction;
 
 	uint8_t min = 255;
 	uint16_t tile = maze[row][col];
@@ -329,7 +333,18 @@ void turn()
 		}
 	}
 	lookAhead();
-    // TODO: actual turn
+    actualTurn(tmp, direction);
+}
+
+/*****************************************************************************/
+// turn():
+//		Turn to the cell closest to the center
+/*****************************************************************************/
+void actualTurn(uint8_t prev, uint8_t next)
+{
+    if ((prev == 0 && next == 1) || (prev == 1 && next == 2) || (prev == 2 && next == 3) || (prev == 3 && next == 0)) rightTurn();
+    else if ((prev == 1 && next == 0) || (prev == 2 && next == 1) || (prev == 3 && next == 2) || (prev == 0 && next == 3)) leftTurn();
+    else fullTurn();
 }
 
 /*****************************************************************************/
