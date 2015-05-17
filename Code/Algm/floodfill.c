@@ -90,7 +90,9 @@ void lookAhead()
 	// Fill in maze info for cells around NORTH CELL
 	if (direction == 0 && !(maze[row][col] & NORTH_WALL))
 	{
+        // TODO: change to sensor readings
 		maze[row - 1][col] |= testmaze[row - 1][col];
+        // TODO
 
 		// if north cell has west wall, and column is at least second column,
 		// set east wall of cell left of north wall
@@ -117,7 +119,9 @@ void lookAhead()
 	// Fill in maze info for cells around EAST CELL
 	else if (direction == 1 && !(maze[row][col] & EAST_WALL))
 	{
+        // TODO: change to sensor readings
 		maze[row][col + 1] |= testmaze[row][col + 1];
+        // TODO
 
 		// if east cell has east wall, and column is at least second clumn,
 		// set the west wall of cell to right of east cell
@@ -144,7 +148,9 @@ void lookAhead()
 	// Fill in maze info for cells around SOUTH CELL
 	else if (direction == 2 && !(maze[row][col] & SOUTH_WALL))
 	{
+        // TODO: change to sensor readings
 		maze[row + 1][col] |= testmaze[row + 1][col];
+        // TODO
 		
 		// if south cell has east wall, and column is at least second column,
 		// set the west wall of cell to the right of east cell
@@ -172,7 +178,10 @@ void lookAhead()
 	// Fill in maze info for cells around WEST CELL
 	else if (direction == 3 && !(maze[row][col] & WEST_WALL))
 	{
+        // TODO: change to sensor readings
 		maze[row][col - 1] |= testmaze[row][col - 1];
+        // TODO
+
 		if (maze[row][col - 1] & WEST_WALL && col - 2 >= 0) 
 		{
 			maze[row][col - 2] |= EAST_WALL;
@@ -207,7 +216,7 @@ void move(uint8_t flood)
     if (flood != 'f')
     {
         maze[row][col] |= VISITED;
-        // Actual move
+        // TODO: Actual move
     }
 }
 
@@ -265,6 +274,7 @@ void moveFast() {
 		}
 	}
 	location = (row << 4) | col;
+    // TODO: actual turns and moves
 }
 
 /*****************************************************************************/
@@ -319,6 +329,7 @@ void turn()
 		}
 	}
 	lookAhead();
+    // TODO: actual turn
 }
 
 /*****************************************************************************/
