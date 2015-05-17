@@ -41,7 +41,7 @@ void setupTest(unsigned char start, unsigned char face)
 	testmaze[15][0] |= EAST_WALL;
 
 	//Open text file that represents a maze to read walls in, read-only
-	FILE *file = fopen("testmaze1.txt", "r");
+	FILE *file = fopen("testmaze2.txt", "r");
 	if (!file) {
 		printf("Sorry, that test maze file does not exist.\n");
 		exit(1);
