@@ -22,9 +22,9 @@ int main(void)
   ADC_Configuration();
   PWM_Configuration();
   ENCODER_Configuration();
-  MPU6050_I2C_Init();
-  MPU6050_Initialize();
-  Angle_Set();
+  /*MPU6050_I2C_Init();*/
+  /*MPU6050_Initialize();*/
+  /*Angle_Set();*/
 
   // Only for debug
   USART_Configuration();
@@ -92,8 +92,9 @@ int main(void)
         GPIO_ResetBits(GPIOC, GREEN);
         GPIO_SetBits(GPIOC, YELLOW);
 
-        printf("  sensor reading: %u         %u        %u        %u\r\n",
-              sensor_buffers[3], sensor_buffers[2], sensor_buffers[1], sensor_buffers[0]);
+        /*printf("  sensor reading: %u         %u        %u        %u\r\n",*/
+              /*sensor_buffers[3], sensor_buffers[2], sensor_buffers[1], sensor_buffers[0]);*/
+
         /*Free our mouse*/
         /*if(sensor_buffers[R_IR] >= 450) {*/
           /*Delay_us(10000);*/
