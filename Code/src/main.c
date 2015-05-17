@@ -99,45 +99,41 @@ ANBT_I2C_Configuration();
 
 /*****************************************CELL BY CELL MOVEMENT****************************/
 
-	
+	  if(sensor_buffers[L_IR] < 150){
 
-	
-	
-	L_ENC->CNT=0;
-	R_ENC->CNT=0;
+		  L_ENC->CNT=0;
+		  R_ENC->CNT=0;
 
-	while(L_ENC->CNT < 6005 && R_ENC->CNT < 6005){
-		change_LeftMotorSpeed(80);
-		change_RightMotorSpeed(80);
-		pid();
-		
-		if(L_ENC->CNT >3000 && L_ENC->CNT<4000){
-			change_LeftMotorSpeed(60);
-			change_RightMotorSpeed(60);
-			pid();
-		}
+		  while(L_ENC->CNT < 6005 && R_ENC->CNT < 6005){
+			  change_LeftMotorSpeed(80);
+			  change_RightMotorSpeed(80);
+			  pid();
 
-		if(L_ENC->CNT>=4000 && L_ENC->CNT<5000){
-			change_LeftMotorSpeed(40);
-			change_RightMotorSpeed(40);
-			pid();
-		}
-	
-	}
-		change_LeftMotorSpeed(0);
-		change_RightMotorSpeed(0);
+			  if(L_ENC->CNT >3000 && L_ENC->CNT<4000){
+				  change_LeftMotorSpeed(60);
+				  change_RightMotorSpeed(60);
+				  pid();
+			  }
 
-	if(sensor_buffers[L_IR]>150){
-		//calibration
-		while(){
-			
-		}
-	}
-	
-	Delay_us(1000000);
-	L_ENC->CNT=0;
-	R_ENC->CNT=0;
+			  if(L_ENC->CNT>=4000 && L_ENC->CNT<5000){
+				  change_LeftMotorSpeed(40);
+				  change_RightMotorSpeed(40);
+				  pid();
+			  }
 
+		  }
+		  change_LeftMotorSpeed(0);
+		  change_RightMotorSpeed(0);
+
+
+		  Delay_us(1000000);
+		  L_ENC->CNT=0;
+		  R_ENC->CNT=0;
+
+	  }
+	  else{
+		  stopFrontWall();
+	  }
 
 /******************************LEFT 90 TURN******************************************/
 /*	ADC_Read(1,0,0,1);	
