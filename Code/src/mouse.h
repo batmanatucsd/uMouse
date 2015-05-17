@@ -12,8 +12,11 @@
 #define RF_IR 1
 #define R_IR 0
 
-#define LEFT_MAX_SPEED 255
-#define RIGHT_MAX_SPEED 255
+//#define LEFT_MAX_SPEED 255
+//#define RIGHT_MAX_SPEED 255
+
+#define LEFT_MAX_SPEED 250
+#define RIGHT_MAX_SPEED 250
 
 // TODO: change to appropriate states
 typedef enum {

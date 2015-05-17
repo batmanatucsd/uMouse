@@ -183,14 +183,14 @@ uint16_t i = 0;
 /**
   * @}
   */
-void DMA1_Channel1_IRQHandler(void)/*{{{*/
+void DMA2_Channel4_5_IRQHandler(void)/*{{{*/
 {
   //Test on DMA1 Channel1 Transfer Complete interrupt
-  if(DMA_GetITStatus(DMA1_IT_TC1))
+  if(DMA_GetITStatus(DMA2_IT_TC5))
   {
     readADC_status = 0;
    /*Clear DMA1 interrupt pending bits*/
-    DMA_ClearITPendingBit(DMA1_IT_GL1);
+    DMA_ClearITPendingBit(DMA2_IT_GL5);
   }
 }/*}}}*/
 
