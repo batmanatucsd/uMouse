@@ -38,7 +38,7 @@ void RCC_Configuration(void) /*{{{*/
   /* GPIO, ADC clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
                          RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO |
-                         RCC_APB2Periph_ADC1 | RCC_APB2Periph_ADC3, ENABLE);
+                         RCC_APB2Periph_ADC3 | RCC_APB2Periph_ADC3, ENABLE);
 
 }/*}}}*/
 
@@ -112,7 +112,7 @@ void DMA_Configuration(void) /*{{{*/
   DMA_InitTypeDef  DMA_InitStructure;
 
   //reset DMA1 channe1 to default values;/*{{{*/
-  DMA_DeInit(DMA1_Channel1);
+  DMA_DeInit(DMA2_Channel5);
 
   //channel will be used for memory to memory transfer
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
@@ -131,10 +131,10 @@ void DMA_Configuration(void) /*{{{*/
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
 
   //source and destination start addresses
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC3->DR;
   DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)sensor_buffers;
   /*DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&ADC3->JOFR1;*/
-  /*DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&ADC1->JOFR1;*/
+  /*DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&ADC3->JOFR1;*/
 
   //source address increment disable
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -142,10 +142,10 @@ void DMA_Configuration(void) /*{{{*/
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 
   //send values to DMA registers
-  DMA_Init(DMA1_Channel1, &DMA_InitStructure);
+  DMA_Init(DMA2_Channel5, &DMA_InitStructure);
   /*Enable DMA1 Channel Transfer Complete interrupt*/
-  DMA_ITConfig(DMA1_Channel1, DMA_IT_TC, ENABLE);
-  DMA_Cmd(DMA1_Channel1, ENABLE); //Enable the DMA1 - Channel1/*}}}*/
+  DMA_ITConfig(DMA2_Channel5, DMA_IT_TC, ENABLE);
+  DMA_Cmd(DMA2_Channel5, ENABLE); //Enable the DMA1 - Channel1/*}}}*/
 
   /*// DMA2 Channe5 Configuration;[>{{{<]*/
   /*DMA_DeInit(DMA2_Channel5);*/
@@ -175,11 +175,11 @@ void ADC_Configuration(void) /*{{{*/
   ADC_InitTypeDef ADC_InitStructure;
 
   /* Put everything back to power-on defaults */
-  ADC_DeInit(ADC1);
+  ADC_DeInit(ADC3);
   /*ADC_DeInit(ADC3);*/
 
-  /* ADC1 Configuration ------------------------------------------------------*/
-  /* ADC1 and ADC3 operate independently */
+  /* ADC3 Configuration ------------------------------------------------------*/
+  /* ADC3 and ADC3 operate independently */
   ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
   /* Disable the scan conversion so we do one at a time */
   ADC_InitStructure.ADC_ScanConvMode = ENABLE;
@@ -193,28 +193,28 @@ void ADC_Configuration(void) /*{{{*/
   /* Say how many channels would be used by the sequencer */
   ADC_InitStructure.ADC_NbrOfChannel = 4;
   /* Now do the setup */
-  ADC_Init(ADC1, &ADC_InitStructure);
+  ADC_Init(ADC3, &ADC_InitStructure);
 
-  ADC_RegularChannelConfig(ADC1, R_RECEIVER, 1, ADC_SampleTime_71Cycles5);
-  ADC_RegularChannelConfig(ADC1, RF_RECEIVER, 2, ADC_SampleTime_71Cycles5);
-  ADC_RegularChannelConfig(ADC1, LF_RECEIVER, 3, ADC_SampleTime_71Cycles5);
-  ADC_RegularChannelConfig(ADC1, L_RECEIVER, 4, ADC_SampleTime_71Cycles5);
+  ADC_RegularChannelConfig(ADC3, R_RECEIVER, 1, ADC_SampleTime_71Cycles5);
+  ADC_RegularChannelConfig(ADC3, RF_RECEIVER, 2, ADC_SampleTime_71Cycles5);
+  ADC_RegularChannelConfig(ADC3, LF_RECEIVER, 3, ADC_SampleTime_71Cycles5);
+  ADC_RegularChannelConfig(ADC3, L_RECEIVER, 4, ADC_SampleTime_71Cycles5);
 
   /*[> Set injected sequencer length <]*/
-  /*ADC_InjectedSequencerLengthConfig(ADC1, 4);*/
-  /*[> ADC1 injected channel Configuration <]*/
-  /*ADC_InjectedChannelConfig(ADC1, R_RECEIVER, 1, ADC_SampleTime_41Cycles5);*/
-  /*ADC_InjectedChannelConfig(ADC1, RF_RECEIVER, 2, ADC_SampleTime_41Cycles5);*/
-  /*ADC_InjectedChannelConfig(ADC1, LF_RECEIVER, 3, ADC_SampleTime_41Cycles5);*/
-  /*ADC_InjectedChannelConfig(ADC1, L_RECEIVER, 4, ADC_SampleTime_41Cycles5);*/
-  /*[> ADC1 injected external trigger configuration <]*/
-  /*ADC_ExternalTrigInjectedConvConfig(ADC1, ADC_ExternalTrigInjecConv_None);*/
+  /*ADC_InjectedSequencerLengthConfig(ADC3, 4);*/
+  /*[> ADC3 injected channel Configuration <]*/
+  /*ADC_InjectedChannelConfig(ADC3, R_RECEIVER, 1, ADC_SampleTime_41Cycles5);*/
+  /*ADC_InjectedChannelConfig(ADC3, RF_RECEIVER, 2, ADC_SampleTime_41Cycles5);*/
+  /*ADC_InjectedChannelConfig(ADC3, LF_RECEIVER, 3, ADC_SampleTime_41Cycles5);*/
+  /*ADC_InjectedChannelConfig(ADC3, L_RECEIVER, 4, ADC_SampleTime_41Cycles5);*/
+  /*[> ADC3 injected external trigger configuration <]*/
+  /*ADC_ExternalTrigInjectedConvConfig(ADC3, ADC_ExternalTrigInjecConv_None);*/
 
-  /*[> Enable ADC1 Injected Channels in discontinous mode <]*/
-  /*ADC_InjectedDiscModeCmd(ADC1, ENABLE);*/
+  /*[> Enable ADC3 Injected Channels in discontinous mode <]*/
+  /*ADC_InjectedDiscModeCmd(ADC3, ENABLE);*/
 
-  /*[> Enable ADC1 EOC interrupt <]*/
-  /*ADC_ITConfig(ADC1, ADC_IT_JEOC, ENABLE);*/
+  /*[> Enable ADC3 EOC interrupt <]*/
+  /*ADC_ITConfig(ADC3, ADC_IT_JEOC, ENABLE);*/
 
   /*// ADC3 Configuration*/
   /*ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;*/
@@ -242,22 +242,22 @@ void ADC_Configuration(void) /*{{{*/
   /*[>Enable DMA for ADC<]*/
   /*ADC_DMACmd(ADC3, ENABLE);*/
 
-  /*[> Enable ADC1 EOC interrupt <]*/
-  ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
+  /*[> Enable ADC3 EOC interrupt <]*/
+  ADC_ITConfig(ADC3, ADC_IT_EOC, ENABLE);
 
-  /* Enable ADC1 */
-  ADC_Cmd(ADC1, ENABLE);
+  /* Enable ADC3 */
+  ADC_Cmd(ADC3, ENABLE);
   /*Enable DMA for ADC*/
-  ADC_DMACmd(ADC1, ENABLE);
+  ADC_DMACmd(ADC3, ENABLE);
 
-  /* Enable ADC1 reset calibaration register */
-  ADC_ResetCalibration(ADC1);
-  /* Check the end of ADC1 reset calibration register */
-  while(ADC_GetResetCalibrationStatus(ADC1));
-  /* Start ADC1 calibaration */
-  ADC_StartCalibration(ADC1);
-  /* Check the end of ADC1 calibration */
-  while(ADC_GetCalibrationStatus(ADC1));
+  /* Enable ADC3 reset calibaration register */
+  ADC_ResetCalibration(ADC3);
+  /* Check the end of ADC3 reset calibration register */
+  while(ADC_GetResetCalibrationStatus(ADC3));
+  /* Start ADC3 calibaration */
+  ADC_StartCalibration(ADC3);
+  /* Check the end of ADC3 calibration */
+  while(ADC_GetCalibrationStatus(ADC3));
 
   /*[> Enable ADC3 reset calibaration register <]*/
   /*ADC_ResetCalibration(ADC3);*/
@@ -268,7 +268,7 @@ void ADC_Configuration(void) /*{{{*/
   /*[> Check the end of ADC3 calibration <]*/
   /*while(ADC_GetCalibrationStatus(ADC3));*/
 
-  /*ADC_SoftwareStartInjectedConvCmd(ADC1, ENABLE);*/
+  /*ADC_SoftwareStartInjectedConvCmd(ADC3, ENABLE);*/
 }/*}}}*/
 
 /*****************************************************************************/
@@ -277,17 +277,17 @@ void ADC_Configuration(void) /*{{{*/
 // @brief: Gets analog input
 // @param: channel : adc_channel to get the result from
 /*****************************************************************************/
-void ADC_Read() /*{{{*/
+void ADC_Read(uint16_t l, uint16_t lf, uint16_t rf, uint16_t r) /*{{{*/
 {
-  /*ADC_RegularChannelConfig(ADC1, channel, rank, ADC_SampleTime_7Cycles5);*/
+  /*ADC_RegularChannelConfig(ADC3, channel, rank, ADC_SampleTime_7Cycles5);*/
   // Start the conversion
-  /*ADC_SoftwareStartConvCmd(ADC1, ENABLE);*/
+  /*ADC_SoftwareStartConvCmd(ADC3, ENABLE);*/
   /*Wait until conversion completion*/
-  /*while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);*/
+  /*while(ADC_GetFlagStatus(ADC3, ADC_FLAG_EOC) == RESET);*/
   /*Get the conversion value*/
-  /*return ADC_GetConversionValue(ADC1);*/
-  /*ADC_SoftwareStartConvCmd(ADC1, DISABLE);*/
-  /*ADC_SoftwareStartInjectedConvCmd(ADC1, DISABLE);*/
+  /*return ADC_GetConversionValue(ADC3);*/
+  /*ADC_SoftwareStartConvCmd(ADC3, DISABLE);*/
+  /*ADC_SoftwareStartInjectedConvCmd(ADC3, DISABLE);*/
 
   readADC_status = 1;
 
@@ -296,17 +296,22 @@ void ADC_Read() /*{{{*/
   GPIO_SetBits(EMITTER, LF_EMITTER);
   GPIO_SetBits(EMITTER, L_EMITTER);
 
-  Delay_us(75);
-  ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+  /*GPIO_WriteBit(EMITTER, R_EMITTER, r);*/
+  /*GPIO_WriteBit(EMITTER, RF_EMITTER, rf);*/
+  /*GPIO_WriteBit(EMITTER, LF_EMITTER, lf);*/
+  /*GPIO_WriteBit(EMITTER, L_EMITTER, l);*/
+
+  Delay_us(80);
+  ADC_SoftwareStartConvCmd(ADC3, ENABLE);
   /* Start the conversion */
   /*ADC_SoftwareStartConvCmd(ADC3, ENABLE);*/
-  /*ADC_SoftwareStartInjectedConvCmd(ADC1, ENABLE);*/
+  /*ADC_SoftwareStartInjectedConvCmd(ADC3, ENABLE);*/
   while(readADC_status);
-  /*while(ADC_GetFlagStatus(ADC1, ADC_FLAG_JEOC) == RESET);*/
+  /*while(ADC_GetFlagStatus(ADC3, ADC_FLAG_JEOC) == RESET);*/
 
-  /*printf("ADC1 reading: %u         %u        %u        %u\r\n",*/
+  /*printf("ADC3 reading: %u         %u        %u        %u\r\n",*/
         /*sensor_buffers[0], sensor_buffers[1], sensor_buffers[2], sensor_buffers[3]);*/
-  /*ADC_SoftwareStartConvCmd(ADC1, DISABLE);*/
+  /*ADC_SoftwareStartConvCmd(ADC3, DISABLE);*/
   GPIO_ResetBits(GPIOB, GPIO_Pin_12);
   GPIO_ResetBits(GPIOB, GPIO_Pin_13);
   GPIO_ResetBits(GPIOB, GPIO_Pin_14);
@@ -367,9 +372,9 @@ void PWM_Configuration(void) /*{{{*/
 }/*}}}*/
 
 /*****************************************************************************/
-// PWM_Configuration
+// ENCODER_Configuration
 //
-// @brief: Set configurations for PWM
+// @brief: Set configurations for Encoder readings
 //         TIM4 is for RIGHT motor
 //         TIM8 is for LEFT motor
 /*****************************************************************************/
@@ -414,8 +419,8 @@ void ENCODER_Configuration(void) {/*{{{*/
   // //  TIM_ITConfig(ENCODER_TIM, TIM_IT_Update, ENABLE);
     
   // reset encoder counts
-  L_ENC->CNT = 0; // prevent counts to become negative when the moved backwards
-  R_ENC->CNT = 0;
+  L_ENC->CNT = 50; // prevent counts to become negative when the moved backwards
+  R_ENC->CNT = 50;
   TIM_Cmd(L_ENC, ENABLE);
   TIM_Cmd(R_ENC, ENABLE);
 }/*}}}*/
@@ -430,14 +435,14 @@ void NVIC_Configuration(void)/*{{{*/
   NVIC_InitTypeDef NVIC_InitStructure;
 
   /* Configure and enable ADC interrupt */
-  /*NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn;*/
+  /*NVIC_InitStructure.NVIC_IRQChannel = ADC3_IRQn;*/
   /*NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;*/
   /*NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;*/
   /*NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;*/
   /*NVIC_Init(&NVIC_InitStructure);*/
 
   /* Enable DMA1 channel IRQ Channel */
-  NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Channel4_5_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;

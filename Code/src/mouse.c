@@ -11,7 +11,7 @@ void delay(volatile int i)/*{{{*/
 void listen_for_button(void)/*{{{*/
 {
   if(GPIO_ReadInputDataBit(GPIOB, BUTTON) != Bit_RESET) {
-    state  next_state;
+    state next_state;
 
     if(mouse_state == STOP) // if the mouse_state is the last state
       next_state = GO;      // change it to the first state
@@ -126,8 +126,7 @@ void rightBackward(void)/*{{{*/
 /*****************************************************************************/
 // Turns
 /*****************************************************************************/
-
-void rightTurn(void)
+void rightTurn(void)/*{{{*/
 {
   
   // reset encoder counts
@@ -149,8 +148,9 @@ void rightTurn(void)
   // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
-}
-void leftTurn(void)
+}/*}}}*/
+
+void leftTurn(void)/*{{{*/
 {
   // reset encoder counts
   L_ENC->CNT = 0; 
@@ -159,8 +159,8 @@ void leftTurn(void)
   // set motor directions and speed
   /*leftBackward();*/
   /*rightForward();*/
-  change_RightMotorSpeed(-250);
-  change_LeftMotorSpeed(250);
+  change_RightMotorSpeed(250);
+  change_LeftMotorSpeed(-250);
 
   while(R_ENC->CNT < 2100); // wait for encoder counts
 
@@ -171,19 +171,53 @@ void leftTurn(void)
   // reset encoder counts
   L_ENC->CNT = 0; 
   R_ENC->CNT = 0; 
-}
+}/*}}}*/
 
+void fullTurn(void)/*{{{*/
+{
+  // reset encoder counts
+  L_ENC->CNT = 0; 
+  R_ENC->CNT = 0; 
+
+  // set motor directions and speed
+  change_RightMotorSpeed(250);
+  change_LeftMotorSpeed(-250);
+
+  /*while(R_ENC->CNT < 4250); // wait for encoder counts*/
+  while(R_ENC->CNT < 4350); // wait for encoder counts
+
+  // stop motors
+  change_LeftMotorSpeed(0);
+  change_RightMotorSpeed(0);
+
+  // reset encoder counts
+  L_ENC->CNT = 0; 
+  R_ENC->CNT = 0; 
+
+}/*}}}*/
 
 /*****************************************************************************/
 // Stop
 /*****************************************************************************/
-
-void stopFrontWall(void)
+void stopFrontWall(void)/*{{{*/
 {
-  //ADC_Read();
-  change_LeftMotorSpeed(330  - sensor_buffers[L_IR]);
-  change_RightMotorSpeed(330 - sensor_buffers[R_IR]);
-}
+  ADC_Read(1, 0, 0, 1);
+
+  if(sensor_buffers[L_IR] >= 250 && sensor_buffers[R_IR] >= 250) { 
+    // Stop the bot when it is too close
+    change_LeftMotorSpeed(0);
+    change_RightMotorSpeed(0);
+    Delay_us(100);
+
+  } else if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120) {
+    // Gradually slow down
+    change_LeftMotorSpeed(430 - (0.1661*sensor_buffers[L_IR] + 358.57));
+    change_RightMotorSpeed(400 - (0.1854*sensor_buffers[R_IR] + 326.2));
+    Delay_us(50);
+  } 
+  
+
+}/*}}}*/
 
 
 

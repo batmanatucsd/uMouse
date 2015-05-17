@@ -91,7 +91,7 @@ void lookAhead(void)/*{{{*/
 	uint8_t col = location & COL;
 
 	getWalls(row, col);
-	// // Fill in maze info for cells around NORTH CELL
+	// Fill in maze info for cells around NORTH CELL
 	// if (direction == 0 && !(maze[row][col] & NORTH_WALL)) {
  //        // TODO: change to sensor readings
 	// 	maze[row - 1][col] |= testmaze[row - 1][col];
@@ -229,24 +229,28 @@ void moveFast(void) {/*{{{*/
 	uint8_t col = location & COL;
 	uint8_t priority = 1;
     uint8_t tmp = direction;
+    uint8_t newrow = row;
+    uint8_t newcol = col;
+    // Minimum open neighbor
+	uint8_t min = 255;
 
     // set priority to 0 if cell has been visited 
 	if ((maze[row-1][col] & VISITED) && (maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1) {
 		direction = 0;
 		--row;
 		priority = 0;
-	}
-	else if ((maze[row][col+1] & VISITED) && (maze[row][col+1] & DIST) == (maze[row][col] & DIST) - 1) {
+
+	} else if ((maze[row][col+1] & VISITED) && (maze[row][col+1] & DIST) == (maze[row][col] & DIST) - 1) {
 		direction = 1;
 		++col;
 		priority = 0;
-	}
-	else if ((maze[row+1][col] & VISITED) && (maze[row+1][col] & DIST) == (maze[row][col] & DIST) - 1) {
+
+	} else if ((maze[row+1][col] & VISITED) && (maze[row+1][col] & DIST) == (maze[row][col] & DIST) - 1) {
 		direction = 2;
 		++row;
 		priority = 0;
-	}
-	else if ((maze[row][col-1] & VISITED) && (maze[row][col-1] & DIST) == (maze[row][col] & DIST) - 1) {
+
+	} else if ((maze[row][col-1] & VISITED) && (maze[row][col-1] & DIST) == (maze[row][col] & DIST) - 1) {
 		direction = 3;
 		--col;
 		priority = 0;
@@ -270,11 +274,9 @@ void moveFast(void) {/*{{{*/
 			direction = 3;
 			--col;
 		}
-	}
+	} 
 	location = (row << 4) | col;
-	char a[2];
-	fgets(a, sizeof(a), stdin);
-	print();
+
     //TODO
     // actualTurn(tmp, direction);
     // forward();
@@ -475,10 +477,6 @@ void print() {
 
 
 void getWalls(unsigned short row, unsigned short col) {
-    printf("********************************************");
-    printf("*** getWalls() ***\n");
-    printf("ROW:%d, COL:%d\n\n", row, col);
-
     //NORTH
     if ((testmaze[row][col] & NORTH_WALL)) {
         maze[row][col] |= NORTH_WALL;
@@ -518,7 +516,7 @@ int main(void) {/*{{{*/
 	setup(0xf0, 0, 1);
 	setupTest(0xf0, 0);
 
-	char name[2];
+	char a[2];
 	//1ST RUN-----------------------------------------------------------------
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
@@ -536,12 +534,13 @@ int main(void) {/*{{{*/
     	tmpDir = direction;
 		turn();
 		move('m');
-		print();
+		//print();
 	}
 	print();
 
 	//CENTER->BACK--------------------------------------------------------------
-	setup(location, direction, 2);
+	// setup(location, direction, 2);
+	setup(tmpLoc, tmpDir, 2);
 	print();
 	while (location != 0xf0) {
 		getWalls((location & ROW) >> 4, location & COL);
@@ -552,50 +551,53 @@ int main(void) {/*{{{*/
 	 		update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
 	 		print();
 	 	}
-
 	 	turn();
-
-		// printf("Press RETURN to continue");
-  //       fgets(name, sizeof(name), stdin);
-
 		move('m');
 
-		// printf("Press RETURN to continue");
-  //       fgets(name, sizeof(name), stdin);
 
 	}
 	print();
 
     // Floodfill ---------------------------------------------------------------
     setup(tmpLoc, tmpDir, 3);
-    location = tmpLoc;
-    direction = tmpDir;
+    // location = tmpLoc;
+    // direction = tmpDir;
+
+    // setup(0xf0, 0, 3);
+    // location = 0xf0;
+    // direction = 0;
 
 	while (location != 0x77 && location != 0x78 &&
-		location != 0x87 && location != 0x88)
+		   location != 0x87 && location != 0x88)
 	{
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
 			--stackptr;
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-
 		}
 
 		turn();
 		move('f');
-	    //print();
-
 	}
 	print();
 
     location = 0xf0;
     direction = 0;
+		
+	print();
+	printf("Please hit enter to cintnue in moveFast\n");
+	fgets(a, sizeof(a), stdin);
 
-	//While location is not in one of the endpoint cells move fast
+	// MoveFast ----------------------------------------------------------------
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
 		moveFast();
+		print();
+		printf("Please hit enter to cintnue in moveFast\n");
+		fgets(a, sizeof(a), stdin);
 	}
+
+	print();
 }/*}}}*/

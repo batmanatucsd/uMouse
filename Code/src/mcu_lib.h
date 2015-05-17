@@ -74,7 +74,7 @@ void PWM_Configuration(void);
 void NVIC_Configuration(void);
 void ENCODER_Configuration(void);
 
-void ADC_Read();
+void ADC_Read(uint16_t, uint16_t, uint16_t, uint16_t);
 
 void Delay_Init(void);
 void Decrement_WaitTime(void);

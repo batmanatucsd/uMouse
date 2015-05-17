@@ -6,7 +6,7 @@ all: floodfill
 
 floodfill: floodfill.o
 
-floodfill.o: floodfill.c testmaze.h 
+floodfill.o: floodfill.c testmaze.h
 
 clean:
 	rm -f *.o *.gch a.out floodfill
