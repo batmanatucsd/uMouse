@@ -215,26 +215,55 @@ void move(unsigned char flood)
 void moveFast() {
 	unsigned char row = (location & ROW) >> 4;
 	unsigned char col = location & COL;
+	unsigned char priority = 1;
 
 	if ((maze[row-1][col] & VISITED) && (maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1)
 	{
 		direction = 0;
 		--row;
+		priority = 0;
 	}
 	else if ((maze[row][col+1] & VISITED) && (maze[row][col+1] & DIST) == (maze[row][col] & DIST) - 1)
 	{
 		direction = 1;
 		++col;
+		priority = 0;
 	}
 	else if ((maze[row+1][col] & VISITED) && (maze[row+1][col] & DIST) == (maze[row][col] & DIST) - 1)
 	{
 		direction = 2;
 		++row;
+		priority = 0;
 	}
 	else if ((maze[row][col-1] & VISITED) && (maze[row][col-1] & DIST) == (maze[row][col] & DIST) - 1)
 	{
 		direction = 3;
 		--col;
+		priority = 0;
+	}
+
+	if (priority)
+	{
+		if ((maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1)
+		{
+			direction = 0;
+			--row;
+		}
+		else if ((maze[row][col+1] & DIST) == (maze[row][col] & DIST) - 1)
+		{
+			direction = 1;
+			++col;
+		}
+		else if ((maze[row+1][col] & DIST) == (maze[row][col] & DIST) - 1)
+		{
+			direction = 2;
+			++row;
+		}
+		else if ((maze[row][col-1] & DIST) == (maze[row][col] & DIST) - 1)
+		{
+			direction = 3;
+			--col;
+		}
 	}
 	location = (row << 4) | col;
 }
@@ -533,8 +562,6 @@ int main() {
 	{
 	  	printf("Press RETURN to contine");
 	    fgets(name, sizeof(name), stdin);
-
-		turn();
 		moveFast();
 		print();
 	}
