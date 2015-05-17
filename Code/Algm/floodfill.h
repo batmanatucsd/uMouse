@@ -35,5 +35,6 @@ unsigned short initBack(unsigned short row, unsigned short col);
 unsigned short initFlood(unsigned short row, unsigned short col);
 void lookAhead();
 void move(unsigned char flood);
+void moveFast();
 void update(unsigned short row, unsigned short col);
 void print();
