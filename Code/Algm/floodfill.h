@@ -32,6 +32,7 @@ unsigned short stackptr = 0;
 void setup(unsigned char loc, unsigned char dist, unsigned char back);
 unsigned short init(unsigned short row, unsigned short col);
 unsigned short initBack(unsigned short row, unsigned short col);
+unsigned short initFlood(unsigned short row, unsigned short col);
 void lookAhead();
 void move();
 void update(unsigned short row, unsigned short col);

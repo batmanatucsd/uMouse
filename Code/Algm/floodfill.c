@@ -6,31 +6,27 @@
 // setup(unsigned char loc, unsigned char dist, unsigned char back):
 // 		Initialize 16x16 maze using 2D array, assumption that no walls exist
 /*****************************************************************************/
-void setup(unsigned char loc, unsigned char dist, unsigned char back) 
+void setup(unsigned char loc, unsigned char dist, unsigned char step) 
 {
-	// If going back to start cell, remember maze state and set start
-	// cell as destination with distance 0
-	if (back == 'b') {
-		maze[15][0] = 0x0700;
-		//return;
-	}
 
 	// Initialize maze
 	for (unsigned short row = 0; row < 16; row++)
 	{
 		for (unsigned short col = 0; col < 16; col++)
 		{
-			//maze[row][col] = back == 'b'? initBack(row, col) : init(row, col);
-		  // maze[row][col] &= 0xff00;
-			//maze[row][col] |= back == 'b'? initBack(row, col) : init(row, col);
-      
-      
-		  maze[row][col] &= 0xff00;
-			if (maze[row][col] |= back == 'b')
-        initBack(row, col);
-      else if (maze[row][col] |= back != 'b' && flood==1)
-          init(row, col);
-
+            maze[row][col] &= 0xff00;
+            switch(step)
+            {
+                case 1:
+                    maze[row][col] |= init(row, col);
+                    break;
+                case 2:
+                    maze[row][col] |= initBack(row, col);
+                    break;
+                case 3:
+                    maze[row][col] |= initFlood(row, col);
+                    break;
+            }
 		}
 	}
 	for (unsigned short i = 0; i < 16; i++)
@@ -71,7 +67,15 @@ unsigned short init(unsigned short row, unsigned short col)
 unsigned short initBack(unsigned short row, unsigned short col) 
 {	
 
-	return (col + (15-row));
+	return (col + (0x0f - row));
+}
+
+unsigned short initFlood(unsigned short row, unsigned short col) 
+{	
+	return ((row == 7 && col == 7) ||
+            (row == 7 && col == 8) ||
+            (row == 8 && col == 7) ||
+            (row == 8 && col == 8)) ? 0: 255;
 }
 
 /*****************************************************************************/
@@ -203,6 +207,18 @@ void move()
 	lookAhead();
 }
 
+void moveFast() {
+	unsigned char row = (location & ROW) >> 4;
+	unsigned char col = location & COL;
+	if (direction == 0 && maze[row-1][col] & DIST < maze[row][col]) --row;
+	else if (direction == 1 && (maze[row][col+1] & DIST) < (maze[row][col] & DIST)) ++col;
+	else if (direction == 2 && (maze[row+1][col] & DIST) < (maze[row][col] & DIST)) ++row;
+	else if (direction == 3 && (maze[row][col-1] & DIST) < (maze[row][col] & DIST)) --col;
+	location = (row << 4) | col;
+	lookAhead();
+
+}
+
 /*****************************************************************************/
 // turn():
 //		Turn to the cell closest to the center
@@ -264,7 +280,6 @@ void turn()
 /*****************************************************************************/
 void update(unsigned short row, unsigned short col)
 {
-	printf("INSIDE UPDATE():\nrow: %d\ncol: %d\n", row, col);
 	unsigned short tile = maze[row][col];
 
 	// Minimum open neighbor
@@ -310,43 +325,8 @@ void update(unsigned short row, unsigned short col)
 		}
 	}
 
-	// Set cells with 3 walls to DIST = 255
-	if (row == 15 && col == 0) {
-		printf("helpppppppppppppppppppppppp");
-	}
-
-	if ( (tile & WALLS)>>8 == 7 || (tile & WALLS)>>8 == 11 ||
-       (tile & WALLS)>>8 == 13 || (tile & WALLS)>>8 == 14 ) {
-
-		if (row != 15 && col != 0) 
-		{
-			maze[row][col] &= 0xff00;
-			maze[row][col] |= 255;
-		}
-
-		// // Push open neighbors onto stack
-		// if (!(maze[row][col] & NORTH_WALL))
-		// {
-		// 	stack[stackptr++] = ((row - 1) << 4) | col;
-		// }
-		// if (!(maze[row][col] & EAST_WALL))
-		// {
-		// 	stack[stackptr++] = (row << 4) | (col + 1);
-		// }
-		// if (!(maze[row][col] & SOUTH_WALL))
-		// {
-		// 	stack[stackptr++] = ((row + 1) << 4) | col;
-		// }
-		// if (!(maze[row][col] & WEST_WALL))
-		// {
-		// 	stack[stackptr++] = (row << 4) | (col - 1);
-		// } 
-		
-  	}
-
-
 	// If cell value is wrong, push open neighbors onto stack
-	else if (min + 1 != (tile & DIST))
+	if (min + 1 != (tile & DIST))
 	{
 		// Update distance
 		maze[row][col] &= 0xff00;
@@ -448,7 +428,7 @@ int main() {
 
 	// Initialize maze and mouse location
 	char name[99999];
-	setup(0xf0, 0, 'f');
+	setup(0xf0, 0, 1);
 	setupTest(0xf0, 0);
 
 	printf("Maze in mouse memory: \n");
@@ -458,54 +438,69 @@ int main() {
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
+/*
 	  	printf("Press RETURN to contine");
 	    fgets(name, sizeof(name), stdin);
+*/
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
 			--stackptr;
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-
-		   	// DEBUG -----------------------------------------------------------
-			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
-			printf("Current stack: ");
-			for (int i = 0; i < stackptr; i++)
-				printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
-			printf("\n");
-			// DEBUG -----------------------------------------------------------
 		}
 		turn();
 		move();
-		debug();
+		//debug();
 	}
 	print();
 
 	/* Going from center->back */
-	setup(0x87, 3, 'b');
+    unsigned short tmpLoc = location;
+    unsigned char tmpDir = direction;
+	setup(location, direction, 2);
 	print();	
-	fgets(name, sizeof(name), stdin);
 
 	while (location != 0xf0)
 	{
+/*
 	  	printf("Press RETURN to contine");
 	    fgets(name, sizeof(name), stdin);
+*/
 		update((location & ROW) >> 4, location & COL);
 		while (stackptr > 0)
 		{
 			--stackptr;
 			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
-
-		   	// DEBUG -----------------------------------------------------------
-			printf("Current cell: %d,%d\n", (stack[stackptr - 1] & ROW) >> 4, stack[stackptr - 1] & COL);
-			printf("Current stack: ");
-			for (int i = 0; i < stackptr; i++)
-				printf("(%d, %d)", (stack[i] & ROW) >> 4, stack[i] & COL);
-			printf("\n"); 
-			// DEBUG -----------------------------------------------------------
 		}
 		turn();
 		move();
-		debug();
+		//debug();
+	}
+	print();
+
+    // Floodfill
+    setup(tmpLoc, tmpDir, 3);
+    location = tmpLoc;
+    direction = tmpDir;
+    print();
+    
+    // While location is not in one of the endpoint cells
+	while (location != 0xf0)
+	{
+
+	  	printf("Press RETURN to contine");
+	    fgets(name, sizeof(name), stdin);
+        print();
+
+		update((location & ROW) >> 4, location & COL);
+		while (stackptr > 0)
+		{
+			--stackptr;
+			update((stack[stackptr] & ROW) >> 4, stack[stackptr] & COL);
+		}
+		turn();
+		move();
+		//debug();
 	}
 	print();
 }
