@@ -154,23 +154,20 @@ void lookAhead()
 		
 		// if south cell has east wall, and column is at least second column,
 		// set the west wall of cell to the right of east cell
-		if (maze[row + 1][col] & EAST_WALL && col + 1 <= 15) 
-		{
+		if (maze[row + 1][col] & EAST_WALL && col + 1 <= 15) {
 			maze[row + 1][col + 1] |= WEST_WALL;
 		}
 
 		// if south cell has west wall, and column is at least second column,
 		// set east wall of cell left of north wall
-		if (maze[row + 1][col] & WEST_WALL && col - 1 >= 0)
-		{
+		if (maze[row + 1][col] & WEST_WALL && col - 1 >= 0){
 			maze[row + 1][col - 1] |= EAST_WALL;
 		}
 		
 
 		// if south cell has south wall, and it is not bottom row,
 		// set north wall on cell below south cell
-		if (maze[row + 1][col] & SOUTH_WALL && row + 2 <= 15) 
-		{
+		if (maze[row + 1][col] & SOUTH_WALL && row + 2 <= 15) {
 			maze[row + 2][col] |= NORTH_WALL;
 		}
 	}
