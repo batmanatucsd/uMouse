@@ -1,10 +1,12 @@
 #include "mouse.h"
+#include "angle.h"
 
 /*****************************************************************************/
 // Global Variables
 /*****************************************************************************/
 __IO uint16_t sensor_buffers[4];
 __IO uint16_t sensor_readings[4];
+extern float angle[3];
 
 /*****************************************************************************/
 // Main Function
@@ -21,9 +23,8 @@ int main(void)
   PWM_Configuration();
   ENCODER_Configuration();
   MPU6050_I2C_Init();
-  //MPU6050_Initialize();
-  /*IIC_Configuration();*/
-  /*MPU_Configuration();*/
+  MPU6050_Initialize();
+  Angle_Set();
 
   // Only for debug
   USART_Configuration();
@@ -35,66 +36,71 @@ int main(void)
   /*turnMotorOn();*/
   while(1)
   {
+    Delay_ms(100);
 
-    listen_for_button();
+    printf("test");
 
-    switch(mouse_state) {
-      case GO:
+    printf("%ld \r\n", (int16_t)angle[2]);
 
-        switch(mouse_status) {
-          case FORWARD:
-            ADC_Read(1, 0, 0, 1);
-            if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120)
-              stopFrontWall();
-            else {  // Do PID when moving forward
-              change_LeftMotorSpeed(175);
-              change_RightMotorSpeed(175);
-              pid();
-            }
+    // listen_for_button();
+    //
+    // switch(mouse_state) {
+    //   case GO:
+    //
+    //     switch(mouse_status) {
+    //       case FORWARD:
+    //         ADC_Read(1, 0, 0, 1);
+    //         if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120)
+    //           stopFrontWall();
+    //         else {  // Do PID when moving forward
+    //           change_LeftMotorSpeed(175);
+    //           change_RightMotorSpeed(175);
+    //           pid();
+    //         }
+    //
+    //         Delay_us(100);
+    //         break;
+    //
+    //       case TURN90:
+    //         Delay_us(1000000);
+    //         Delay_us(1000000);
+    //         rightTurn();
+    //         break;
+    //
+    //       case TURN180:
+    //         fullTurn();
+    //         Delay_us(100);
+    //         mouse_status = FORWARD;
+    //         break;
+    //     }
+    //
+    //     break;
+    //
+    //   case TEST:
+    //     /*rightTurn();*/
+    //     Delay_us(1000000);
+    //     Delay_us(1000000);
+    //     /*leftTurn();*/
+    //     fullTurn();
+    //     /*change_LeftMotorSpeed(120);*/
+    //     /*change_RightMotorSpeed(120);*/
+    //     /*stopFrontWall(); */
+    //     GPIO_SetBits(GPIOC, YELLOW);
+    //     GPIO_SetBits(GPIOC, GREEN);
+    //     GPIO_ResetBits(GPIOB, RED);
+    //     break;
+    //
+    //   case STOP:
+    //
+    //     /*ADC_Read();*/
+    //     turnMotorOff();
+    //     GPIO_SetBits(GPIOB, RED);
+    //     GPIO_ResetBits(GPIOC, GREEN);
+    //     GPIO_SetBits(GPIOC, YELLOW);
+    //     break;
+    // }
 
-            Delay_us(100);
-            break;
 
-          case TURN90:
-            Delay_us(1000000);
-            Delay_us(1000000);
-            rightTurn();
-            break;
-
-          case TURN180:
-            fullTurn();
-            Delay_us(100);
-            mouse_status = FORWARD;
-            break;
-        }
-
-        break;
-
-      case TEST:
-        /*rightTurn();*/
-        Delay_us(1000000);
-        Delay_us(1000000);
-        /*leftTurn();*/
-        fullTurn();
-        /*change_LeftMotorSpeed(120);*/
-        /*change_RightMotorSpeed(120);*/
-        /*stopFrontWall(); */
-        GPIO_SetBits(GPIOC, YELLOW);
-        GPIO_SetBits(GPIOC, GREEN);
-        GPIO_ResetBits(GPIOB, RED);
-        break;
-
-      case STOP:
-
-        /*ADC_Read();*/
-        turnMotorOff();
-        GPIO_SetBits(GPIOB, RED);
-        GPIO_ResetBits(GPIOC, GREEN);
-        GPIO_SetBits(GPIOC, YELLOW);
-        break;
-    }
-    
-  
     /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
     /*printf("                                                  %u              %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
 
