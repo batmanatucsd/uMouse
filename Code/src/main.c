@@ -1,5 +1,8 @@
 #include "mouse.h"
 #include "angle.h"
+#include "anbt_dmp_driver.h"
+#include "anbt_dmp_fun.h"
+#include "anbt_dmp_mpu6050.h"
 
 /*****************************************************************************/
 // Global Variables
@@ -18,19 +21,27 @@ int main(void)
   // MCU Configurations
   RCC_Configuration();
   GPIO_Configuration();
-  DMA_Configuration();
+  //DMA_Configuration();
   NVIC_Configuration();
 
-  ADC_Configuration();
+
+
+  //ADC_Configuration();
   PWM_Configuration();
   ENCODER_Configuration();
-  /*MPU6050_I2C_Init();*/
-  /*MPU6050_Initialize();*/
-  /*Angle_Set();*/
-  /*Angle_OffsetCal();*/
 
-  // Only for debug
-  USART_Configuration();
+//  MPU6050_I2C_Init();
+
+// Only for debug
+USART_Configuration();
+ANBT_I2C_Configuration();
+  AnBT_DMP_MPU6050_Init();
+  //MPU6050_Initialize();
+//  Angle_Set();
+//  Angle_OffsetCal();
+
+
+
 
   mouse_state = STOP;
   mouse_status = FORWARD;
@@ -38,6 +49,7 @@ int main(void)
   /*turnMotorOn();*/
   while(1)
   {
+
     listen_for_button();
 
     switch(mouse_state) {
@@ -113,7 +125,9 @@ int main(void)
 
         break;
     }
-    
+
+
+>>>>>>> origin/mpu-test
     /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
     /*printf("                                                  %u              %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
 
