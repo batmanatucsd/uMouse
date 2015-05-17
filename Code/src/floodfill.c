@@ -89,8 +89,11 @@ void lookAhead(void)/*{{{*/
 	uint8_t col = location & COL;
 
 	// Fill in maze info for cells around NORTH CELL
-	if (direction == 0 && !(maze[row][col] & NORTH_WALL))
-	{
+    // if current direction is north....
+    // if current direction is east...
+    // if current direction is west...
+    // if current direction is south...
+	if (direction == 0 && !(maze[row][col] & NORTH_WALL)) {
         // TODO: change to sensor readings
 		maze[row - 1][col] |= testmaze[row - 1][col];
         // TODO
@@ -214,8 +217,7 @@ void move(uint8_t flood)/*{{{*/
 	else if (direction == 3 && !(maze[row][col] & WEST_WALL)) --col;
 	location = (row << 4) | col;
 	lookAhead();
-    if (flood != 'f')
-    {
+    if (flood != 'f') {
         maze[row][col] |= VISITED;
         //TODO
         forward();
@@ -229,6 +231,7 @@ void moveFast(void) {/*{{{*/
 	uint8_t priority = 1;
     uint8_t tmp = direction;
 
+    // set priority to 0 if cell has been visited 
 	if ((maze[row-1][col] & VISITED) && (maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1)
 	{
 		direction = 0;
@@ -254,6 +257,7 @@ void moveFast(void) {/*{{{*/
 		priority = 0;
 	}
 
+    // if cell has not been visited, go to min cell
 	if (priority)
 	{
 		if ((maze[row-1][col] & DIST) == (maze[row][col] & DIST) - 1)
@@ -346,7 +350,7 @@ void turn(void)/*{{{*/
 
 //TODO
 /*****************************************************************************/
-// turn():
+// actualTurn():
 //		Turn to the cell closest to the center
 /*****************************************************************************/
 void actualTurn(uint8_t prev, uint8_t next)/*{{{*/
@@ -403,8 +407,7 @@ void update(uint16_t row, uint16_t col)/*{{{*/
 
 	// If there is no WEST wall for this cell, and west cell is closer
 	// to the center than current min, make it the new 'min'
-	if (!(tile & WEST_WALL))
-	{
+	if (!(tile & WEST_WALL)) {
 		if ((maze[row][col - 1] & DIST) < min)
 		{
 			min = maze[row][col - 1] & DIST;
@@ -451,7 +454,7 @@ int flood_main(void) {/*{{{*/
 	//setupTest(0xf0, 0);
 
 
-	// While location is not in one of the endpoint cells
+	// While location is not in center, traverse to center 1st run
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
@@ -488,7 +491,7 @@ int flood_main(void) {/*{{{*/
     location = tmpLoc;
     direction = tmpDir;
 
-    // While location is not in one of the endpoint cells
+    // While location is not in one of the endpoint cells 
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
@@ -506,7 +509,7 @@ int flood_main(void) {/*{{{*/
     location = 0xf0;
     direction = 0;
 
-	// While location is not in one of the endpoint cells
+	// While location is not in one of the endpoint cells move fast
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{

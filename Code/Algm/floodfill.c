@@ -493,7 +493,7 @@ int main() {
 	printf("Maze in mouse memory: \n");
 	print();
 
-	// While location is not in one of the endpoint cells
+	// First run: find walls, move to center ---------------------------------
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
@@ -515,7 +515,7 @@ int main() {
 	}
 	print();
 
-	/* Going from center->back */
+	// Going from center->back -----------------------------------------------
 	setup(location, direction, 2);
 
 	while (location != 0xf0)
@@ -536,12 +536,12 @@ int main() {
 	}
 	print();
 
-    // Floodfill
+    // Floodfill --------------------------------------------------------------
     setup(tmpLoc, tmpDir, 3);
     location = tmpLoc;
     direction = tmpDir;
     
-    // While location is not in one of the endpoint cells
+    // Using wall info, floodfill maze with values
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
@@ -560,10 +560,11 @@ int main() {
 	}
 	print();
 
+	// Reset position
     location = 0xf0;
     direction = 0;
 
-	// While location is not in one of the endpoint cells
+	// Move fast -- do not stop cell by cell
 	while (location != 0x77 && location != 0x78 &&
 		location != 0x87 && location != 0x88)
 	{
