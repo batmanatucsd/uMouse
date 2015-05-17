@@ -21,9 +21,9 @@ void ANBT_I2C_Configuration(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;	  //Բ�㲩ʿ:����I2CΪ��©����
   GPIO_Init(ANBT_I2C_PORT, &GPIO_InitStructure);
 	//
-	GPIO_InitStructure.GPIO_Pin = AnBT_MPU6050_INT;					//Բ�㲩ʿ:����ʹ�õ�I2C��
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;   //Բ�㲩ʿ:����I2C���������������ٶ�
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;	  //Բ�㲩ʿ:����I2CΪ��©����
+	GPIO_InitStructure.GPIO_Pin = AnBT_MPU6050_INT;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_Init(AnBT_MPU6050_INT_PORT, &GPIO_InitStructure);
 	//
 	ANBT_I2C_SCL_1;

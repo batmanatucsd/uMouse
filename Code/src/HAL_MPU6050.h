@@ -51,6 +51,9 @@ extern "C" {
 #define MPU6050_I2C_RCC_Port         RCC_APB2Periph_GPIOB
 #define MPU6050_I2C_Speed            100000 // 100kHz standard mode
 
+#define MPU6050_INT_Pin              GPIO_Pin_12
+#define MPU6050_INT_Port             GPIOC 
+
 /**
  *@}
  *//* end of group MPU6050_I2C_Define */
