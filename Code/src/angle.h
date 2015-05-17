@@ -9,8 +9,9 @@
 #define g 9.81
 
 void Angle_Set();
-void Angle_Update();
+void Angle_Update(uint16_t count_diff);
 void Angle_Simple();
-void MPU6050_OffsetCal();
+void Angle_Handler();
+void Angle_OffsetCal();
 
 #endif

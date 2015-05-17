@@ -2,7 +2,7 @@
 PROJECT = uMouse
 
 # DEVICE(MOUSE, DISCOVERY)
-BOARD = MOUSE
+BOARD = DISCOVERY
 
 # Make Mode(DEBUG, RELEASE)
 MAKEMODE = RELEASE
@@ -93,7 +93,7 @@ endif
 
 
 LDFLAGS = -lm -nostartfiles $(OPT) $(GFLAGS)  -T$(LDSCRIPT)
-CFLAGS  = $(OPT) $(GFLAGS) -g3 -Wall
+CFLAGS  = $(OPT) $(GFLAGS) -g3 -Wall -std=c11
 ASFLAGS = $(GFLAGS) -g3
 
 INCFLAGS  = $(addprefix -I, $(INC))
