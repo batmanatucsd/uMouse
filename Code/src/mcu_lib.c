@@ -527,3 +527,50 @@ void Delay_ms(uint16_t wait_for)  /*{{{*/
     /*SysTick->CTRL=0x00;  */
     /*SysTick->VAL=0x00;     */
 }  /*}}}*/
+
+
+/*****************************************************************************/
+// REPEAT_Configuration
+//
+// @brief: Set configurations for repeat functions
+//         TIM6 is used
+/*****************************************************************************/
+void REPEAT_Configuration(void)
+{
+  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
+
+  RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM6, ENABLE);
+  RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM6, DISABLE);
+
+  TIM_TimeBaseStructure.TIM_Prescaler = 14400 -1;  //5kHz
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+  TIM_TimeBaseStructure.TIM_Period = 0xFFFF;    //20ms
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
+
+  TIM_TimeBaseInit(TIM6, &TIM_TimeBaseStructure);
+
+  TIM_Cmd(TIM6, ENABLE);
+}
+
+
+//before calling the function remember to set last_count = TIM6 ->CNT
+// void REPEAT_EXAMPLE()
+// {
+//   uint16_t current_count = TIM6 -> CNT;
+//   uint16_t count_diff = current_count - last_count;
+//
+//   if(count_diff > time_diff)
+//   {
+//
+//   }
+//
+//   last_count = current_count;
+//   if (last_count > 0xBBBB)
+//   {
+//     TIM6 -> CNT = (TIM6 -> CNT) - last_count;
+//     last_count = 0;
+//   }
+// }
