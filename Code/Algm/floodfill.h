@@ -1,38 +1,42 @@
+#include <stdint.h>
+
 /*****************************************************************************/
 // Globals
 /*****************************************************************************/
-unsigned short maze[16][16];   // Initially empty board in mouse memory
-unsigned char location = 0x0;  // First four bits = ROW, last four = COL
-unsigned char direction = 0x0; // 0x0 north 0x1 east 0x2 south 0x3 west
+uint16_t maze[16][16];   // Initially empty board in mouse memory
+uint8_t location = 0x0;  // First four bits = ROW, last four = COL
+uint8_t direction = 0x0; // 0x0 north 0x1 east 0x2 south 0x3 west
 
 /*****************************************************************************/
 // Bit masks
 // xxxV_NESW_DIST
 /*****************************************************************************/
-unsigned short VISITED = 0x1000;
-unsigned short NORTH_WALL = 0x0800;
-unsigned short EAST_WALL = 0x0400;
-unsigned short SOUTH_WALL = 0x0200;
-unsigned short WEST_WALL = 0x0100;
-unsigned short WALLS = 0x0f00;
-unsigned short DIST = 0xff;
-unsigned char ROW = 0xf0;
-unsigned char COL = 0x0f;
+uint16_t VISITED = 0x1000;
+uint16_t NORTH_WALL = 0x0800;
+uint16_t EAST_WALL = 0x0400;
+uint16_t SOUTH_WALL = 0x0200;
+uint16_t WEST_WALL = 0x0100;
+uint16_t WALLS = 0x0f00;
+uint16_t DIST = 0xff;
+uint8_t ROW = 0xf0;
+uint8_t COL = 0x0f;
 
 /*****************************************************************************/
 // Neighbor stack
 /*****************************************************************************/
 
-unsigned char stack[512];
-unsigned short stackptr = 0;
+uint8_t stack[512];
+uint16_t stackptr = 0;
 
 /*****************************************************************************/
 // Functions
 /*****************************************************************************/
-void setup(unsigned char loc, unsigned char dist, unsigned char back);
-unsigned short init(unsigned short row, unsigned short col);
-void initBack();
+void setup(uint8_t loc, uint8_t dist, uint8_t back);
+uint16_t init(uint16_t row, uint16_t col);
+uint16_t initBack(uint16_t row, uint16_t col);
+uint16_t initFlood(uint16_t row, uint16_t col);
 void lookAhead();
-void move();
-void update(unsigned short row, unsigned short col);
+void move(uint8_t flood);
+void moveFast();
+void update(uint16_t row, uint16_t col);
 void print();
