@@ -1,5 +1,4 @@
 arm-none-eabi toolchain: https://launchpad.net/gcc-arm-embedded
-stm32f10x library: http://www.st.com/web/en/catalog/tools/PF257890
 STM flash loader: http://www.st.com/web/en/catalog/tools/PF257525
 ST-LINK utility: http://www.st.com/web/en/catalog/tools/PF258168
 
@@ -10,26 +9,11 @@ ST-LINK utility: http://www.st.com/web/en/catalog/tools/PF258168
 known issue: some 64 bit system might need ia32-libs to run 32 bit program(or NO such file or directory error appear)
 For me(ubuntu 14.04 64 bit):sudo apt-get install libc6-i386
 
-3.download the STM32F10X Library and extract them into /Code folder too
+It is better to add the toolchain into PATH
 
-in the end should look like this:
-/code
-	/arm-none-eabi
-		/arm-none-eabi
-		/bin
-		/lib
-		/share
-	/STM32F10x_StdPeriph_Lib_V3.5.0
-		/Libraries
-		...
-	Makefile
-	main.c
-	...
+3.first make the submodule(libopencm3):go into the folder and make
 
-4.there is a known error in core_cm3.c, updated accord to the reference.
-reference: http://www.atollic.com/index.php/kb/1-kb_building/117-kb_error_in_strexb
-
-5.type make and the whole program should be compiled, although not sure if it is right because no test tools
+4.make the project
 
 uMouse Pin out(HEAD UP)
 RST|VCC
