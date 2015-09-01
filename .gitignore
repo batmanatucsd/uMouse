@@ -4,6 +4,7 @@
 *.o
 *.d
 *.bin
+*.map
 *.elf
 
 #ignore executables
