@@ -49,12 +49,7 @@ int _write(int file, char *ptr, int len)
 //
 // }
 
-/*****************************************************************************/
-// USART Functions
-//
-// Set configurations for serial connection
-// Only called when in debug mode
-/*****************************************************************************/
+//confiure usart
 void USART_Configuration(void)
 {
   clock_setup();
@@ -62,25 +57,25 @@ void USART_Configuration(void)
 }
 
 //Unit test
-int main(void)
-{
-	int counter = 0;
-	float fcounter = 0.0;
-	double dcounter = 0.0;
-
-  USART_Configuration();
-
-	/*
-	 * Write Hello World, an integer, float and double all over
-	 * again while incrementing the numbers.
-	 */
-	while (1) {
-		printf("Hello World! %i %f %f\r\n", counter, fcounter,
-		       dcounter);
-		counter++;
-		fcounter += 0.01;
-		dcounter += 0.01;
-	}
-
-	return 0;
-}
+// int main(void)
+// {
+// 	int counter = 0;
+// 	float fcounter = 0.0;
+// 	double dcounter = 0.0;
+//
+//   USART_Configuration();
+//
+// 	/*
+// 	 * Write Hello World, an integer, float and double all over
+// 	 * again while incrementing the numbers.
+// 	 */
+// 	while (1) {
+// 		printf("Hello World! %i %f %f\r\n", counter, fcounter,
+// 		       dcounter);
+// 		counter++;
+// 		fcounter += 0.01;
+// 		dcounter += 0.01;
+// 	}
+//
+// 	return 0;
+// }

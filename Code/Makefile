@@ -3,3 +3,6 @@ all:
 
 clean:
 	cd src && make clean
+
+debug:
+	cd src && make debug

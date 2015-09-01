@@ -14,4 +14,4 @@ int _write(int file, char *ptr, int len);
 
 void USART_Configuration(void);
 
-#endif // USART_H
+#endif // _USART_H_
