@@ -1,212 +1,86 @@
 #include "usart.h"
 
+static void clock_setup(void)
+{
+	/* Enable clocks for GPIO port A (for GPIO_USART1_TX) and USART1. */
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_AFIO);
+	rcc_periph_clock_enable(RCC_USART1);
+}
+
+static void usart_setup(void)
+{
+	/* Setup GPIO pin GPIO_USART1_TX(9) on GPIO port A for transmit. */
+	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ,
+    GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART1_TX);
+
+  /* Setup GPIO pin GPIO_USART1_RX(10) on GPIO port A for receive. */
+  gpio_set_mode(GPIOA, GPIO_MODE_INPUT,
+    GPIO_CNF_INPUT_FLOAT, GPIO_USART1_RX);
+
+	/* Setup UART parameters. */
+	usart_set_baudrate(USART1, 9600);
+	usart_set_databits(USART1, 8);
+	usart_set_stopbits(USART1, USART_STOPBITS_1);
+	usart_set_parity(USART1, USART_PARITY_NONE);
+	usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+	usart_set_mode(USART1, USART_MODE_TX_RX);
+
+	/* Finally enable the USART. */
+	usart_enable(USART1);
+}
+
+int _write(int file, char *ptr, int len)
+{
+	int i;
+
+	if (file == 1) {
+		for (i = 0; i < len; i++)
+			usart_send_blocking(USART1, ptr[i]);
+		return i;
+	}
+
+	errno = EIO;
+	return -1;
+}
+
+// int _read(int file, char *ptr, int len)
+// {
+//
+// }
+
 /*****************************************************************************/
 // USART Functions
 //
 // Set configurations for serial connection
 // Only called when in debug mode
 /*****************************************************************************/
-void USART_Configuration(void) /*{{{*/
+void USART_Configuration(void)
 {
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+  clock_setup();
+  usart_setup();
+}
 
-  GPIO_InitTypeDef GPIO_InitStructure;
-
-	// **** GPIO config for serial connection *** //
-  // USART_RX
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-  // USART_TX
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-  USART_InitTypeDef USART_InitStructure;
-
-  USART_InitStructure.USART_BaudRate = USART_BAUDRATE;
-  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-  USART_InitStructure.USART_StopBits = USART_StopBits_1;
-  USART_InitStructure.USART_Parity = USART_Parity_No;
-  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-
-  USART_Init(USART1, &USART_InitStructure);
-  USART_Cmd(USART1, ENABLE);
-}/*}}}*/
-
-void USART_Write(uint16_t Data) /*{{{*/
+//Unit test
+int main(void)
 {
-  USART_SendData(USART1, Data);
-  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
-}/*}}}*/
+	int counter = 0;
+	float fcounter = 0.0;
+	double dcounter = 0.0;
 
-uint8_t USART_Read(void) {/*{{{*/
-  while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
-  return (uint8_t) USART_ReceiveData(USART1);
-}/*}}}*/
+  USART_Configuration();
 
-void USART_SendInt(uint16_t num) /*{{{*/
-{
-  int i = 5;
-  char num_char[6] = {0};
+	/*
+	 * Write Hello World, an integer, float and double all over
+	 * again while incrementing the numbers.
+	 */
+	while (1) {
+		printf("Hello World! %i %f %f\r\n", counter, fcounter,
+		       dcounter);
+		counter++;
+		fcounter += 0.01;
+		dcounter += 0.01;
+	}
 
-  while(num > 0) {
-    num_char[i--] = num%10 + 48;
-    num /= 10;
-  }
-
-  for(i=0; i<6; ++i) {
-    if(num_char[i])
-      USART_Write(num_char[i]);
-  }
-}/*}}}*/
-
-
-/*****************************************************************************/
-// Stub Functions Needed for stio 
-/*****************************************************************************/
-
-/*
- read
- Read a character to a file. `libc' subroutines will use this system routine for input from all files, including stdin
- Returns -1 on error or blocks until the number of characters have been read.
- */
-
-
-int _read(int file, char *ptr, int len) {/*{{{*/
-    int n;
-    int num = 0;
-    switch (file) {
-    case STDIN_FILENO:
-        for (n = 0; n < len; n++) {
-
-// #if   STDIN_USART == 1
-//             while ((USART1->SR & USART_FLAG_RXNE) == (uint16_t)RESET) {}
-//             char c = (char)(USART1->DR & (uint16_t)0x01FF);
-// #elif STDIN_USART == 2
-//             while ((USART2->SR & USART_FLAG_RXNE) == (uint16_t) RESET) {}
-//             char c = (char) (USART2->DR & (uint16_t) 0x01FF);
-// #elif STDIN_USART == 3
-//             while ((USART3->SR & USART_FLAG_RXNE) == (uint16_t)RESET) {}
-//             char c = (char)(USART3->DR & (uint16_t)0x01FF);
-// #endif
-            char c = USART_Read();
-            *ptr++ = c;
-            num++;
-        }
-        break;
-    default:
-        errno = EBADF;
-        return -1;
-    }
-    return num;
-}/*}}}*/
-
-/*
- write
- Write a character to a file. `libc' subroutines will use this system routine for output to all files, including stdout
- Returns -1 on error or number of bytes sent
- */
-int _write(int file, char *ptr, int len) {/*{{{*/
-    int n;
-    switch (file) {
-    case STDOUT_FILENO: /*stdout*/
-    case STDERR_FILENO: /* stderr */
-        for (n = 0; n < len; n++) {
-            USART_Write(*ptr++ & (uint16_t) 0x01FF);
-// #if STDERR_USART == 1
-//             while ((USART1->SR & USART_FLAG_TC) == (uint16_t)RESET) {}
-//             USART1->DR = (*ptr++ & (uint16_t)0x01FF);
-// #elif  STDERR_USART == 2
-//             while ((USART2->SR & USART_FLAG_TC) == (uint16_t) RESET) {
-//             }
-//             USART2->DR = (*ptr++ & (uint16_t) 0x01FF);
-// #elif  STDERR_USART == 3
-//             while ((USART3->SR & USART_FLAG_TC) == (uint16_t)RESET) {}
-//             USART3->DR = (*ptr++ & (uint16_t)0x01FF);
-// #endif
-
-        }
-        break;
-    default:
-        errno = EBADF;
-        return -1;
-    }
-    return len;
-}/*}}}*/
-
-
-int _close(int file) {/*{{{*/
-    return -1;
-}/*}}}*/
-
-/*
- sbrk
- Increase program data space.
- Malloc and related functions depend on this
- */
-caddr_t _sbrk(int incr) {/*{{{*/
-
-    extern char _ebss; // Defined by the linker
-    static char *heap_end;
-    char *prev_heap_end;
-
-    if (heap_end == 0) {
-        heap_end = &_ebss;
-    }
-    prev_heap_end = heap_end;
-
-char * stack = (char*) __get_MSP();
-     if (heap_end + incr >  stack)
-     {
-         _write (STDERR_FILENO, "Heap and stack collision\n", 25);
-         errno = ENOMEM;
-         return  (caddr_t) -1;
-         //abort ();
-     }
-
-    heap_end += incr;
-    return (caddr_t) prev_heap_end;
-
-}/*}}}*/
-
-/*
- lseek
- Set position in a file. Minimal implementation:
- */
-int _lseek(int file, int ptr, int dir) {/*{{{*/
-    return 0;
-}/*}}}*/
-
-/*
- isatty
- Query whether output stream is a terminal. For consistency with the other minimal implementations,
- */
-int _isatty(int file) {/*{{{*/
-    switch (file){
-    case STDOUT_FILENO:
-    case STDERR_FILENO:
-    case STDIN_FILENO:
-        return 1;
-    default:
-        //errno = ENOTTY;
-        errno = EBADF;
-        return 0;
-    }
-}/*}}}*/
-
-/*
- fstat
- Status of an open file. For consistency with other minimal implementations in these examples,
- all files are regarded as character special devices.
- The `sys/stat.h' header file required is distributed in the `include' subdirectory for this C library.
- */
-int _fstat(int file, struct stat *st) {/*{{{*/
-    st->st_mode = S_IFCHR;
-    return 0;
-}/*}}}*/
-
+	return 0;
+}
