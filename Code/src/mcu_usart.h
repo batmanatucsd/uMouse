@@ -1,7 +1,7 @@
 //handle all usart communication
 
-#ifndef _USART_H_
-#define _USART_H_
+#ifndef _MCU_USART_H_
+#define _MCU_USART_H_
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>

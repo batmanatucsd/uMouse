@@ -1,4 +1,4 @@
-#include "usart.h"
+#include "mcu_usart.h"
 
 static void clock_setup(void)
 {
