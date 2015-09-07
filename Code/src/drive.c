@@ -1,5 +1,4 @@
 #include "mouse.h"
-//#include "math.h"
 
 /*****************************************************************************/
 // General Functions
@@ -11,7 +10,7 @@ void listen_for_button(void)/*{{{*/
 
     if(mouse_state == STOP) // if the mouse_state is the last state
       next_state = GO;      // change it to the first state
-    else 
+    else
       next_state = ++mouse_state; // else next state
 
     do {
@@ -87,10 +86,10 @@ void change_LeftMotorSpeed(float speed)/*{{{*/
     leftBackward();
     speed *= -1;
   }
-  
+
   if(speed > LEFT_MAX_SPEED)
     speed = LEFT_MAX_SPEED;
-  
+
   L_PWM->CCR2 = speed; // CCR2 because we are using channel two of TIM3
 }/*}}}*/
 
@@ -116,8 +115,8 @@ void rightTurn(void)/*{{{*/
 {
   /**********************************90 TURN*********************************/
   // reset encoder counts
-//  L_ENC->CNT = 0; 
-//  R_ENC->CNT = 0; 
+//  L_ENC->CNT = 0;
+//  R_ENC->CNT = 0;
 
 //  change_LeftMotorSpeed(250);
 //  change_RightMotorSpeed(-250);
@@ -129,13 +128,13 @@ void rightTurn(void)/*{{{*/
 //  change_RightMotorSpeed(0);
 
   // reset encoder counts
-//  L_ENC->CNT = 0; 
+//  L_ENC->CNT = 0;
 //  R_ENC->CNT = 0;
 
 /********************************SMOOTH RIGHT TURN*************************/
 /*  ADC_Read(1,1,1,1);
   while(sensor_buffers[R_IR]<140){
-	
+
 	//turn left wheel more AND faster
 	while(L_ENC->CNT<5000){
 		if(sensor_buffers[R_IR]>140)
@@ -145,14 +144,14 @@ void rightTurn(void)/*{{{*/
   }
 
 */
- 
+
 }/*}}}*/
 
 void leftTurn(void)/*{{{*/
 {
   // reset encoder counts
-  L_ENC->CNT = 0; 
-  R_ENC->CNT = 0; 
+  L_ENC->CNT = 0;
+  R_ENC->CNT = 0;
 
   // set motor directions and speed
 <<<<<<< HEAD
@@ -166,7 +165,7 @@ void leftTurn(void)/*{{{*/
 =======
   /*leftForward();*/
   /*rightBackward();*/
-  
+
   change_LeftMotorSpeed(250);
   change_RightMotorSpeed(-250);
 
@@ -177,15 +176,15 @@ void leftTurn(void)/*{{{*/
   change_RightMotorSpeed(0);
 
   // reset encoder counts
-  L_ENC->CNT = 0; 
-  R_ENC->CNT = 0; 
+  L_ENC->CNT = 0;
+  R_ENC->CNT = 0;
 }/*}}}*/
 
 void fullTurn(void)/*{{{*/
 {
   // reset encoder counts
-  L_ENC->CNT = 0; 
-  R_ENC->CNT = 0; 
+  L_ENC->CNT = 0;
+  R_ENC->CNT = 0;
 
   // set motor directions and speed
   change_RightMotorSpeed(250);
@@ -199,8 +198,8 @@ void fullTurn(void)/*{{{*/
   change_RightMotorSpeed(0);
 
   // reset encoder counts
-  L_ENC->CNT = 0; 
-  R_ENC->CNT = 0; 
+  L_ENC->CNT = 0;
+  R_ENC->CNT = 0;
 
 }/*}}}*/
 
@@ -208,13 +207,13 @@ void fullTurn(void)
 {
 
   // reset encoder counts
-  L_ENC->CNT = 0; 
-  R_ENC->CNT = 0; 
+  L_ENC->CNT = 0;
+  R_ENC->CNT = 0;
 
   // set motor directions and speed
   /*leftForward();*/
   /*rightBackward();*/
-  
+
   change_LeftMotorSpeed(250);
   change_RightMotorSpeed(-250);
 
@@ -224,10 +223,10 @@ void fullTurn(void)
   change_RightMotorSpeed(0);
 
   // reset encoder counts
-  L_ENC->CNT = 0; 
-  R_ENC->CNT = 0; 
+  L_ENC->CNT = 0;
+  R_ENC->CNT = 0;
 
-} 
+}
 
 
 /*****************************************************************************/
@@ -237,17 +236,17 @@ void fullTurn(void)
 void stopFrontWall(void){
   ADC_Read(1, 0, 0, 1);
 
-  if(sensor_buffers[L_IR] >= 120 && sensor_buffers[L_IR] < 350) { 
+  if(sensor_buffers[L_IR] >= 120 && sensor_buffers[L_IR] < 350) {
     // Stop the bot when it is too close
     change_LeftMotorSpeed(430 - (0.1661*sensor_buffers[L_IR] + 358.57));
     change_RightMotorSpeed(400 - (0.1854*sensor_buffers[R_IR] + 326.2));
-  } 
+  }
   else{
-    // Gradually slow down 
+    // Gradually slow down
     change_LeftMotorSpeed(500-sensor_buffers[L_IR]);
     change_RightMotorSpeed(400-sensor_buffers[R_IR]);
 
-  } 
+  }
 =======
 void stopFrontWall(void)
 {
@@ -255,11 +254,11 @@ void stopFrontWall(void)
 //  change_LeftMotorSpeed(430 - sensor_buffers[L_IR]);
  // change_RightMotorSpeed(400 - sensor_buffers[R_IR]);
 
- 
+
   ADC_Read();
   //slowing down linearly
   if(sensor_buffers[L_IR] > 120 || sensor_buffers[R_IR] > 120)
-  { 
+  {
     change_LeftMotorSpeed(430  - (.1661*sensor_buffers[L_IR]+358.57));
     change_RightMotorSpeed(400 - (.1845*sensor_buffers[R_IR]+326.2));
   }
@@ -271,6 +270,3 @@ void stopFrontWall(void)
 
 >>>>>>> 9d75405ce786383eda56455c30c45d4158e3a99b
 }
-
-
-

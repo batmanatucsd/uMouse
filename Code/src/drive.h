@@ -1,9 +1,7 @@
-#ifndef _MOUSE_H
-#define _MOUSE_H
+//handle adc motor
 
-#include "mcu_lib.h"
-#include "pid.h"
-#include "floodfill.h"
+#ifndef _MOUSE_H_
+#define _MOUSE_H_
 
 #define ON 1
 #define OFF 0
@@ -25,15 +23,15 @@ typedef enum {
 
 typedef enum {
   PAUSE,
-  TURN90, 
-  TURN180, 
+  TURN90,
+  TURN180,
   FORWARD
 } status;
 
 /*****************************************************************************/
 // Global Variables
 /*****************************************************************************/
-volatile state mouse_state; 
+volatile state mouse_state;
 static status mouse_status = PAUSE;
 __IO uint16_t sensor_buffers[4];
 
