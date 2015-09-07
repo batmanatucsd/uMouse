@@ -1,14 +1,15 @@
-#ifndef _MCU_LIB_H
-#define _MCU_LIB_H
+#ifndef _MCU_H_
+#define _MCU_H_
 
-#include "stm32f10x.h"
-//#include "iic.h"
-#include "MPU6050.h"
-//#include "mouse.h"
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/cm3/nvic.h>
 
 #ifdef  SERIAL_DEBUG
-#include "usart.h"
+#include <libopencm3/stm32/usart.h>
 #include <stdio.h>
+#include <errno.h>
+#include "usart.h"
 #endif // SERIAL_DEBUG
 
 
