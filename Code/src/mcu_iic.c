@@ -1,5 +1,9 @@
 #include "mcu_iic.h"
 
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/i2c.h>
+
 void IIC_Configuration()
 {
  /* Enable clocks for I2C1 and AFIO. */
@@ -43,3 +47,84 @@ void IIC_Configuration()
  /* If everything is configured -> enable the peripheral. */
  i2c_peripheral_enable(I2C1);
 }
+
+int i2c_write(unsigned char slave_addr, unsigned char reg_addr,
+    unsigned char length, unsigned char const *data)
+{
+    uint32_t reg32 __attribute__((unused));
+
+    /* Send START condition. */
+    i2c_send_start(I2C1);
+
+    /* Waiting for START is send and switched to master mode. */
+    while (!((I2C_SR1(I2C1) & I2C_SR1_SB)
+        & (I2C_SR2(I2C1) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
+
+    /* Send destination address. */
+    i2c_send_7bit_address(I2C1, slave_addr, I2C_WRITE);
+
+    /* Waiting for address is transferred. */
+    while (!(I2C_SR1(I2C1) & I2C_SR1_ADDR));
+
+    /* Cleaning ADDR condition sequence. */
+    reg32 = I2C_SR2(I2C1);
+
+    /* Sending the data. */
+    i2c_send_data(I2C1, reg_addr);
+    while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
+
+    while (length-- > 1) {
+        i2c_send_data(I2C1, (uint8_t)(*(data++)));
+        while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
+    }
+
+    i2c_send_data(I2C1, (uint8_t)(*(data++)));
+    /* After the last byte we have to wait for TxE too. */
+    while (!(I2C_SR1(I2C1) & (I2C_SR1_BTF | I2C_SR1_TxE)));
+
+    /* Send STOP condition. */
+    i2c_send_stop(I2C1);
+
+    return 0;
+}
+
+// int i2c_read(unsigned char slave_addr, unsigned char reg_addr,
+//     unsigned char length, unsigned char *data)
+// {
+//     uint32_t reg32 __attribute__((unused));
+//
+//     /* Send START condition. */
+//     i2c_send_start(I2C1);
+//
+//     /* Waiting for START is send and switched to master mode. */
+//     while (!((I2C_SR1(I2C1) & I2C_SR1_SB)
+//         & (I2C_SR2(I2C1) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
+//
+//     /* Send destination address. */
+//     i2c_send_7bit_address(I2C1, slave_addr, I2C_WRITE);
+//
+//     /* Waiting for address is transferred. */
+//     while (!(I2C_SR1(I2C1) & I2C_SR1_ADDR));
+//
+//     /* Cleaning ADDR condition sequence. */
+//     reg32 = I2C_SR2(I2C1);
+//
+//     /* Sending the data. */
+//     i2c_send_data(I2C1, reg_addr);
+//     while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
+//
+//     while (length-- > 1) {
+//         i2c_send_data(I2C1, (uint8_t)(*(data++)));
+//         while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
+//     }
+//
+//     i2c_send_data(I2C1, (uint8_t)(*(data++)));
+//     /* After the last byte we have to wait for TxE too. */
+//     while (!(I2C_SR1(I2C1) & (I2C_SR1_BTF | I2C_SR1_TxE)));
+//
+//     /* Send STOP condition. */
+//     i2c_send_stop(I2C1);
+//
+//     return 0;
+//
+// }
