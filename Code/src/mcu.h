@@ -70,10 +70,4 @@ void ENCODER_Configuration(void);
 
 void ADC_Read(uint16_t, uint16_t, uint16_t, uint16_t);
 
-void Delay_Init(void);
-void Decrement_WaitTime(void);
-void Delay_us(uint32_t);
-void Delay_ms(uint16_t);
-
-
 #endif // _MCU_LIB_H

@@ -21,6 +21,10 @@ BINARY = uMouse
 
 OBJS += mcu_usart.o
 OBJS += mcu_iic.o
+OBJS += mcu_delay.o
+OBJS += eMPL/inv_mpu.o
+
+CPPFLAGS += -DMPU6050 -DEMPL_TARGET_UMOUSE
 
 OPENCM3_DIR=../libopencm3
 LDSCRIPT = $(OPENCM3_DIR)/lib/stm32/f1/stm32f100xb.ld

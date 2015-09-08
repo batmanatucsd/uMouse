@@ -3,6 +3,7 @@ all:
 
 clean:
 	cd src && make clean
+	cd src/eMPL && make clean
 
 debug:
 	cd src && make debug
