@@ -6,7 +6,16 @@
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
 
+#include <math.h>
+
 #define DEFAULT_MPU_HZ  (100)
+
+#define q30  1073741824.0f
+float q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
+unsigned long sensor_timestamp;
+short gyro_raw[3], accel_raw[3], sensors;
+unsigned char more;
+long quat[4];
 
 static signed char gyro_orientation[9] = {-1, 0, 0,
                                            0,-1, 0,
@@ -152,3 +161,20 @@ int MPU_Configuration(void)
 
     return 0;
 }
+
+void MPU6050_Pose(float cal_data[3])
+{
+   dmp_read_fifo(gyro_raw, accel_raw, quat, &sensor_timestamp, &sensors,&more);
+   if (sensors & INV_WXYZ_QUAT )
+   {
+       q0=quat[0] / q30;
+       q1=quat[1] / q30;
+       q2=quat[2] / q30;
+       q3=quat[3] / q30;
+
+       cal_data[0] = asin(-2 * q1 * q3 + 2 * q0* q2)* 57.3;
+       cal_data[1] = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3;
+       cal_data[2] = atan2(2*(q1*q2 + q0*q3),q0*q0+q1*q1-q2*q2-q3*q3) * 57.3;
+       // printf("pitch: %.2f    roll:%.2f		yaw:%.2f\r\n",Pitch,Roll,Yaw);
+   }
+ }
