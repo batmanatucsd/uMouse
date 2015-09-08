@@ -18,19 +18,19 @@ int i2c_write(unsigned char slave_addr,
     unsigned char length,
     unsigned char const *data);
 
-// /**
-//  *  @brief      Read from a device.
-//  *
-//  *  @param[in]  slave_addr  Slave address of device.
-//  *  @param[in]  reg_addr	Slave register to be read from.
-//  *  @param[in]  length      Number of bytes to read.
-//  *  @param[out] data        Data from register.
-//  *
-//  *  @return     0 if successful.
-//  */
-// int i2c_read(unsigned char slave_addr,
-//     unsigned char reg_addr,
-//     unsigned char length,
-//     unsigned char *data);
+/**
+ *  @brief      Read from a device.
+ *
+ *  @param[in]  slave_addr  Slave address of device.
+ *  @param[in]  reg_addr	Slave register to be read from.
+ *  @param[in]  length      Number of bytes to read.
+ *  @param[out] data        Data from register.
+ *
+ *  @return     0 if successful.
+ */
+int i2c_read(unsigned char slave_addr,
+    unsigned char reg_addr,
+    unsigned char length,
+    unsigned char *data);
 
 #endif

@@ -3,6 +3,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/i2c.h>
+#include <libopencm3/cm3/cortex.h>
 
 void IIC_Configuration()
 {
@@ -78,7 +79,7 @@ int i2c_write(unsigned char slave_addr, unsigned char reg_addr,
         while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
     }
 
-    i2c_send_data(I2C1, (uint8_t)(*(data++)));
+    i2c_send_data(I2C1, (uint8_t)(*data));
     /* After the last byte we have to wait for TxE too. */
     while (!(I2C_SR1(I2C1) & (I2C_SR1_BTF | I2C_SR1_TxE)));
 
@@ -88,43 +89,172 @@ int i2c_write(unsigned char slave_addr, unsigned char reg_addr,
     return 0;
 }
 
-// int i2c_read(unsigned char slave_addr, unsigned char reg_addr,
-//     unsigned char length, unsigned char *data)
-// {
-//     uint32_t reg32 __attribute__((unused));
-//
-//     /* Send START condition. */
-//     i2c_send_start(I2C1);
-//
-//     /* Waiting for START is send and switched to master mode. */
-//     while (!((I2C_SR1(I2C1) & I2C_SR1_SB)
-//         & (I2C_SR2(I2C1) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
-//
-//     /* Send destination address. */
-//     i2c_send_7bit_address(I2C1, slave_addr, I2C_WRITE);
-//
-//     /* Waiting for address is transferred. */
-//     while (!(I2C_SR1(I2C1) & I2C_SR1_ADDR));
-//
-//     /* Cleaning ADDR condition sequence. */
-//     reg32 = I2C_SR2(I2C1);
-//
-//     /* Sending the data. */
-//     i2c_send_data(I2C1, reg_addr);
-//     while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
-//
-//     while (length-- > 1) {
-//         i2c_send_data(I2C1, (uint8_t)(*(data++)));
-//         while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
-//     }
-//
-//     i2c_send_data(I2C1, (uint8_t)(*(data++)));
-//     /* After the last byte we have to wait for TxE too. */
-//     while (!(I2C_SR1(I2C1) & (I2C_SR1_BTF | I2C_SR1_TxE)));
-//
-//     /* Send STOP condition. */
-//     i2c_send_stop(I2C1);
-//
-//     return 0;
-//
-// }
+int i2c_read(unsigned char slave_addr, unsigned char reg_addr,
+    unsigned char length, unsigned char *data)
+{
+    uint32_t reg32 __attribute__((unused));
+
+	/* Send START condition. */
+	i2c_send_start(I2C1);
+
+	/* Waiting for START is send and switched to master mode. */
+	while (!((I2C_SR1(I2C1) & I2C_SR1_SB)
+		& (I2C_SR2(I2C1) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
+
+	/* Say to what address we want to talk to. */
+	/* Yes, WRITE is correct - for selecting register in STTS75. */
+	i2c_send_7bit_address(I2C1, slave_addr, I2C_WRITE);
+
+	/* Waiting for address is transferred. */
+	while (!(I2C_SR1(I2C1) & I2C_SR1_ADDR));
+
+	/* Cleaning ADDR condition sequence. */
+	reg32 = I2C_SR2(I2C1);
+
+	i2c_send_data(I2C1, reg_addr);
+	while (!(I2C_SR1(I2C1) & (I2C_SR1_BTF | I2C_SR1_TxE)));
+
+    /* Send START condition. */
+    i2c_send_start(I2C1);
+
+    /* Waiting for START is send and switched to master mode. */
+    while (!((I2C_SR1(I2C1) & I2C_SR1_SB)
+        & (I2C_SR2(I2C1) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
+
+    /* Say to what address we want to talk to. */
+    i2c_send_7bit_address(I2C1, slave_addr, I2C_READ);
+
+    if(length > 2)
+    {
+        /* Waiting for address is transferred. */
+        while (!(I2C_SR1(I2C1) & I2C_SR1_ADDR));
+
+        /* Cleaning ADDR condition sequence. */
+        reg32 = I2C_SR2(I2C1);
+
+        while(length-- > 3)
+        {
+            /* Waiting for EV7 software sequence. */
+            while (!(I2C_SR1(I2C1) & I2C_SR1_RxNE));
+
+            /* Cleaning EV7 software sequence. */
+            *(data++) = I2C_DR(I2C1);
+        }
+
+        /* Waiting for EV7_2 software sequence. */
+        while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
+
+        /* Cleaning I2C_SR1_ACK. */
+        I2C_CR1(I2C1) &= ~I2C_CR1_ACK;
+
+        /* Reading DataN-2 */
+        *(data++) = I2C_DR(I2C1);
+
+        /* Disable interrupts. */
+        cm_disable_interrupts();
+
+        /* STOP = 1 */
+        I2C_CR1(I2C1) |= I2C_CR1_STOP;
+
+        /* Reading DataN-1 */
+        *(data++) = I2C_DR(I2C1);
+
+        /* Enable interrupts. */
+        cm_enable_interrupts();
+
+        /* Waiting for EV7 software sequence. */
+        while (!(I2C_SR1(I2C1) & I2C_SR1_RxNE));
+
+        /* Reading DataN */
+        *data = I2C_DR(I2C1);
+
+        /*Wait until STOP is cleared by hardware. */
+        while ((I2C_CR1(I2C1) & I2C_CR1_STOP) == I2C_CR1_STOP)
+
+        /* ACK = 1 */
+        I2C_CR1(I2C1) |= I2C_CR1_ACK;
+
+        return 0;
+    }
+    else if(length == 2)
+    {
+        /* Waiting for address is transferred. */
+        while (!(I2C_SR1(I2C1) & I2C_SR1_ADDR));
+
+        /* Set POS */
+        I2C_CR1(I2C1) |= I2C_CR1_POS;
+
+        /* Disable interrupts. */
+        cm_disable_interrupts();
+
+        /* Cleaning ADDR condition sequence. */
+        reg32 = I2C_SR2(I2C1);
+
+        /* Cleaning I2C_SR1_ACK. */
+        I2C_CR1(I2C1) &= ~I2C_CR1_ACK;
+
+        /* Enable interrupts. */
+        cm_enable_interrupts();
+
+        /* Now the slave should begin to send us the first byte. Await BTF. */
+        while (!(I2C_SR1(I2C1) & I2C_SR1_BTF));
+
+        /* Disable interrupts. */
+        cm_disable_interrupts();
+
+        /* STOP = 1 */
+        I2C_CR1(I2C1) |= I2C_CR1_STOP;
+
+        /* Reading Data1 */
+        *data = I2C_DR(I2C1);
+
+        /* Enable interrupts. */
+        cm_enable_interrupts();
+
+        /* Reading Data2 */
+        *(++data) = I2C_DR(I2C1);
+
+        /*Wait until STOP is cleared by hardware. */
+        while ((I2C_CR1(I2C1) & I2C_CR1_STOP) == I2C_CR1_STOP)
+
+        /* POS = 0 and ACK = 1 */
+        I2C_CR1(I2C1) &= ~I2C_CR1_POS;
+        I2C_CR1(I2C1) |= I2C_CR1_ACK;
+
+        return 0;
+    }
+    else
+    {
+        /* Waiting for address is transferred. */
+        while (!(I2C_SR1(I2C1) & I2C_SR1_ADDR));
+
+        /* Cleaning I2C_SR1_ACK. */
+        I2C_CR1(I2C1) &= ~I2C_CR1_ACK;
+
+        /* Disable interrupts. */
+        cm_disable_interrupts();
+
+        /* Cleaning ADDR condition sequence. */
+        reg32 = I2C_SR2(I2C1);
+
+        /* STOP = 1 */
+        I2C_CR1(I2C1) |= I2C_CR1_STOP;
+
+        /* Enable interrupts. */
+        cm_enable_interrupts();
+
+        /* Wait until RxNE = 1 */
+        while (!(I2C_SR1(I2C1) & I2C_SR1_RxNE));
+
+        /* Reading Data */
+        *data = I2C_DR(I2C1);
+
+        /*Wait until STOP is cleared by hardware. */
+        while ((I2C_CR1(I2C1) & I2C_CR1_STOP) == I2C_CR1_STOP)
+
+        /* ACK = 1 */
+        I2C_CR1(I2C1) |= I2C_CR1_ACK;
+
+        return 0;
+    }
+}
