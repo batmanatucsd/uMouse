@@ -29,6 +29,8 @@ OBJS += eMPL/mpu_basic.o
 
 CPPFLAGS += -DMPU6050 -DEMPL_TARGET_UMOUSE
 
+LDLIBS += -lm
+
 OPENCM3_DIR=../libopencm3
 LDSCRIPT = $(OPENCM3_DIR)/lib/stm32/f1/stm32f100xb.ld
 #LDSCRIPT = stm32_flash.ld
