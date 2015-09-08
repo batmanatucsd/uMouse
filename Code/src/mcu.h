@@ -5,13 +5,6 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/cm3/nvic.h>
 
-#ifdef  SERIAL_DEBUG
-#include <libopencm3/stm32/usart.h>
-#include <stdio.h>
-#include <errno.h>
-#include "usart.h"
-#endif // SERIAL_DEBUG
-
 
 /*****************************************************************************/
 // For ADC
