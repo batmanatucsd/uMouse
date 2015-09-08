@@ -57,7 +57,8 @@ struct int_param_s {
 #define MPU_INT_STATUS_DMP_5            (0x2000)
 
 /* Set up APIs */
-int mpu_init(struct int_param_s *int_param);
+//int mpu_init(struct int_param_s *int_param);
+int mpu_init(void);
 int mpu_init_slave(void);
 int mpu_set_bypass(unsigned char bypass_on);
 
@@ -97,6 +98,7 @@ int mpu_get_power_state(unsigned char *power_on);
 int mpu_set_sensors(unsigned char sensors);
 
 int mpu_read_6500_accel_bias(long *accel_bias);
+int mpu_read_6500_gyro_bias(long *gyro_bias);
 int mpu_set_gyro_bias_reg(long * gyro_bias);
 int mpu_set_accel_bias_6500_reg(const long *accel_bias);
 int mpu_read_6050_accel_bias(long *accel_bias);
@@ -129,4 +131,3 @@ int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug);
 int mpu_register_tap_cb(void (*func)(unsigned char, unsigned char));
 
 #endif  /* #ifndef _INV_MPU_H_ */
-

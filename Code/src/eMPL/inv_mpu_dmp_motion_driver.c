@@ -62,6 +62,12 @@
 #define log_i       MPL_LOGI
 #define log_e       MPL_LOGE
 
+#elif defined EMPL_TARGET_UMOUSE
+
+#include "../mcu_delay.h"
+#define log_i(...)     do {} while (0)
+#define log_e(...)     do {} while (0)
+
 #else
 #error  Gyro driver is missing the system layer implementations.
 #endif
@@ -626,7 +632,7 @@ int dmp_set_accel_bias(long *bias)
 
     mpu_get_accel_sens(&accel_sens);
     accel_sf = (long long)accel_sens << 15;
-    __no_operation();
+    //__no_operation();
 
     accel_bias_body[0] = bias[dmp.orient & 3];
     if (dmp.orient & 4)
@@ -1330,7 +1336,7 @@ int dmp_read_fifo(short *gyro, short *accel, long *quat,
     if (dmp.feature_mask & (DMP_FEATURE_TAP | DMP_FEATURE_ANDROID_ORIENT))
         decode_gesture(fifo_data + ii);
 
-    get_ms(timestamp);
+    //get_ms(timestamp);
     return 0;
 }
 
@@ -1366,4 +1372,3 @@ int dmp_register_android_orient_cb(void (*func)(unsigned char))
 /**
  *  @}
  */
-

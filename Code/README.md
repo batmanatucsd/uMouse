@@ -73,3 +73,7 @@ The second debug approach:
 1. use openocd to start gdb server:
 		openocd -f interface/stlink-v1.cfg -f target/stm32f1x_stlink.cfg
 2. Follow the same step as before.
+
+hardware
+===
+systick -->mcu_delay

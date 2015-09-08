@@ -101,6 +101,16 @@ static inline int reg_int_cb(struct int_param_s *int_param)
 /* UC3 is a 32-bit processor, so abs and labs are equivalent. */
 #define labs        abs
 #define fabs(x)     (((x)>0)?(x):-(x))
+
+#elif defined EMPL_TARGET_UMOUSE
+#include "../mcu_iic.h"
+#include "../mcu_delay.h"
+
+#define log_i(...)     do {} while (0)
+#define log_e(...)     do {} while (0)
+#define get_ms(...)    do {} while (0)
+#define min(a,b) ((a<b)?a:b)
+
 #else
 #error  Gyro driver is missing the system layer implementations.
 #endif
@@ -676,13 +686,13 @@ int mpu_reg_dump(void)
  *  @param[out] data    Register data.
  *  @return     0 if successful.
  */
-int mpu_read_reg(unsigned char reg, unsigned char *data)
+int mpu_read_reg(unsigned char regi, unsigned char *data)
 {
-    if (reg == st.reg->fifo_r_w || reg == st.reg->mem_r_w)
+    if (regi == st.reg->fifo_r_w || regi == st.reg->mem_r_w)
         return -1;
-    if (reg >= st.hw->num_reg)
+    if (regi >= st.hw->num_reg)
         return -1;
-    return i2c_read(st.hw->addr, reg, 1, data);
+    return i2c_read(st.hw->addr, regi, 1, data);
 }
 
 /**
@@ -698,7 +708,8 @@ int mpu_read_reg(unsigned char reg, unsigned char *data)
  *  @param[in]  int_param   Platform-specific parameters to interrupt API.
  *  @return     0 if successful.
  */
-int mpu_init(struct int_param_s *int_param)
+//int mpu_init(struct int_param_s *int_param)
+int mpu_init()
 {
     unsigned char data[6];
 
@@ -758,8 +769,8 @@ int mpu_init(struct int_param_s *int_param)
     if (mpu_configure_fifo(0))
         return -1;
 
-    if (int_param)
-        reg_int_cb(int_param);
+    // if (int_param)
+    //     reg_int_cb(int_param);
 
 #ifdef AK89xx_SECONDARY
     setup_compass();
@@ -855,17 +866,17 @@ int mpu_lp_accel_mode(unsigned short rate)
     	data = INV_LPA_250HZ;
     else
     	data = INV_LPA_500HZ;
-        
+
     if (i2c_write(st.hw->addr, st.reg->lp_accel_odr, 1, &data))
         return -1;
-    
+
     if (i2c_read(st.hw->addr, st.reg->accel_cfg2, 1, &data))
         return -1;
-        
+
     data = data | BIT_ACCL_FC_B;
     if (i2c_write(st.hw->addr, st.reg->accel_cfg2, 1, &data))
             return -1;
-            
+
     data = BIT_LPA_CYCLE;
     if (i2c_write(st.hw->addr, st.reg->pwr_mgmt_1, 1, &data))
         return -1;
@@ -951,7 +962,7 @@ int mpu_get_temperature(long *data, unsigned long *timestamp)
 /**
  *  @brief      Read biases to the accel bias 6500 registers.
  *  This function reads from the MPU6500 accel offset cancellations registers.
- *  The format are G in +-8G format. The register is initialized with OTP 
+ *  The format are G in +-8G format. The register is initialized with OTP
  *  factory trim values.
  *  @param[in]  accel_bias  returned structure with the accel bias
  *  @return     0 if successful.
@@ -973,7 +984,7 @@ int mpu_read_6500_accel_bias(long *accel_bias) {
 /**
  *  @brief      Read biases to the accel bias 6050 registers.
  *  This function reads from the MPU6050 accel offset cancellations registers.
- *  The format are G in +-8G format. The register is initialized with OTP 
+ *  The format are G in +-8G format. The register is initialized with OTP
  *  factory trim values.
  *  @param[in]  accel_bias  returned structure with the accel bias
  *  @return     0 if successful.
@@ -1019,21 +1030,21 @@ int mpu_set_gyro_bias_reg(long *gyro_bias)
     unsigned char data[6] = {0, 0, 0, 0, 0, 0};
     long gyro_reg_bias[3] = {0, 0, 0};
     int i=0;
-    
+
     if(mpu_read_6500_gyro_bias(gyro_reg_bias))
         return -1;
 
     for(i=0;i<3;i++) {
         gyro_reg_bias[i]-= gyro_bias[i];
     }
-    
+
     data[0] = (gyro_reg_bias[0] >> 8) & 0xff;
     data[1] = (gyro_reg_bias[0]) & 0xff;
     data[2] = (gyro_reg_bias[1] >> 8) & 0xff;
     data[3] = (gyro_reg_bias[1]) & 0xff;
     data[4] = (gyro_reg_bias[2] >> 8) & 0xff;
     data[5] = (gyro_reg_bias[2]) & 0xff;
-    
+
     if (i2c_write(st.hw->addr, 0x13, 2, &data[0]))
         return -1;
     if (i2c_write(st.hw->addr, 0x15, 2, &data[2]))
@@ -1473,7 +1484,7 @@ int mpu_get_compass_sample_rate(unsigned short *rate)
  *  @param[in]  rate    Desired compass sampling rate (Hz).
  *  @return     0 if successful.
  */
-int mpu_set_compass_sample_rate(unsigned short rate)
+int mpu_set_compass_sample_rate(unsigned short rate __attribute__((unused)))
 {
 #ifdef AK89xx_SECONDARY
     unsigned char div;
@@ -2011,7 +2022,7 @@ static int gyro_self_test(long *bias_regular, long *bias_st)
     return result;
 }
 
-#endif 
+#endif
 #ifdef AK89xx_SECONDARY
 static int compass_self_test(void)
 {
@@ -2058,13 +2069,13 @@ static int compass_self_test(void)
         result |= 0x04;
 #elif defined MPU9250
     data = (short)(tmp[1] << 8) | tmp[0];
-    if ((data > 200) || (data < -200))  
+    if ((data > 200) || (data < -200))
         result |= 0x01;
     data = (short)(tmp[3] << 8) | tmp[2];
-    if ((data > 200) || (data < -200))  
+    if ((data > 200) || (data < -200))
         result |= 0x02;
     data = (short)(tmp[5] << 8) | tmp[4];
-    if ((data > -800) || (data < -3200))  
+    if ((data > -800) || (data < -3200))
         result |= 0x04;
 #endif
 AKM_restore:
@@ -3045,7 +3056,7 @@ static int setup_compass(void)
  *  @param[out] timestamp   Timestamp in milliseconds. Null if not needed.
  *  @return     0 if successful.
  */
-int mpu_get_compass_reg(short *data, unsigned long *timestamp)
+int mpu_get_compass_reg(short *data __attribute__((unused)), unsigned long *timestamp __attribute__((unused)))
 {
 #ifdef AK89xx_SECONDARY
     unsigned char tmp[9];
@@ -3098,7 +3109,7 @@ int mpu_get_compass_reg(short *data, unsigned long *timestamp)
  *  @param[out] fsr Current full-scale range.
  *  @return     0 if successful.
  */
-int mpu_get_compass_fsr(unsigned short *fsr)
+int mpu_get_compass_fsr(unsigned short *fsr __attribute__((unused)))
 {
 #ifdef AK89xx_SECONDARY
     fsr[0] = st.hw->compass_fsr;
@@ -3146,7 +3157,7 @@ int mpu_get_compass_fsr(unsigned short *fsr)
  *  @param[in]  lpa_freq    Minimum sampling rate, or zero to disable.
  *  @return     0 if successful.
  */
-int mpu_lp_motion_interrupt(unsigned short thresh, unsigned char time,
+int mpu_lp_motion_interrupt(unsigned short thresh __attribute__((unused)), unsigned char time,
     unsigned char lpa_freq)
 {
 
@@ -3237,7 +3248,7 @@ int mpu_lp_motion_interrupt(unsigned short thresh, unsigned char time,
         data[0] = BITS_WOM_EN;
         if (i2c_write(st.hw->addr, st.reg->accel_intel, 1, data))
             goto lp_int_restore;
-            
+
         /* Bypass DLPF ACCEL_FCHOICE_B=1*/
         data[0] = BIT_ACCL_FC_B | 0x01;
         if (i2c_write(st.hw->addr, st.reg->accel_cfg2, 1, data))
@@ -3247,18 +3258,18 @@ int mpu_lp_motion_interrupt(unsigned short thresh, unsigned char time,
         data[0] = BIT_MOT_INT_EN;
         if (i2c_write(st.hw->addr, st.reg->int_enable, 1, data))
             goto lp_int_restore;
-        
+
         /* Enable cycle mode. */
         data[0] = BIT_LPA_CYCLE;
         if (i2c_write(st.hw->addr, st.reg->pwr_mgmt_1, 1, data))
             goto lp_int_restore;
-            
+
         st.chip_cfg.int_motion_only = 1;
         return 0;
 #endif
     } else {
         /* Don't "restore" the previous state if no state has been saved. */
-        int ii;
+        unsigned int ii;
         char *cache_ptr = (char*)&st.chip_cfg.cache;
         for (ii = 0; ii < sizeof(st.chip_cfg.cache); ii++) {
             if (cache_ptr[ii] != 0)
@@ -3300,4 +3311,3 @@ lp_int_restore:
 /**
  *  @}
  */
-
