@@ -20,9 +20,12 @@
 BINARY = uMouse
 
 OBJS += mcu_usart.o
+
 OBJS += mcu_iic.o
 OBJS += mcu_delay.o
 OBJS += eMPL/inv_mpu.o
+OBJS += eMPL/inv_mpu_dmp_motion_driver.o
+OBJS += eMPL/mpu_basic.o
 
 CPPFLAGS += -DMPU6050 -DEMPL_TARGET_UMOUSE
 
