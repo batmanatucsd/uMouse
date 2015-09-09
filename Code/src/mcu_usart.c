@@ -57,7 +57,7 @@ int _write(int file, char *ptr, int len)
 // }
 
 //confiure usart
-void USART_Configuration(void)
+void USART_init(void)
 {
   clock_setup();
   usart_setup();

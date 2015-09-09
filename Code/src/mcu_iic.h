@@ -1,7 +1,7 @@
 #ifndef _MCU_IIC_H_
 #define _MCU_IIC_H_
 
-void IIC_Configuration(void);
+void i2c_init(void);
 
 /**
  *  @brief      Write to a device register.

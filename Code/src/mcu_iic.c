@@ -5,7 +5,7 @@
 #include <libopencm3/stm32/i2c.h>
 #include <libopencm3/cm3/cortex.h>
 
-void IIC_Configuration()
+void i2c_init()
 {
  /* Enable clocks for I2C1 and AFIO. */
  rcc_periph_clock_enable(RCC_I2C1);

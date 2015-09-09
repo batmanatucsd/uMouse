@@ -66,9 +66,9 @@ static inline unsigned short inv_orientation_matrix_to_scalar(
     return scalar;
 }
 
-int MPU_Configuration(void)
+int MPU_init(void)
 {
-    IIC_Configuration();
+    i2c_init();
     delay_init();
 
     mpu_init();

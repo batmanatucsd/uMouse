@@ -9,6 +9,6 @@
 int _write(int file, char *ptr, int len);
 //int _read(int file, char *ptr, int len);
 
-void USART_Configuration(void);
+void USART_init(void);
 
 #endif // _USART_H_
