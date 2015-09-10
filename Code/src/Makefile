@@ -19,17 +19,25 @@
 
 BINARY = uMouse
 
+## usart debug
 OBJS += mcu_usart.o
 
-OBJS += mcu_soft_iic.o
+## delay related
 OBJS += mcu_delay.o
+
+## MPU related
+OBJS += mcu_soft_iic.o
 OBJS += eMPL/inv_mpu.o
 OBJS += eMPL/inv_mpu_dmp_motion_driver.o
 OBJS += eMPL/mpu_basic.o
 
 CPPFLAGS += -DMPU6050 -DEMPL_TARGET_UMOUSE
 
+## for math.h
 LDLIBS += -lm
+
+## adc related
+OBJS += mcu_adc.o
 
 OPENCM3_DIR=../libopencm3
 LDSCRIPT = $(OPENCM3_DIR)/lib/stm32/f1/stm32f100xb.ld
