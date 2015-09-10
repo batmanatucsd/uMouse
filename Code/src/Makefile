@@ -25,6 +25,9 @@ OBJS += mcu_usart.o
 ## delay related
 OBJS += mcu_delay.o
 
+## adc related
+## OBJS += mcu_adc.o
+
 ## MPU related
 OBJS += mcu_soft_iic.o
 OBJS += eMPL/inv_mpu.o
@@ -36,14 +39,11 @@ CPPFLAGS += -DMPU6050 -DEMPL_TARGET_UMOUSE
 ## for math.h
 LDLIBS += -lm
 
-## adc related
-OBJS += mcu_adc.o
-
 OPENCM3_DIR=../libopencm3
 LDSCRIPT = $(OPENCM3_DIR)/lib/stm32/f1/stm32f100xb.ld
 #LDSCRIPT = stm32_flash.ld
 
-include ../libopencm3.target.mk
+include ../mk/libopencm3.target.mk
 
 debug:
 	$(GDB) $(BINARY).elf
