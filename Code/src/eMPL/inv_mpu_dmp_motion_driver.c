@@ -1260,7 +1260,7 @@ int dmp_set_interrupt_mode(unsigned char mode)
  *  @return     0 if successful.
  */
 int dmp_read_fifo(short *gyro, short *accel, long *quat,
-    unsigned long *timestamp, short *sensors, unsigned char *more)
+    unsigned long *timestamp __attribute__((unused)), short *sensors, unsigned char *more)
 {
     unsigned char fifo_data[MAX_PACKET_LENGTH];
     unsigned char ii = 0;

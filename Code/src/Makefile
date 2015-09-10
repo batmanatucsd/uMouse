@@ -21,7 +21,7 @@ BINARY = uMouse
 
 OBJS += mcu_usart.o
 
-OBJS += mcu_iic.o
+OBJS += mcu_soft_iic.o
 OBJS += mcu_delay.o
 OBJS += eMPL/inv_mpu.o
 OBJS += eMPL/inv_mpu_dmp_motion_driver.o

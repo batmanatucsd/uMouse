@@ -6,6 +6,6 @@
 int MPU_init(void);
 
 //param: cal_data = {pitch, row, yaw}
-void MPU6050_Pose(float cal_data[3]);
+void MPU6050_Pose(double cal_data[3]);
 
 #endif

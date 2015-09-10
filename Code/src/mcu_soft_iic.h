@@ -1,5 +1,5 @@
-#ifndef _MCU_IIC_H_
-#define _MCU_IIC_H_
+#ifndef _MCU_SOFT_IIC_H_
+#define _MCU_SOFT_IIC_H_
 
 #define I2C_RCC_port    RCC_GPIOB
 #define I2C_port    GPIOB

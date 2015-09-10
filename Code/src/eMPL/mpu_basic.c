@@ -1,7 +1,7 @@
 #include "mpu_basic.h"
 
 #include "../mcu_delay.h"
-#include "../mcu_iic.h"
+#include "../mcu_soft_iic.h"
 
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
@@ -10,8 +10,8 @@
 
 #define DEFAULT_MPU_HZ  (100)
 
-#define q30  1073741824.0f
-float q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
+#define q30 1073741824.0f
+double q0, q1, q2, q3;
 unsigned long sensor_timestamp;
 short gyro_raw[3], accel_raw[3], sensors;
 unsigned char more;
@@ -68,8 +68,8 @@ static inline unsigned short inv_orientation_matrix_to_scalar(
 
 int MPU_init(void)
 {
-    i2c_init();
     delay_init();
+    I2C_init();
 
     mpu_init();
 
@@ -162,7 +162,7 @@ int MPU_init(void)
     return 0;
 }
 
-void MPU6050_Pose(float cal_data[3])
+void MPU6050_Pose(double cal_data[3])
 {
    dmp_read_fifo(gyro_raw, accel_raw, quat, &sensor_timestamp, &sensors,&more);
    if (sensors & INV_WXYZ_QUAT )

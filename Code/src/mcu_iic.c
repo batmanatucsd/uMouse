@@ -5,61 +5,80 @@
 #include <libopencm3/stm32/i2c.h>
 #include <libopencm3/cm3/cortex.h>
 
-void i2c_init()
+#include "mcu_delay.h"
+#include <stdio.h>
+
+void I2C_init()
 {
- /* Enable clocks for I2C1 and AFIO. */
- rcc_periph_clock_enable(RCC_I2C1);
- rcc_periph_clock_enable(RCC_AFIO);
+    /* Enable clocks for I2C1 and AFIO. */
+    rcc_periph_clock_enable(I2C_RCC_port | RCC_AFIO | RCC_I2C1);
 
- /* Set alternate functions for the SCL and SDA pins of I2C1. */
- gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ,
-         GPIO_CNF_OUTPUT_ALTFN_OPENDRAIN,
-         GPIO_I2C1_SCL | GPIO_I2C1_SDA);
+    /* Set alternate functions(REMAP) for the SCL and SDA pins of I2C1. */
+    gpio_set_mode(I2C_port, GPIO_MODE_OUTPUT_50_MHZ,
+        GPIO_CNF_OUTPUT_ALTFN_OPENDRAIN, I2C_SCL | I2C_SDA);
 
- /* Disable the I2C before changing any configuration. */
- i2c_peripheral_disable(I2C1);
+    /* Set I2C remap and disable full jtag funcion */
+    gpio_primary_remap(AFIO_MAPR_SWJ_CFG_JTAG_OFF_SW_ON, AFIO_MAPR_I2C1_REMAP);
 
- /* APB1 is running at 36MHz. */
- i2c_set_clock_frequency(I2C1, I2C_CR2_FREQ_36MHZ);
+    /* Disable the I2C before changing any configuration. */
+    i2c_peripheral_disable(I2C1);
 
- /* 400KHz - I2C Fast Mode */
- i2c_set_fast_mode(I2C1);
+    /* PCLK must be a multiple of 10Mhz to reach 400KHz */
+    i2c_set_clock_frequency(I2C1, I2C_CR2_FREQ_30MHZ);
 
- /*
-  * fclock for I2C is 36MHz APB2 -> cycle time 28ns, low time at 400kHz
-  * incl trise -> Thigh = 1600ns; CCR = tlow/tcycle = 0x1C,9;
-  * Datasheet suggests 0x1e.
-  */
- i2c_set_ccr(I2C1, 0x1e);
+    /* 400KHz - I2C Fast Mode */
+    i2c_set_fast_mode(I2C1);
 
- /*
-  * fclock for I2C is 36MHz -> cycle time 28ns, rise time for
-  * 400kHz => 300ns and 100kHz => 1000ns; 300ns/28ns = 10;
-  * Incremented by 1 -> 11.
-  */
- i2c_set_trise(I2C1, 0x0b);
+    i2c_set_dutycycle(I2C1, I2C_CCR_DUTY_DIV2);
 
- /*
-  * This is our slave address - needed only if we want to receive from
-  * other masters.
-  */
- i2c_set_own_7bit_slave_address(I2C1, 0x32);
+    /*
+     * pclk for I2C is 30MHz -> cycle time 33.3ns
+     * Thigh + Tlow = 3 * CCR * Tpclk
+     * ->one cycle time at 400kHz = 1 / 400 kHz = 2500 ns
+     * CCR = 25d = 0x19
+     */
+    i2c_set_ccr(I2C1, 0x19);
 
- /* If everything is configured -> enable the peripheral. */
- i2c_peripheral_enable(I2C1);
+    /*
+     * pclk for I2C is 30MHz -> cycle time 33.3ns
+     * rise time for 400kHz => 300ns and 100kHz => 1000ns;
+     * 300ns/33.3ns = 9
+     * Incremented by 1 -> 10
+     */
+    i2c_set_trise(I2C1, 0x0A);
+
+    i2c_enable_interrupt(I2C1, I2C_CR2_ITERREN);
+
+    /* If everything is configured -> enable the peripheral. */
+    i2c_peripheral_enable(I2C1);
+
+    delay_ms(50);
+
+    if ((I2C_SR2(I2C1) & I2C_SR2_BUSY)) {
+
+       while(1);
+   }
 }
 
-int i2c_write(unsigned char slave_addr, unsigned char reg_addr,
+int I2C_write(unsigned char slave_addr, unsigned char reg_addr,
     unsigned char length, unsigned char const *data)
 {
     uint32_t reg32 __attribute__((unused));
+
+    if ((I2C_SR2(I2C1) & I2C_SR2_BUSY)) {
+
+       while(1);
+   }
 
     /* Send START condition. */
     i2c_send_start(I2C1);
 
     /* Waiting for START is send and switched to master mode. */
     while (!((I2C_SR1(I2C1) & I2C_SR1_SB)
-        & (I2C_SR2(I2C1) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
+        & (I2C_SR2(I2C1) & (I2C_SR2_MSL | I2C_SR2_BUSY))))
+    {
+        printf("SR1:%X SR2:%X \n", (unsigned int)I2C_SR1(I2C1), (unsigned int)I2C_SR2(I2C1));
+    }
 
     /* Send destination address. */
     i2c_send_7bit_address(I2C1, slave_addr, I2C_WRITE);
@@ -89,7 +108,7 @@ int i2c_write(unsigned char slave_addr, unsigned char reg_addr,
     return 0;
 }
 
-int i2c_read(unsigned char slave_addr, unsigned char reg_addr,
+int I2C_read(unsigned char slave_addr, unsigned char reg_addr,
     unsigned char length, unsigned char *data)
 {
     uint32_t reg32 __attribute__((unused));

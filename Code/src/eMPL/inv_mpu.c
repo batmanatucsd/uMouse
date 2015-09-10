@@ -103,12 +103,16 @@ static inline int reg_int_cb(struct int_param_s *int_param)
 #define fabs(x)     (((x)>0)?(x):-(x))
 
 #elif defined EMPL_TARGET_UMOUSE
-#include "../mcu_iic.h"
+#include "../mcu_soft_iic.h"
 #include "../mcu_delay.h"
 
+#define i2c_write(a, b, c, d)   I2C_write(a, b, c, d)
+#define i2c_read(a, b, c, d)    I2C_read(a, b, c, d)
+
+//#define get_ms(...)    do {} while (0)
 #define log_i(...)     do {} while (0)
 #define log_e(...)     do {} while (0)
-#define get_ms(...)    do {} while (0)
+
 #define min(a,b) ((a<b)?a:b)
 
 #else
@@ -895,7 +899,7 @@ int mpu_lp_accel_mode(unsigned short rate)
  *  @param[out] timestamp   Timestamp in milliseconds. Null if not needed.
  *  @return     0 if successful.
  */
-int mpu_get_gyro_reg(short *data, unsigned long *timestamp)
+int mpu_get_gyro_reg(short *data, unsigned long *timestamp __attribute__((unused)))
 {
     unsigned char tmp[6];
 
@@ -907,8 +911,8 @@ int mpu_get_gyro_reg(short *data, unsigned long *timestamp)
     data[0] = (tmp[0] << 8) | tmp[1];
     data[1] = (tmp[2] << 8) | tmp[3];
     data[2] = (tmp[4] << 8) | tmp[5];
-    if (timestamp)
-        get_ms(timestamp);
+    // if (timestamp)
+    //     get_ms(timestamp);
     return 0;
 }
 
@@ -918,7 +922,7 @@ int mpu_get_gyro_reg(short *data, unsigned long *timestamp)
  *  @param[out] timestamp   Timestamp in milliseconds. Null if not needed.
  *  @return     0 if successful.
  */
-int mpu_get_accel_reg(short *data, unsigned long *timestamp)
+int mpu_get_accel_reg(short *data, unsigned long *timestam __attribute__((unused)))
 {
     unsigned char tmp[6];
 
@@ -930,8 +934,8 @@ int mpu_get_accel_reg(short *data, unsigned long *timestamp)
     data[0] = (tmp[0] << 8) | tmp[1];
     data[1] = (tmp[2] << 8) | tmp[3];
     data[2] = (tmp[4] << 8) | tmp[5];
-    if (timestamp)
-        get_ms(timestamp);
+    // if (timestamp)
+    //     get_ms(timestamp);
     return 0;
 }
 
@@ -941,7 +945,7 @@ int mpu_get_accel_reg(short *data, unsigned long *timestamp)
  *  @param[out] timestamp   Timestamp in milliseconds. Null if not needed.
  *  @return     0 if successful.
  */
-int mpu_get_temperature(long *data, unsigned long *timestamp)
+int mpu_get_temperature(long *data, unsigned long *timestamp __attribute__((unused)))
 {
     unsigned char tmp[2];
     short raw;
@@ -952,8 +956,8 @@ int mpu_get_temperature(long *data, unsigned long *timestamp)
     if (i2c_read(st.hw->addr, st.reg->temp, 2, tmp))
         return -1;
     raw = (tmp[0] << 8) | tmp[1];
-    if (timestamp)
-        get_ms(timestamp);
+    // if (timestamp)
+    //     get_ms(timestamp);
 
     data[0] = (long)((35 + ((raw - (float)st.hw->temp_offset) / st.hw->temp_sens)) * 65536L);
     return 0;
@@ -1746,7 +1750,7 @@ int mpu_get_int_status(short *status)
  *  @param[out] more        Number of remaining packets.
  *  @return     0 if successful.
  */
-int mpu_read_fifo(short *gyro, short *accel, unsigned long *timestamp,
+int mpu_read_fifo(short *gyro, short *accel, unsigned long *timestamp __attribute__((unused)),
         unsigned char *sensors, unsigned char *more)
 {
     /* Assumes maximum packet size is gyro (6) + accel (6). */
@@ -1787,7 +1791,7 @@ int mpu_read_fifo(short *gyro, short *accel, unsigned long *timestamp,
             return -2;
         }
     }
-    get_ms((unsigned long*)timestamp);
+    //get_ms((unsigned long*)timestamp);
 
     if (i2c_read(st.hw->addr, st.reg->fifo_r_w, packet_size, data))
         return -1;
