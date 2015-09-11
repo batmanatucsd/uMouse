@@ -26,7 +26,7 @@ OBJS += mcu_usart.o
 OBJS += mcu_delay.o
 
 ## adc related
-## OBJS += mcu_adc.o
+OBJS += mcu_adc.o
 
 ## MPU related
 OBJS += mcu_soft_iic.o

@@ -2,7 +2,6 @@
 >STM flash loader: http://www.st.com/web/en/catalog/tools/PF257525  
 >ST-LINK utility: http://www.st.com/web/en/catalog/tools/PF258168
 
-
 prepare
 ===
 1. make sure you have
@@ -51,7 +50,11 @@ notes
 	reason: USE_STDPERIPH_DRIVER
 
 2. stm32_flash.ld comes from /STM32F10x_StdPeriph_Lib_V3.5.0/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM3210E-EVAL_XL
-	reason: need to modify linker script for different MCU
+	reason: need to modify linker script for different MCU  
+
+systick -->mcu_delay
+
+scb_set_priority_grouping(SCB_AIRCR_PRIGROUP_GROUP4_SUB4) --> divide Priority into 2 Preemption & 2 Sub --> set in mcu_adc
 
 debug
 ===
@@ -73,7 +76,3 @@ The second debug approach:
 1. use openocd to start gdb server:
 		openocd -f interface/stlink-v1.cfg -f target/stm32f1x_stlink.cfg
 2. Follow the same step as before.
-
-hardware
-===
-systick -->mcu_delay
