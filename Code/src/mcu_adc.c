@@ -138,7 +138,7 @@ void ADC_init(void)
     adc_calibration(REC_ADC);
 }
 
-void ADC_request()
+void ADC_request(void)
 {
     // start receive
     gpio_set(EMIT_PORT, L_EMIT_PIN);
@@ -153,7 +153,7 @@ void ADC_request()
     adc_start_conversion_regular(REC_ADC);
 }
 
-void ADC_read()
+void ADC_read(void)
 {
     while(!data_ready);
 

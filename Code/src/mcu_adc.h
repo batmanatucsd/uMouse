@@ -34,5 +34,7 @@
 #define R_REC_ADC   ADC_CHANNEL13
 
 void ADC_init(void);
+void ADC_request(void);
+void ADC_read(void);
 
 #endif
