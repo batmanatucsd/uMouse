@@ -18,19 +18,20 @@ void setup(uint8_t loc, uint8_t dist, uint8_t step)/*{{{*/
 		for (col = 0; col < 16; col++)
 		{
 			maze[row][col] &= 0xff00;
-      switch(step) {
+      		switch(step)
+			{
 				case 1:
 					maze[row][col] |= init(row, col);
-          break;
-        case 2:
-          maze[row][col] |= initBack(row, col);
-          break;
-        case 3:
-          maze[row][col] |= initFlood(row, col);
-          break;
-				}
+          			break;
+        		case 2:
+          			maze[row][col] |= initBack(row, col);
+          			break;
+        		case 3:
+          			maze[row][col] |= initFlood(row, col);
+          			break;
 			}
 		}
+	}
 
 	for (i = 0; i < 16; i++)
 	{
