@@ -27,12 +27,12 @@ int main(void)
   PWM_Configuration();
   ENCODER_Configuration();
 
-  
+
 
   // Only for debug
   USART_Configuration();
-//  ANBT_I2C_Configuration();
-//  AnBT_DMP_MPU6050_Init();
+  ANBT_I2C_Configuration();
+  AnBT_DMP_MPU6050_Init();
 
   mouse_state = STOP;
   mouse_status = FORWARD;
@@ -49,7 +49,7 @@ int main(void)
 	  switch(mouse_state){
 		  case GO:
 			  /*****************************************CELL BY CELL MOVEMENT****************************/
-			
+
 
 			     ADC_Read(1,0,0,1);
 
@@ -96,7 +96,7 @@ int main(void)
 				  Delay_us(1000000);
 				  L_ENC->CNT=0;
 				  R_ENC->CNT=0;
-				
+
 			}
 
 
@@ -141,7 +141,7 @@ int main(void)
 				change_RightMotorSpeed(150);
 				pid();
 				rightTurn();
-			   */	  
+			   */
 
 			  break;
 
@@ -175,7 +175,7 @@ int main(void)
 
 */
 			  /*******************************straight, stop, 180, go ********************/
-			  
+
 			     ADC_Read(1,0,0,1);
 			     if(sensor_buffers[L_IR] > 120 && sensor_buffers[R_IR] > 120){
 			     stopFrontWall();
@@ -193,7 +193,7 @@ int main(void)
 			     pid();
 			     }
 
-			   
+
 
 
 			  GPIO_SetBits(GPIOC, GREEN);
@@ -225,7 +225,7 @@ int main(void)
 			  /*}*/
 
 			  break;
-	  
+
 	  /*printf("%u            %u\r\n", TIM3->CCR3, TIM4->CCR4);*/
 	  /*printf("                                                  %u              %u\r\n", L_ENC->CNT, R_ENC->CNT);*/
 	  /*    ADC_Read(1,1,1,1);
